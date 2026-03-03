@@ -183,20 +183,20 @@ function openTemplateManager() {
 }
 
 function updateVoucherPreviews() {
-    var tables = document.querySelectorAll('.voucher-preview table.voucher');
-    tables.forEach(function (t) {
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) {
         if (templateBg) {
-            t.style.backgroundImage = 'url(' + templateBg + ')';
-            t.style.backgroundSize = 'cover';
-            t.style.backgroundRepeat = 'no-repeat';
-            t.style.backgroundPosition = 'center';
+            container.style.backgroundImage = 'url(' + templateBg + ')';
+            container.style.backgroundSize = 'cover';
+            container.style.backgroundRepeat = 'no-repeat';
+            container.style.backgroundPosition = 'center';
         } else {
-            t.style.backgroundImage = '';
-            t.style.backgroundSize = '';
-            t.style.backgroundRepeat = '';
-            t.style.backgroundPosition = '';
+            container.style.backgroundImage = '';
+            container.style.backgroundSize = '';
+            container.style.backgroundRepeat = '';
+            container.style.backgroundPosition = '';
         }
-    });
+    }
 }
 
 // ---- Upload Handler (Template Manager) ----
@@ -279,41 +279,58 @@ function buildScript(code, userpass, cfg) {
 
 // Build voucher HTML for printing
 function buildVoucher(code, userpass, qr, cfg) {
-    var w = qr ? 200 : 170;
     var bgStyle = '';
     if (templateBg) {
         bgStyle = 'background-image:url(' + templateBg + ');background-size:cover;background-repeat:no-repeat;background-position:center;';
     }
-    var h = '<table class="voucher" style="width:' + w + 'px;' + bgStyle + '"><tbody><tr>';
 
-    // Price sidebar
-    var sidebarBg = templateBg ? 'transparent' : cfg.color;
-    h += '<td class="rotate" style="font-weight:700;border-right:1px solid #ccc;background-color:' + sidebarBg + ';-webkit-print-color-adjust:exact;" rowspan="4">';
-    h += '<span>' + cfg.currency + ' ' + cfg.price + '</span></td>';
+    // Container div instead of table
+    var h = '<div class="voucher" style="width: 200px; height: 100px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bgStyle + '">';
+
+    // Price
+    var cPrice = voucherElementsConfig.price;
+    if (cPrice && cPrice.visible) {
+        var sidebarBg = templateBg ? 'transparent' : cfg.color;
+        h += '<div style="position: absolute; left: ' + cPrice.left + 'px; top: ' + cPrice.top + 'px; width: 30px; height: 100px; background-color: ' + sidebarBg + '; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">';
+        h += cfg.currency + ' ' + cfg.price;
+        h += '</div>';
+    }
 
     // Tag name
-    h += '<td style="font-weight:700" colspan="2">' + cfg.vendo + '</td>';
-
-    // QR code
-    if (qr) {
-        var url = 'http://' + cfg.ip + '/login?username=' + code;
-        if (userpass) url += '&password=' + code;
-        h += '<td rowspan="3"><div class="qr-wrapper"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=' + encodeURIComponent(url) + '"></div></td>';
+    var cVendor = voucherElementsConfig.vendor;
+    if (cVendor && cVendor.visible) {
+        h += '<div style="position: absolute; left: ' + cVendor.left + 'px; top: ' + cVendor.top + 'px; font-weight: bold; font-size: 14px; white-space: nowrap;">' + cfg.vendo + '</div>';
     }
-    h += '</tr>';
 
     // Code
-    h += '<tr><td style="width:100%;font-weight:700;font-size:18px;text-align:center">' + code + '</td></tr>';
-
-    // Duration
-    h += '<tr><td style="font-size:11px">Duration: ' + cfg.durDisplay + '</td></tr>';
-
-    // Login info
-    if (cfg.ip) {
-        h += '<tr><td style="font-size:12px" colspan="3">Login: <span style="font-weight:700">http://' + cfg.ip + '</span></td></tr>';
+    var cCode = voucherElementsConfig.code;
+    if (cCode && cCode.visible) {
+        h += '<div style="position: absolute; left: ' + cCode.left + 'px; top: ' + cCode.top + 'px; font-weight: bold; font-size: 18px; white-space: nowrap;">' + code + '</div>';
     }
 
-    h += '</tbody></table>';
+    // Duration
+    var cDur = voucherElementsConfig.duration;
+    if (cDur && cDur.visible) {
+        h += '<div style="position: absolute; left: ' + cDur.left + 'px; top: ' + cDur.top + 'px; font-size: 11px; white-space: nowrap;">Duration: ' + cfg.durDisplay + '</div>';
+    }
+
+    // Login info
+    var cLog = voucherElementsConfig.login;
+    if (cLog && cLog.visible && cfg.ip) {
+        h += '<div style="position: absolute; left: ' + cLog.left + 'px; top: ' + cLog.top + 'px; font-size: 12px; white-space: nowrap;">Login: <b style="font-weight:700">http://' + cfg.ip + '</b></div>';
+    }
+
+    // QR code
+    var cQR = voucherElementsConfig.qr;
+    if (qr && cQR && cQR.visible) {
+        var url = 'http://' + cfg.ip + '/login?username=' + code;
+        if (userpass) url += '&password=' + code;
+        h += '<div style="position: absolute; left: ' + cQR.left + 'px; top: ' + cQR.top + 'px;">';
+        h += '<img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=' + encodeURIComponent(url) + '" width="60" height="60" style="background: white;">';
+        h += '</div>';
+    }
+
+    h += '</div>';
     return h;
 }
 
@@ -398,7 +415,10 @@ function printvoucher() {
 // ---- Apply Tag Color ----
 function color() {
     var c = $('#TagColor').val();
-    $('#voucher1, #voucher2').attr('style', 'font-weight:700;border-right:1px solid #ccc;background-color:' + c + ';-webkit-print-color-adjust:exact;');
+    var priceEl = document.getElementById('dragPrice');
+    if (priceEl && !templateBg) {
+        priceEl.style.backgroundColor = c;
+    }
 }
 
 // ---- Reset Form ----
@@ -423,9 +443,167 @@ function copyCode() {
     }
 }
 
+// ---- Drag and Drop Functionality ----
+var voucherElementsConfig = {
+    price: { id: 'dragPrice', visible: true, left: 0, top: 0 },
+    vendor: { id: 'dragVendor', visible: true, left: 35, top: 5 },
+    code: { id: 'dragCode', visible: true, left: 35, top: 30 },
+    duration: { id: 'dragDuration', visible: true, left: 35, top: 60 },
+    login: { id: 'dragLogin', visible: true, left: 35, top: 75 },
+    qr: { id: 'dragQR', visible: false, left: 135, top: 5 }
+};
+
+function initDraggables() {
+    var container = document.getElementById('dragVoucherContainer');
+    if (!container) return;
+
+    // Load saved positions/visibility if any
+    try {
+        var saved = localStorage.getItem('qv_elements_config');
+        if (saved) {
+            var parsed = JSON.parse(saved);
+            for (var key in parsed) {
+                if (voucherElementsConfig[key]) {
+                    voucherElementsConfig[key] = parsed[key];
+                }
+            }
+        }
+    } catch (e) {}
+
+    // Apply config
+    for (var key in voucherElementsConfig) {
+        var elConf = voucherElementsConfig[key];
+        var el = document.getElementById(elConf.id);
+        if (el) {
+            el.style.left = elConf.left + 'px';
+            el.style.top = elConf.top + 'px';
+            el.style.display = elConf.visible ? (key === 'price' ? 'flex' : 'block') : 'none';
+
+            // Sync toggles
+            var toggle = document.querySelector('.visibility-toggle[data-target="' + elConf.id + '"]');
+            if (toggle) toggle.checked = elConf.visible;
+        }
+
+        // Special case for QR toggle which has different ID
+        if (key === 'qr') {
+            var qrToggle = document.getElementById('qrcodebtn');
+            if (qrToggle) qrToggle.checked = elConf.visible;
+        }
+    }
+
+    // Drag logic
+    var dragElements = document.querySelectorAll('.drag-el');
+    dragElements.forEach(function (el) {
+        var isDragging = false;
+        var startX, startY, initialLeft, initialTop;
+
+        el.addEventListener('mousedown', dragStart);
+        el.addEventListener('touchstart', dragStart, {passive: false});
+
+        function dragStart(e) {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            e.preventDefault();
+            isDragging = true;
+            var clientX = e.clientX || e.touches[0].clientX;
+            var clientY = e.clientY || e.touches[0].clientY;
+
+            startX = clientX;
+            startY = clientY;
+            initialLeft = parseInt(el.style.left || 0);
+            initialTop = parseInt(el.style.top || 0);
+
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchmove', dragMove, {passive: false});
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            var clientX = e.clientX || e.touches[0].clientX;
+            var clientY = e.clientY || e.touches[0].clientY;
+
+            var dx = clientX - startX;
+            var dy = clientY - startY;
+
+            var newLeft = initialLeft + dx;
+            var newTop = initialTop + dy;
+
+            // Simple boundary check (optional, but good to keep elements inside)
+            // if (newLeft < 0) newLeft = 0;
+            // if (newTop < 0) newTop = 0;
+
+            el.style.left = newLeft + 'px';
+            el.style.top = newTop + 'px';
+        }
+
+        function dragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchmove', dragMove);
+            document.removeEventListener('touchend', dragEnd);
+
+            saveElementsConfig();
+        }
+    });
+
+    // Toggle logic
+    var toggles = document.querySelectorAll('.visibility-toggle');
+    toggles.forEach(function (toggle) {
+        toggle.addEventListener('change', function () {
+            var targetId = this.getAttribute('data-target');
+            var el = document.getElementById(targetId);
+            if (el) {
+                var isPrice = targetId === 'dragPrice';
+                el.style.display = this.checked ? (isPrice ? 'flex' : 'block') : 'none';
+            }
+            saveElementsConfig();
+        });
+    });
+
+    // Special case for QR toggle
+    var qrToggle = document.getElementById('qrcodebtn');
+    if (qrToggle) {
+        qrToggle.addEventListener('change', function () {
+            var el = document.getElementById('dragQR');
+            if (el) {
+                el.style.display = this.checked ? 'block' : 'none';
+            }
+            saveElementsConfig();
+        });
+    }
+}
+
+function saveElementsConfig() {
+    for (var key in voucherElementsConfig) {
+        var elConf = voucherElementsConfig[key];
+        var el = document.getElementById(elConf.id);
+        if (el) {
+            elConf.left = parseInt(el.style.left || 0);
+            elConf.top = parseInt(el.style.top || 0);
+
+            // Get visibility
+            if (key === 'qr') {
+                elConf.visible = document.getElementById('qrcodebtn').checked;
+            } else {
+                var toggle = document.querySelector('.visibility-toggle[data-target="' + elConf.id + '"]');
+                if (toggle) {
+                    elConf.visible = toggle.checked;
+                }
+            }
+        }
+    }
+    localStorage.setItem('qv_elements_config', JSON.stringify(voucherElementsConfig));
+}
+
+
 // ---- Init ----
 $(function () {
     loadActiveTemplate();
+    initDraggables();
     renderTemplateSelector();
 
     // Template Manager upload
