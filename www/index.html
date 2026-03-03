@@ -166,82 +166,203 @@
 
     </div>
 
-    <!-- Customize Modal -->
+    <!-- Voucher Editor Modal -->
     <div class="modal fade" id="customize" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Customize Voucher</h5>
-                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-xl modal-fullscreen-md-down">
+            <div class="modal-content editor-modal">
+                <!-- Editor Header / Toolbar -->
+                <div class="editor-header">
+                    <span class="editor-title">Voucher Editor</span>
+                    <div class="editor-toolbar">
+                        <div class="tb-group">
+                            <button class="tb-btn" id="btnUndo" title="Undo (Ctrl+Z)" disabled onclick="editorUndo()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnRedo" title="Redo (Ctrl+Y)" disabled onclick="editorRedo()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
+                            </button>
+                        </div>
+                        <div class="tb-sep"></div>
+                        <div class="tb-group">
+                            <button class="tb-btn" id="btnAlignLeft" title="Align Left" onclick="alignElement('left')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="3" x2="4" y2="21"/><rect x="8" y="5" width="12" height="4" rx="1"/><rect x="8" y="13" width="8" height="4" rx="1"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnAlignCenterH" title="Center Horizontally" onclick="alignElement('centerH')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="3" x2="12" y2="21"/><rect x="4" y="5" width="16" height="4" rx="1"/><rect x="6" y="13" width="12" height="4" rx="1"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnAlignRight" title="Align Right" onclick="alignElement('right')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="20" y1="3" x2="20" y2="21"/><rect x="4" y="5" width="12" height="4" rx="1"/><rect x="8" y="13" width="8" height="4" rx="1"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnAlignTop" title="Align Top" onclick="alignElement('top')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="4" x2="21" y2="4"/><rect x="5" y="8" width="4" height="12" rx="1"/><rect x="13" y="8" width="4" height="8" rx="1"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnAlignCenterV" title="Center Vertically" onclick="alignElement('centerV')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="13" y="6" width="4" height="12" rx="1"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnAlignBottom" title="Align Bottom" onclick="alignElement('bottom')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="20" x2="21" y2="20"/><rect x="5" y="4" width="4" height="12" rx="1"/><rect x="13" y="8" width="4" height="8" rx="1"/></svg>
+                            </button>
+                        </div>
+                        <div class="tb-sep"></div>
+                        <div class="tb-group">
+                            <button class="tb-btn" id="btnGrid" title="Toggle Grid" onclick="toggleGrid()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                            </button>
+                        </div>
+                        <div class="tb-group tb-zoom">
+                            <button class="tb-btn" id="btnZoomOut" title="Zoom Out" onclick="editorSetZoom(editorZoom - 0.25)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                            </button>
+                            <span class="tb-zoom-label" id="zoomLabel">100%</span>
+                            <button class="tb-btn" id="btnZoomIn" title="Zoom In" onclick="editorSetZoom(editorZoom + 0.25)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                            </button>
+                            <button class="tb-btn" id="btnZoomFit" title="Fit to View" onclick="editorZoomFit()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <!-- Voucher Previews -->
-                    <div class="voucher-preview d-flex flex-column align-items-center bg-light p-3 rounded" style="overflow: hidden;">
-                        <p class="text-muted small mb-2">Drag elements to reposition. Drag the bottom right corner to resize.</p>
-                        <div id="dragVoucherContainer" class="drag-voucher-container" style="width: 200px; height: 100px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; resize: both;">
-                            <div id="dragPrice" class="drag-el" style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; height: 100%; background-color: #ffea8f; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; cursor: move; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">PHP 100</div>
-                            <div id="dragVendor" class="drag-el" style="position: absolute; left: 35px; top: 5px; font-weight: bold; font-size: 14px; cursor: move; white-space: nowrap;">QuickVoucher</div>
-                            <div id="dragCode" class="drag-el" style="position: absolute; left: 35px; top: 30px; font-weight: bold; font-size: 18px; cursor: move; white-space: nowrap;">ABC1234</div>
-                            <div id="dragDuration" class="drag-el" style="position: absolute; left: 35px; top: 60px; font-size: 11px; cursor: move; white-space: nowrap;">Duration: 1D 2H 3M</div>
-                            <div id="dragLogin" class="drag-el" style="position: absolute; left: 35px; top: 75px; font-size: 12px; cursor: move; white-space: nowrap;">Login: <b>10.0.0.1</b></div>
-                            <div id="dragQR" class="drag-el qr-wrapper" style="position: absolute; right: 5px; top: 5px; cursor: move; display: none;"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234" width="60" height="60" style="background: white;"></div>
-                        </div>
-                    </div>
 
-                    <!-- Template Selector -->
-                    <div class="tpl-selector-section mt-3">
-                        <div class="tpl-selector-header">
-                            <label class="form-label mb-0">Voucher Template</label>
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="openTemplateManager()">Manage Templates</button>
+                <!-- Editor Body -->
+                <div class="editor-body">
+                    <div class="editor-layout">
+                        <!-- Canvas Workspace -->
+                        <div class="editor-canvas-area" id="canvasArea">
+                            <div class="canvas-workspace" id="canvasWorkspace">
+                                <div class="canvas-scaler" id="canvasScaler" style="transform: scale(1); transform-origin: center center;">
+                                    <div id="dragVoucherContainer" class="drag-voucher-container" style="width: 200px; height: 100px; position: relative; border: 1px dashed #aaa; background-color: #fff; overflow: visible;">
+                                        <div class="canvas-grid-overlay" id="canvasGridOverlay"></div>
+                                        <div class="snap-guide snap-guide-h" id="snapGuideH"></div>
+                                        <div class="snap-guide snap-guide-v" id="snapGuideV"></div>
+                                        <div id="dragPrice" class="drag-el" data-key="price" style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; height: 100%; background-color: #ffea8f; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; cursor: move; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">PHP 100</div>
+                                        <div id="dragVendor" class="drag-el" data-key="vendor" style="position: absolute; left: 35px; top: 5px; font-weight: bold; font-size: 14px; cursor: move; white-space: nowrap;">QuickVoucher</div>
+                                        <div id="dragCode" class="drag-el" data-key="code" style="position: absolute; left: 35px; top: 30px; font-weight: bold; font-size: 18px; cursor: move; white-space: nowrap;">ABC1234</div>
+                                        <div id="dragDuration" class="drag-el" data-key="duration" style="position: absolute; left: 35px; top: 60px; font-size: 11px; cursor: move; white-space: nowrap;">Duration: 1D 2H 3M</div>
+                                        <div id="dragLogin" class="drag-el" data-key="login" style="position: absolute; left: 35px; top: 75px; font-size: 12px; cursor: move; white-space: nowrap;">Login: <b>10.0.0.1</b></div>
+                                        <div id="dragQR" class="drag-el qr-wrapper" data-key="qr" style="position: absolute; right: 5px; top: 5px; cursor: move; display: none;"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234" width="60" height="60" style="background: white;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-info-bar">
+                                <div class="canvas-size-group">
+                                    <label>W</label>
+                                    <input type="number" id="canvasW" class="canvas-dim-input" value="200" min="100" max="800" onchange="setCanvasSize()">
+                                    <span class="canvas-dim-sep">x</span>
+                                    <label>H</label>
+                                    <input type="number" id="canvasH" class="canvas-dim-input" value="100" min="50" max="600" onchange="setCanvasSize()">
+                                    <span class="canvas-dim-unit">px</span>
+                                </div>
+                                <div class="canvas-coords" id="canvasCoords">X: 0 &nbsp; Y: 0</div>
+                            </div>
                         </div>
-                        <div class="tpl-selector-strip" id="templateSelector"></div>
-                    </div>
 
-                    <!-- Customization Controls -->
-                    <div class="row g-3 mt-2">
-                        <div class="col-12 col-sm-6">
-                            <label class="form-label">Currency</label>
-                            <input class="form-control" id="currency" placeholder="PHP" value="PHP">
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <label class="form-label">Tag Color</label>
-                            <input class="form-control" id="TagColor" type="color" value="#ffea8f">
-                        </div>
-                    </div>
+                        <!-- Right Panel -->
+                        <div class="editor-panel" id="editorPanel">
+                            <!-- Properties Section -->
+                            <div class="panel-section">
+                                <div class="panel-header">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    Properties
+                                </div>
+                                <div id="propEmpty" class="panel-empty">Click an element to edit</div>
+                                <div id="propEditor" style="display: none;">
+                                    <div class="prop-selected-badge" id="propName"></div>
+                                    <div class="prop-group">
+                                        <div class="prop-label">Position</div>
+                                        <div class="prop-row">
+                                            <div class="prop-field"><label>X</label><input type="number" id="propX" class="prop-input" onchange="setPropPosition()"></div>
+                                            <div class="prop-field"><label>Y</label><input type="number" id="propY" class="prop-input" onchange="setPropPosition()"></div>
+                                        </div>
+                                    </div>
+                                    <div class="prop-group" id="propTypoGroup">
+                                        <div class="prop-label">Typography</div>
+                                        <select id="propFont" class="prop-select" onchange="setPropTypography()">
+                                            <option value="Arial, sans-serif">Arial</option>
+                                            <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
+                                            <option value="Verdana, sans-serif">Verdana</option>
+                                            <option value="Georgia, serif">Georgia</option>
+                                            <option value="'Times New Roman', serif">Times New Roman</option>
+                                            <option value="'Courier New', monospace">Courier New</option>
+                                            <option value="Tahoma, sans-serif">Tahoma</option>
+                                            <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                                        </select>
+                                        <div class="prop-row mt-1">
+                                            <div class="prop-field"><label>Size</label><input type="number" id="propFontSize" class="prop-input" min="6" max="72" onchange="setPropTypography()"></div>
+                                            <div class="prop-field"><label>Color</label><input type="color" id="propFontColor" class="prop-color" onchange="setPropTypography()"></div>
+                                        </div>
+                                        <div class="prop-style-row">
+                                            <button class="prop-style-btn" id="propBold" title="Bold" onclick="togglePropBold()"><b>B</b></button>
+                                            <button class="prop-style-btn" id="propItalic" title="Italic" onclick="togglePropItalic()"><i>I</i></button>
+                                        </div>
+                                    </div>
+                                    <div class="prop-group">
+                                        <div class="prop-label">Opacity</div>
+                                        <div class="prop-row">
+                                            <input type="range" id="propOpacity" class="prop-range" min="0" max="100" value="100" oninput="setPropOpacity()">
+                                            <span id="propOpacityVal" class="prop-range-val">100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="row g-2 mt-2">
-                        <div class="col-12">
-                            <label class="form-label mb-1">Visibility Toggles</label>
-                            <div class="d-flex flex-wrap gap-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input visibility-toggle" id="togglePrice" type="checkbox" checked data-target="dragPrice">
-                                    <label class="form-check-label" for="togglePrice">Price</label>
+                            <!-- Layers Section -->
+                            <div class="panel-section">
+                                <div class="panel-header">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                                    Layers
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input visibility-toggle" id="toggleVendor" type="checkbox" checked data-target="dragVendor">
-                                    <label class="form-check-label" for="toggleVendor">Tag Name</label>
+                                <div id="layersList" class="layers-list"></div>
+                            </div>
+
+                            <!-- Style Section -->
+                            <div class="panel-section">
+                                <div class="panel-header">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.08 4.93a10 10 0 0 1 0 14.14"/><path d="M6.92 4.93a10 10 0 0 0 0 14.14"/><circle cx="12" cy="12" r="10"/></svg>
+                                    Style
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input visibility-toggle" id="toggleCode" type="checkbox" checked data-target="dragCode">
-                                    <label class="form-check-label" for="toggleCode">Code</label>
+                                <div class="prop-group">
+                                    <div class="prop-label">Currency</div>
+                                    <input type="text" id="currency" class="prop-input prop-input-full" value="PHP" placeholder="PHP">
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input visibility-toggle" id="toggleDuration" type="checkbox" checked data-target="dragDuration">
-                                    <label class="form-check-label" for="toggleDuration">Duration</label>
+                                <div class="prop-group">
+                                    <div class="prop-label">Tag Color</div>
+                                    <div class="prop-row">
+                                        <input type="color" id="TagColor" class="prop-color" value="#ffea8f" onchange="applyTagColor()">
+                                        <span class="prop-color-label" id="tagColorLabel">#ffea8f</span>
+                                    </div>
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input visibility-toggle" id="toggleLogin" type="checkbox" checked data-target="dragLogin">
-                                    <label class="form-check-label" for="toggleLogin">Login Info</label>
+                                <div class="prop-group">
+                                    <div class="prop-label">Border</div>
+                                    <select id="voucherBorder" class="prop-select" onchange="applyBorderStyle()">
+                                        <option value="1px dashed #aaa">Dashed</option>
+                                        <option value="1px solid #ccc">Solid</option>
+                                        <option value="2px solid #333">Bold</option>
+                                        <option value="none">None</option>
+                                    </select>
                                 </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input visibility-toggle" id="qrcodebtn" type="checkbox" data-target="dragQR">
-                                    <label class="form-check-label" for="qrcodebtn">QR Code</label>
+                            </div>
+
+                            <!-- Template Selector (inside panel on mobile, below canvas on desktop) -->
+                            <div class="panel-section panel-templates-mobile">
+                                <div class="panel-header">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                    Templates
+                                    <button type="button" class="panel-header-btn" onclick="openTemplateManager()">Manage</button>
                                 </div>
+                                <div class="tpl-selector-strip" id="templateSelector"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2 text-end">
-                        <button class="btn btn-primary btn-sm" onclick="color()" type="button">Apply Color</button>
+
+                    <!-- Templates bar (desktop) -->
+                    <div class="editor-templates-bar">
+                        <div class="tpl-selector-header">
+                            <label class="tpl-bar-label">Templates</label>
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="openTemplateManager()">Manage</button>
+                        </div>
+                        <div class="tpl-selector-strip" id="templateSelectorBar"></div>
                     </div>
                 </div>
             </div>
@@ -295,7 +416,7 @@
         <div id="PrintBody"></div>
     </div>
 
-    <footer class="app-footer">QuickVoucher v2.0</footer>
+    <footer class="app-footer">QuickVoucher v2.2</footer>
 
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
