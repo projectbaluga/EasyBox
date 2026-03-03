@@ -226,8 +226,29 @@
                         </div>
                     </div>
 
+                    <!-- Template Upload -->
+                    <div class="template-upload-section">
+                        <label class="form-label">Voucher Background Template <span class="optional">Optional</span></label>
+                        <div class="template-drop-zone" id="dropZone">
+                            <input type="file" id="templateFile" accept="image/*" class="template-file-input">
+                            <div class="template-drop-content" id="dropContent">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <span>Drop image here or click to upload</span>
+                                <small>PNG, JPG, WEBP &mdash; Recommended: 200 x 100 px</small>
+                            </div>
+                            <div class="template-preview-wrap" id="templatePreviewWrap" style="display:none">
+                                <img id="templatePreviewImg" class="template-preview-img" alt="Template preview">
+                                <button type="button" class="template-remove-btn" onclick="removeTemplate()" title="Remove template">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Customization Controls -->
-                    <div class="row g-3">
+                    <div class="row g-3 mt-2">
                         <div class="col">
                             <label class="form-label">Currency</label>
                             <input class="form-control" id="currency" placeholder="PHP" value="PHP">

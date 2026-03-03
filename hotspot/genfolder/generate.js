@@ -7,6 +7,9 @@ if (typeof VOUCHER_CSS === 'undefined') {
     var VOUCHER_CSS = 'css/voucher.css';
 }
 
+// Template background image (base64 data URL)
+var templateBg = '';
+
 // Character sets
 var CHARSETS = {
     '1': '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -71,10 +74,15 @@ function buildScript(code, userpass, cfg) {
 // Build voucher HTML for printing
 function buildVoucher(code, userpass, qr, cfg) {
     var w = qr ? 200 : 170;
-    var h = '<table class="voucher" style="width:' + w + 'px"><tbody><tr>';
+    var bgStyle = '';
+    if (templateBg) {
+        bgStyle = 'background-image:url(' + templateBg + ');background-size:cover;background-repeat:no-repeat;background-position:center;';
+    }
+    var h = '<table class="voucher" style="width:' + w + 'px;' + bgStyle + '"><tbody><tr>';
 
     // Price sidebar
-    h += '<td class="rotate" style="font-weight:700;border-right:1px solid #ccc;background-color:' + cfg.color + ';-webkit-print-color-adjust:exact;" rowspan="4">';
+    var sidebarBg = templateBg ? 'transparent' : cfg.color;
+    h += '<td class="rotate" style="font-weight:700;border-right:1px solid #ccc;background-color:' + sidebarBg + ';-webkit-print-color-adjust:exact;" rowspan="4">';
     h += '<span>' + cfg.currency + ' ' + cfg.price + '</span></td>';
 
     // Tag name
@@ -208,3 +216,89 @@ function copyCode() {
         sel.removeAllRanges();
     }
 }
+
+// ---- Template Image Upload ----
+function handleTemplateFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        templateBg = e.target.result;
+        showTemplatePreview(templateBg);
+        updateVoucherPreviews();
+    };
+    reader.readAsDataURL(file);
+}
+
+function showTemplatePreview(src) {
+    var wrap = document.getElementById('templatePreviewWrap');
+    var img = document.getElementById('templatePreviewImg');
+    var content = document.getElementById('dropContent');
+    if (wrap && img && content) {
+        img.src = src;
+        wrap.style.display = '';
+        content.style.display = 'none';
+    }
+}
+
+function removeTemplate() {
+    templateBg = '';
+    var wrap = document.getElementById('templatePreviewWrap');
+    var img = document.getElementById('templatePreviewImg');
+    var content = document.getElementById('dropContent');
+    var input = document.getElementById('templateFile');
+    if (wrap) wrap.style.display = 'none';
+    if (content) content.style.display = '';
+    if (img) img.src = '';
+    if (input) input.value = '';
+    updateVoucherPreviews();
+}
+
+function updateVoucherPreviews() {
+    var tables = document.querySelectorAll('.voucher-preview table.voucher');
+    tables.forEach(function (t) {
+        if (templateBg) {
+            t.style.backgroundImage = 'url(' + templateBg + ')';
+            t.style.backgroundSize = 'cover';
+            t.style.backgroundRepeat = 'no-repeat';
+            t.style.backgroundPosition = 'center';
+        } else {
+            t.style.backgroundImage = '';
+            t.style.backgroundSize = '';
+            t.style.backgroundRepeat = '';
+            t.style.backgroundPosition = '';
+        }
+    });
+}
+
+// Init upload listeners after DOM is ready
+$(function () {
+    var fileInput = document.getElementById('templateFile');
+    var dropZone = document.getElementById('dropZone');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) handleTemplateFile(this.files[0]);
+        });
+    }
+
+    if (dropZone) {
+        dropZone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('drag-over');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleTemplateFile(e.dataTransfer.files[0]);
+            }
+        });
+    }
+});
