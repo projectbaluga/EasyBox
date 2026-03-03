@@ -289,13 +289,13 @@ function buildVoucher(code, userpass, qr, cfg) {
     var vh = voucherContainerSize.height;
 
     // Container div instead of table
-    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bgStyle + '">';
+    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bgStyle + '">';
 
     // Price
     var cPrice = voucherElementsConfig.price;
     if (cPrice && cPrice.visible) {
         var sidebarBg = templateBg ? 'transparent' : cfg.color;
-        h += '<div style="position: absolute; left: ' + cPrice.left + 'px; top: ' + cPrice.top + 'px; width: 30px; height: ' + vh + 'px; background-color: ' + sidebarBg + '; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-right: 1px solid rgba(0,0,0,0.05); -webkit-print-color-adjust: exact; print-color-adjust: exact;">';
+        h += '<div style="position: absolute; left: ' + cPrice.left + 'px; top: ' + cPrice.top + 'px; width: 30px; height: ' + vh + 'px; background-color: ' + sidebarBg + '; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">';
         h += cfg.currency + ' ' + cfg.price;
         h += '</div>';
     }
@@ -303,25 +303,25 @@ function buildVoucher(code, userpass, qr, cfg) {
     // Tag name
     var cVendor = voucherElementsConfig.vendor;
     if (cVendor && cVendor.visible) {
-        h += '<div style="position: absolute; left: ' + cVendor.left + 'px; top: ' + cVendor.top + 'px; font-weight: 700; font-size: 13px; color: #334155; white-space: nowrap; letter-spacing: 0.02em;">' + cfg.vendo + '</div>';
+        h += '<div style="position: absolute; left: ' + cVendor.left + 'px; top: ' + cVendor.top + 'px; font-weight: bold; font-size: 14px; white-space: nowrap;">' + cfg.vendo + '</div>';
     }
 
     // Code
     var cCode = voucherElementsConfig.code;
     if (cCode && cCode.visible) {
-        h += '<div style="position: absolute; left: ' + cCode.left + 'px; top: ' + cCode.top + 'px; font-weight: 800; font-size: 18px; color: #0f172a; white-space: nowrap; letter-spacing: 0.05em; text-transform: uppercase;">' + code + '</div>';
+        h += '<div style="position: absolute; left: ' + cCode.left + 'px; top: ' + cCode.top + 'px; font-weight: bold; font-size: 18px; white-space: nowrap;">' + code + '</div>';
     }
 
     // Duration
     var cDur = voucherElementsConfig.duration;
     if (cDur && cDur.visible) {
-        h += '<div style="position: absolute; left: ' + cDur.left + 'px; top: ' + cDur.top + 'px; font-size: 10px; font-weight: 500; color: #64748b; white-space: nowrap;">Duration: ' + cfg.durDisplay + '</div>';
+        h += '<div style="position: absolute; left: ' + cDur.left + 'px; top: ' + cDur.top + 'px; font-size: 11px; white-space: nowrap;">Duration: ' + cfg.durDisplay + '</div>';
     }
 
     // Login info
     var cLog = voucherElementsConfig.login;
     if (cLog && cLog.visible && cfg.ip) {
-        h += '<div style="position: absolute; left: ' + cLog.left + 'px; top: ' + cLog.top + 'px; font-size: 10px; font-weight: 500; color: #64748b; white-space: nowrap;">Login: <b style="color: #3b82f6;">' + cfg.ip + '</b></div>';
+        h += '<div style="position: absolute; left: ' + cLog.left + 'px; top: ' + cLog.top + 'px; font-size: 12px; white-space: nowrap;">Login: <b style="font-weight:700">http://' + cfg.ip + '</b></div>';
     }
 
     // QR code
@@ -330,7 +330,7 @@ function buildVoucher(code, userpass, qr, cfg) {
         var url = 'http://' + cfg.ip + '/login?username=' + code;
         if (userpass) url += '&password=' + code;
         h += '<div style="position: absolute; left: ' + cQR.left + 'px; top: ' + cQR.top + 'px;">';
-        h += '<img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=' + encodeURIComponent(url) + '" width="60" height="60" style="background: white; border-radius: 4px; border: 1px solid #e2e8f0;">';
+        h += '<img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=' + encodeURIComponent(url) + '" width="60" height="60" style="background: white;">';
         h += '</div>';
     }
 
