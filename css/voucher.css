@@ -12,18 +12,18 @@ body {
     -webkit-print-color-adjust: exact;
 }
 
-table.voucher {
+div.voucher {
     display: inline-block;
     height: 100px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    margin: 2px;
-    font-size: 13px;
-    vertical-align: top;
-}
-
-table.voucher td {
-    padding: 2px 6px;
+    width: 200px;
+    border: 1px dashed #ccc;
+    background-color: #fff;
+    margin: 5px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    page-break-inside: avoid;
+    float: left;
 }
 
 @page {
@@ -35,17 +35,8 @@ table.voucher td {
 }
 
 @media print {
-    table, td, tr {
-        page-break-after: auto;
-    }
-    td, tr {
+    div.voucher {
         page-break-inside: avoid;
-    }
-    thead {
-        display: table-header-group;
-    }
-    tfoot {
-        display: table-footer-group;
     }
 }
 

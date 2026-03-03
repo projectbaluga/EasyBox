@@ -178,56 +178,20 @@
                 </div>
                 <div class="modal-body">
                     <!-- Voucher Previews -->
-                    <div class="voucher-preview">
-                        <div>
-                            <table class="voucher" style="width:155px">
-                                <tbody>
-                                    <tr>
-                                        <td style="font-weight:700;border-right:1px solid #ccc;background-color:#ffea8f;-webkit-print-color-adjust:exact;" class="rotate" id="voucher1" rowspan="4">
-                                            <span>PHP 200</span>
-                                        </td>
-                                        <td style="font-weight:700" colspan="2">QuickVoucher</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:100%;font-weight:700;font-size:18px;text-align:center">ABC1234</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:11px">Duration: 1D 2H 3M</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:12px" colspan="3">Login: <span style="font-weight:700">10.0.0.1</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div>
-                            <table class="voucher" style="width:200px">
-                                <tbody>
-                                    <tr>
-                                        <td style="font-weight:700;border-right:1px solid #ccc;background-color:#ffea8f;-webkit-print-color-adjust:exact;" class="rotate" id="voucher2" rowspan="4">
-                                            <span>PHP 100</span>
-                                        </td>
-                                        <td style="font-weight:700" colspan="2">QuickVoucher</td>
-                                        <td rowspan="3">
-                                            <div class="qr-wrapper"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234"></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:100%;font-weight:700;font-size:18px;text-align:center">ABC1234</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:11px">Duration: 1D 2H 3M</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:12px" colspan="3">Login: <span style="font-weight:700">10.0.0.1</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="voucher-preview d-flex flex-column align-items-center bg-light p-3 rounded" style="overflow: hidden;">
+                        <p class="text-muted small mb-2">Drag elements to reposition. Drag the bottom right corner to resize.</p>
+                        <div id="dragVoucherContainer" class="drag-voucher-container" style="width: 200px; height: 100px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; resize: both;">
+                            <div id="dragPrice" class="drag-el" style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; height: 100%; background-color: #ffea8f; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; cursor: move; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">PHP 100</div>
+                            <div id="dragVendor" class="drag-el" style="position: absolute; left: 35px; top: 5px; font-weight: bold; font-size: 14px; cursor: move; white-space: nowrap;">QuickVoucher</div>
+                            <div id="dragCode" class="drag-el" style="position: absolute; left: 35px; top: 30px; font-weight: bold; font-size: 18px; cursor: move; white-space: nowrap;">ABC1234</div>
+                            <div id="dragDuration" class="drag-el" style="position: absolute; left: 35px; top: 60px; font-size: 11px; cursor: move; white-space: nowrap;">Duration: 1D 2H 3M</div>
+                            <div id="dragLogin" class="drag-el" style="position: absolute; left: 35px; top: 75px; font-size: 12px; cursor: move; white-space: nowrap;">Login: <b>10.0.0.1</b></div>
+                            <div id="dragQR" class="drag-el qr-wrapper" style="position: absolute; right: 5px; top: 5px; cursor: move; display: none;"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234" width="60" height="60" style="background: white;"></div>
                         </div>
                     </div>
 
                     <!-- Template Selector -->
-                    <div class="tpl-selector-section">
+                    <div class="tpl-selector-section mt-3">
                         <div class="tpl-selector-header">
                             <label class="form-label mb-0">Voucher Template</label>
                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="openTemplateManager()">Manage Templates</button>
@@ -245,13 +209,41 @@
                             <label class="form-label">Tag Color</label>
                             <input class="form-control" id="TagColor" type="color" value="#ffea8f">
                         </div>
-                        <div class="col-auto d-flex flex-column justify-content-end gap-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" id="qrcodebtn" type="checkbox">
-                                <label class="form-check-label" for="qrcodebtn">QR Code</label>
+                    </div>
+
+                    <div class="row g-2 mt-2">
+                        <div class="col-12">
+                            <label class="form-label mb-1">Visibility Toggles</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="togglePrice" type="checkbox" checked data-target="dragPrice">
+                                    <label class="form-check-label" for="togglePrice">Price</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleVendor" type="checkbox" checked data-target="dragVendor">
+                                    <label class="form-check-label" for="toggleVendor">Tag Name</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleCode" type="checkbox" checked data-target="dragCode">
+                                    <label class="form-check-label" for="toggleCode">Code</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleDuration" type="checkbox" checked data-target="dragDuration">
+                                    <label class="form-check-label" for="toggleDuration">Duration</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleLogin" type="checkbox" checked data-target="dragLogin">
+                                    <label class="form-check-label" for="toggleLogin">Login Info</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="qrcodebtn" type="checkbox" data-target="dragQR">
+                                    <label class="form-check-label" for="qrcodebtn">QR Code</label>
+                                </div>
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="color()" type="button">Apply</button>
                         </div>
+                    </div>
+                    <div class="mt-2 text-end">
+                        <button class="btn btn-primary btn-sm" onclick="color()" type="button">Apply Color</button>
                     </div>
                 </div>
             </div>
