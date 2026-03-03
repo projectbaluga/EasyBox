@@ -38,15 +38,15 @@
                 <div class="section">
                     <h6 class="section-title">Basic Settings</h6>
                     <div class="row g-3">
-                        <div class="col-12 col-md-5">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label" for="Vendo">Tag Name</label>
                             <input class="form-control" id="Vendo" placeholder="Your brand name" maxlength="14">
                         </div>
-                        <div class="col-6 col-md-3">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label" for="Prefix">Prefix <span class="hint">(max 3)</span></label>
                             <input class="form-control" id="Prefix" placeholder="e.g. P5" maxlength="3">
                         </div>
-                        <div class="col-6 col-md-2">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label" for="Length">Length</label>
                             <select class="form-select" id="Length">
                                 <option value="6" selected>6</option>
@@ -56,7 +56,7 @@
                                 <option value="10">10</option>
                             </select>
                         </div>
-                        <div class="col-12 col-md-2">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label" for="char">Characters</label>
                             <select class="form-select" id="char">
                                 <option value="1" selected>A3B2C5</option>
@@ -67,9 +67,7 @@
                                 <option value="6">aBc234</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="row g-3 mt-1">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label">Auth Type</label>
                             <div class="btn-group w-100 type-toggle" role="group">
                                 <input class="btn-check" id="userpass" type="radio" name="btnradio" autocomplete="off">
@@ -78,11 +76,11 @@
                                 <label class="btn btn-outline-primary" for="useronly">User Only</label>
                             </div>
                         </div>
-                        <div class="col-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label" for="Price">Price</label>
                             <input class="form-control" id="Price" placeholder="0" min="0" value="0" type="number">
                         </div>
-                        <div class="col-6 col-md-4">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <label class="form-label" for="Quantity">Quantity</label>
                             <input class="form-control" id="Quantity" placeholder="pcs" min="1" max="5000" type="number" value="3">
                         </div>
@@ -93,7 +91,7 @@
                 <div class="section">
                     <h6 class="section-title">Time & Data</h6>
                     <div class="row g-3">
-                        <div class="col-12">
+                        <div class="col-12 col-md-6">
                             <label class="form-label">Duration <span class="hint">limit-uptime</span></label>
                             <div class="duration-group">
                                 <input class="form-control" id="LDays" placeholder="Days" min="0" max="31" type="number">
@@ -101,7 +99,7 @@
                                 <input class="form-control" id="LMinutes" placeholder="Minutes" min="0" max="59" type="number">
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-12 col-md-6">
                             <label class="form-label">Validity <span class="optional">Optional</span></label>
                             <div class="duration-group">
                                 <input class="form-control" id="VDays" placeholder="Days" min="0" max="31" type="number">
@@ -120,15 +118,15 @@
                 <div class="section">
                     <h6 class="section-title">Server Configuration</h6>
                     <div class="row g-3">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-sm-4">
                             <label class="form-label">User Profile <span class="optional">Optional</span></label>
                             <input class="form-control" id="Profile" placeholder="default" value="default">
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-sm-4">
                             <label class="form-label">Hotspot Server <span class="optional">Optional</span></label>
                             <input class="form-control" id="Server" placeholder="all" value="all">
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-sm-4">
                             <label class="form-label">Hotspot IP <span class="hint">For login URL</span></label>
                             <input class="form-control" id="ip" placeholder="10.0.0.1" value="">
                         </div>
@@ -180,13 +178,13 @@
                     <!-- Voucher Previews -->
                     <div class="voucher-preview d-flex flex-column align-items-center bg-light p-3 rounded" style="overflow: hidden;">
                         <p class="text-muted small mb-2">Drag elements to reposition. Drag the bottom right corner to resize.</p>
-                        <div id="dragVoucherContainer" class="drag-voucher-container" style="width: 200px; height: 100px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; resize: both;">
-                            <div id="dragPrice" class="drag-el" style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; height: 100%; background-color: #ffea8f; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; cursor: move; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">PHP 100</div>
-                            <div id="dragVendor" class="drag-el" style="position: absolute; left: 35px; top: 5px; font-weight: bold; font-size: 14px; cursor: move; white-space: nowrap;">QuickVoucher</div>
-                            <div id="dragCode" class="drag-el" style="position: absolute; left: 35px; top: 30px; font-weight: bold; font-size: 18px; cursor: move; white-space: nowrap;">ABC1234</div>
-                            <div id="dragDuration" class="drag-el" style="position: absolute; left: 35px; top: 60px; font-size: 11px; cursor: move; white-space: nowrap;">Duration: 1D 2H 3M</div>
-                            <div id="dragLogin" class="drag-el" style="position: absolute; left: 35px; top: 75px; font-size: 12px; cursor: move; white-space: nowrap;">Login: <b>10.0.0.1</b></div>
-                            <div id="dragQR" class="drag-el qr-wrapper" style="position: absolute; right: 5px; top: 5px; cursor: move; display: none;"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234" width="60" height="60" style="background: white;"></div>
+                        <div id="dragVoucherContainer" class="drag-voucher-container" style="width: 200px; height: 100px; position: relative; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; resize: both;">
+                            <div id="dragPrice" class="drag-el" style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; height: 100%; background-color: #ffea8f; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; cursor: move; border-right: 1px solid rgba(0,0,0,0.05); -webkit-print-color-adjust: exact; print-color-adjust: exact;">PHP 100</div>
+                            <div id="dragVendor" class="drag-el" style="position: absolute; left: 35px; top: 5px; font-weight: 700; font-size: 13px; color: #334155; cursor: move; white-space: nowrap; letter-spacing: 0.02em;">QuickVoucher</div>
+                            <div id="dragCode" class="drag-el" style="position: absolute; left: 35px; top: 24px; font-weight: 800; font-size: 18px; color: #0f172a; cursor: move; white-space: nowrap; letter-spacing: 0.05em; text-transform: uppercase;">ABC1234</div>
+                            <div id="dragDuration" class="drag-el" style="position: absolute; left: 35px; top: 54px; font-size: 10px; font-weight: 500; color: #64748b; cursor: move; white-space: nowrap;">Duration: 1D 2H 3M</div>
+                            <div id="dragLogin" class="drag-el" style="position: absolute; left: 35px; top: 72px; font-size: 10px; font-weight: 500; color: #64748b; cursor: move; white-space: nowrap;">Login: <b style="color: #3b82f6;">10.0.0.1</b></div>
+                            <div id="dragQR" class="drag-el qr-wrapper" style="position: absolute; right: 8px; top: 18px; cursor: move; display: none;"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234" width="60" height="60" style="background: white; border-radius: 4px; border: 1px solid #e2e8f0;"></div>
                         </div>
                     </div>
 
@@ -201,11 +199,11 @@
 
                     <!-- Customization Controls -->
                     <div class="row g-3 mt-2">
-                        <div class="col">
+                        <div class="col-12 col-sm-6">
                             <label class="form-label">Currency</label>
                             <input class="form-control" id="currency" placeholder="PHP" value="PHP">
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-sm-6">
                             <label class="form-label">Tag Color</label>
                             <input class="form-control" id="TagColor" type="color" value="#ffea8f">
                         </div>
@@ -267,7 +265,7 @@
                                 <label class="form-label">Template Name</label>
                                 <input class="form-control" id="tplUploadName" placeholder="e.g. Blue Wave" maxlength="24">
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-md-8">
                                 <label class="form-label">Image File <span class="hint">PNG, JPG, WEBP &mdash; max 500KB</span></label>
                                 <div class="tpl-upload-zone" id="tplDropZone">
                                     <input type="file" id="tplUploadFile" accept="image/*" class="template-file-input">
