@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>QuickVoucher | Hotspot Voucher Generator</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/voucher.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="brand-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                    <path d="M13 5v2"/>
+                    <path d="M13 17v2"/>
+                    <path d="M13 11v2"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="brand-name">QuickVoucher</h1>
+                <p class="brand-tagline">Hotspot Voucher Generator</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <!-- Generator Card -->
+        <div class="qv-card">
+            <form id="rst">
+
+                <!-- Basic Settings -->
+                <div class="section">
+                    <h6 class="section-title">Basic Settings</h6>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-5">
+                            <label class="form-label" for="Vendo">Tag Name</label>
+                            <input class="form-control" id="Vendo" placeholder="Your brand name" maxlength="14">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label" for="Prefix">Prefix <span class="hint">(max 3)</span></label>
+                            <input class="form-control" id="Prefix" placeholder="e.g. P5" maxlength="3">
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" for="Length">Length</label>
+                            <select class="form-select" id="Length">
+                                <option value="6" selected>6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-2">
+                            <label class="form-label" for="char">Characters</label>
+                            <select class="form-select" id="char">
+                                <option value="1" selected>A3B2C5</option>
+                                <option value="2">abcdef</option>
+                                <option value="3">123456</option>
+                                <option value="4">ABCDEF</option>
+                                <option value="5">aBcDef</option>
+                                <option value="6">aBc234</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Auth Type</label>
+                            <div class="btn-group w-100 type-toggle" role="group">
+                                <input class="btn-check" id="userpass" type="radio" name="btnradio" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="userpass">User + Pass</label>
+                                <input class="btn-check" id="useronly" type="radio" name="btnradio" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="useronly">User Only</label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label class="form-label" for="Price">Price</label>
+                            <input class="form-control" id="Price" placeholder="0" min="0" value="0" type="number">
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label class="form-label" for="Quantity">Quantity</label>
+                            <input class="form-control" id="Quantity" placeholder="pcs" min="1" max="5000" type="number" value="3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time & Data -->
+                <div class="section">
+                    <h6 class="section-title">Time & Data</h6>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Duration <span class="hint">limit-uptime</span></label>
+                            <div class="duration-group">
+                                <input class="form-control" id="LDays" placeholder="Days" min="0" max="31" type="number">
+                                <input class="form-control" id="LHours" placeholder="Hours" min="0" max="59" type="number">
+                                <input class="form-control" id="LMinutes" placeholder="Minutes" min="0" max="59" type="number">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Validity <span class="optional">Optional</span></label>
+                            <div class="duration-group">
+                                <input class="form-control" id="VDays" placeholder="Days" min="0" max="31" type="number">
+                                <input class="form-control" id="VHours" placeholder="Hours" min="0" max="59" type="number">
+                                <input class="form-control" id="VMinutes" placeholder="Minutes" min="0" max="59" type="number">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Data Package <span class="optional">Optional &mdash; e.g. 500M, 2G</span></label>
+                            <input class="form-control" id="Data" placeholder="e.g. 500M, 2G, 5G" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Configuration -->
+                <div class="section">
+                    <h6 class="section-title">Server Configuration</h6>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">User Profile <span class="optional">Optional</span></label>
+                            <input class="form-control" id="Profile" placeholder="default" value="default">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Hotspot Server <span class="optional">Optional</span></label>
+                            <input class="form-control" id="Server" placeholder="all" value="all">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Hotspot IP <span class="hint">For login URL</span></label>
+                            <input class="form-control" id="ip" placeholder="10.0.0.1" value="">
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- Actions -->
+            <div class="actions-bar">
+                <button class="btn btn-generate" onclick="Generate()">Generate Vouchers</button>
+                <div class="actions-row">
+                    <button class="btn btn-outline-primary" onclick="copyCode()">Copy Script</button>
+                    <a class="btn btn-outline-primary" onclick="DownloadScript()" role="button">Download .rsc</a>
+                    <button class="btn btn-outline-warning" onclick="printvoucher()">Print</button>
+                </div>
+                <div class="actions-row">
+                    <button class="btn btn-outline-danger" onclick="rst()">Clear All</button>
+                    <button class="btn btn-outline-secondary" data-bs-target="#customize" data-bs-toggle="modal">Customize</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Card -->
+        <div class="qv-card">
+            <div class="output-header">
+                <h6 class="output-title">Script Output</h6>
+                <span class="total-badge" id="Total"></span>
+            </div>
+            <div class="code-output" id="OutputCode">
+                <code>
+                    <span>/ip hotspot user<br></span>
+                    <span id="Output"></span>
+                </code>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Customize Modal -->
+    <div class="modal fade" id="customize" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Customize Voucher</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Voucher Previews -->
+                    <div class="voucher-preview d-flex flex-column align-items-center bg-light p-3 rounded" style="overflow: hidden;">
+                        <p class="text-muted small mb-2">Drag elements to reposition them</p>
+                        <div id="dragVoucherContainer" class="drag-voucher-container" style="width: 200px; height: 100px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+                            <div id="dragPrice" class="drag-el" style="position: absolute; left: 0; top: 0; bottom: 0; width: 30px; height: 100px; background-color: #ffea8f; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; cursor: move; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">PHP 100</div>
+                            <div id="dragVendor" class="drag-el" style="position: absolute; left: 35px; top: 5px; font-weight: bold; font-size: 14px; cursor: move; white-space: nowrap;">QuickVoucher</div>
+                            <div id="dragCode" class="drag-el" style="position: absolute; left: 35px; top: 30px; font-weight: bold; font-size: 18px; cursor: move; white-space: nowrap;">ABC1234</div>
+                            <div id="dragDuration" class="drag-el" style="position: absolute; left: 35px; top: 60px; font-size: 11px; cursor: move; white-space: nowrap;">Duration: 1D 2H 3M</div>
+                            <div id="dragLogin" class="drag-el" style="position: absolute; left: 35px; top: 75px; font-size: 12px; cursor: move; white-space: nowrap;">Login: <b>10.0.0.1</b></div>
+                            <div id="dragQR" class="drag-el qr-wrapper" style="position: absolute; right: 5px; top: 5px; cursor: move; display: none;"><img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=http://10.0.0.1/login?username=ABC1234" width="60" height="60" style="background: white;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Template Selector -->
+                    <div class="tpl-selector-section mt-3">
+                        <div class="tpl-selector-header">
+                            <label class="form-label mb-0">Voucher Template</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="openTemplateManager()">Manage Templates</button>
+                        </div>
+                        <div class="tpl-selector-strip" id="templateSelector"></div>
+                    </div>
+
+                    <!-- Customization Controls -->
+                    <div class="row g-3 mt-2">
+                        <div class="col">
+                            <label class="form-label">Currency</label>
+                            <input class="form-control" id="currency" placeholder="PHP" value="PHP">
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Tag Color</label>
+                            <input class="form-control" id="TagColor" type="color" value="#ffea8f">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mt-2">
+                        <div class="col-12">
+                            <label class="form-label mb-1">Visibility Toggles</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="togglePrice" type="checkbox" checked data-target="dragPrice">
+                                    <label class="form-check-label" for="togglePrice">Price</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleVendor" type="checkbox" checked data-target="dragVendor">
+                                    <label class="form-check-label" for="toggleVendor">Tag Name</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleCode" type="checkbox" checked data-target="dragCode">
+                                    <label class="form-check-label" for="toggleCode">Code</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleDuration" type="checkbox" checked data-target="dragDuration">
+                                    <label class="form-check-label" for="toggleDuration">Duration</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="toggleLogin" type="checkbox" checked data-target="dragLogin">
+                                    <label class="form-check-label" for="toggleLogin">Login Info</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input visibility-toggle" id="qrcodebtn" type="checkbox" data-target="dragQR">
+                                    <label class="form-check-label" for="qrcodebtn">QR Code</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-end">
+                        <button class="btn btn-primary btn-sm" onclick="color()" type="button">Apply Color</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Manager Modal -->
+    <div class="modal fade" id="templateManager" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Template Manager</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Upload Section -->
+                    <div class="tpl-upload-card">
+                        <h6 class="section-title">Upload New Template</h6>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Template Name</label>
+                                <input class="form-control" id="tplUploadName" placeholder="e.g. Blue Wave" maxlength="24">
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Image File <span class="hint">PNG, JPG, WEBP &mdash; max 500KB</span></label>
+                                <div class="tpl-upload-zone" id="tplDropZone">
+                                    <input type="file" id="tplUploadFile" accept="image/*" class="template-file-input">
+                                    <div class="tpl-upload-inner">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        <span>Drop image or click to browse</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery -->
+                    <h6 class="section-title mt-4">Saved Templates</h6>
+                    <div class="tpl-gallery" id="managerGallery"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Print Body -->
+    <div style="display:none">
+        <div id="PrintBody"></div>
+    </div>
+
+    <footer class="app-footer">QuickVoucher v2.0</footer>
+
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/generate.js"></script>
+</body>
+</html>
