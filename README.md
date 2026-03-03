@@ -1,56 +1,39 @@
-# **JuanFi Voucher Generator**
+# QuickVoucher
 
-### **Added:** 
-- user + pass & user only option 
-- Clear button 
-- Voucher color customization 
-- Separate Voucher Duration and Validity 
-- Custom Currency 
-- Generate up to 5000 vouchers
-### **Known Issues:**
-- user + pass QR voucher not working 
-- Need webpage refresh after printing
+**Hotspot Voucher Generator** for MikroTik-based hotspot systems.
 
+Generate, customize, and print WiFi access vouchers with MikroTik-compatible scripts.
 
-# **Generate using Github**
-##  https://kintoyyy.github.io/JuanFiGenerator/
+## Features
 
-# **Generate by adding it to your hotspot portal**
-### **How to add Voucher Generator in your hotspot portal?**
+- Generate vouchers with customizable prefix, length, and character types
+- User-only or User + Password authentication modes
+- Configurable duration, validity, and data limits
+- Export as `.rsc` script file (MikroTik-ready)
+- Copy script to clipboard
+- Print physical voucher cards with optional QR codes
+- Custom currency, tag colors, and branding
 
-### 1. Download the [hotspot](/hotspot) folder and extract the files.
-> ![Step 1](img/1.PNG)
+## Quick Start
 
-### 2. Backup your orignal hotspot files first before adding the voucher generator files.
-> ![Step 2](img/2.PNG)
-### 3. Copy and paste the **vcgen.html** and **genfolder** inside the **/hotspot** folder.
-> ![Step 3](img/3.PNG)
-## 4. **Done!** 
+Open `index.html` in any browser to start generating vouchers.
 
-### 5. You can now access the Generator webpage using your hotspot ip address and placing **/vcgen.html** at the end of it.
+## Hotspot Portal Integration
 
-    http://hotspot-ip-address/vcgen.html
-    http://10.1.0.1/vcgen.html
-> ![Step 4](img/4.PNG)
+You can embed QuickVoucher directly into your MikroTik hotspot portal:
 
-# **Screenshots**
-- Main Page
-![SS1](img/SS1.PNG)
-- Voucher Customization
-![SS2](img/SS2.PNG)
-- printing page
-![SS3](img/SS3.PNG)
-- print settings
-![SS4](img/SS4.PNG)
+1. Download the `hotspot/` folder contents
+2. Copy `vcgen.html` and `genfolder/` into your MikroTik hotspot directory
+3. Access via `http://<hotspot-ip>/vcgen.html`
 
+## Usage
 
-> ## **This Voucher Generator Only works for [ivanalayan15/JuanFi](https://github.com/ivanalayan15/JuanFi) system**
-> - ### Facebook Community: https://www.facebook.com/groups/1172413279934139
-> - JuanFi is an open source system for coinslot integration for mikrotik hotspot
-> - Donation is very welcome, you can donate to juanfi system developer.
-> - Gcash account: Ivan Julius Alayan 09175425572
-> - Paypal account: https://www.paypal.com/paypalme/ivanalayan
+1. Fill in your **Tag Name**, **Prefix**, and voucher settings
+2. Set **Duration** and optional **Validity** / **Data Package**
+3. Configure your **Hotspot Server** and **IP**
+4. Click **Generate Vouchers**
+5. **Copy**, **Download .rsc**, or **Print** your vouchers
 
-    Made by Kintoyyy :)
-    Gcash account: Kent R. 09760009422
-    FB: @kint.oyyy508
+## License
+
+Open source. Free to use and modify.
