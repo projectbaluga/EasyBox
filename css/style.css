@@ -337,6 +337,25 @@ body {
     border: 1px solid var(--border);
 }
 
+.drag-voucher-container {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.drag-el {
+    transition: box-shadow 0.2s;
+}
+
+.drag-el:hover {
+    box-shadow: 0 0 0 1px var(--primary);
+    z-index: 10;
+}
+
+.drag-el:active {
+    box-shadow: 0 0 0 2px var(--primary);
+    opacity: 0.8;
+}
+
 /* ---- Template Selector (Customize Modal) ---- */
 .tpl-selector-section {
     margin-bottom: 16px;
