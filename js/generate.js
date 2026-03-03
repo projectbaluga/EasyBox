@@ -284,14 +284,18 @@ function buildVoucher(code, userpass, qr, cfg) {
         bgStyle = 'background-image:url(' + templateBg + ');background-size:cover;background-repeat:no-repeat;background-position:center;';
     }
 
+    // Dynamic dimensions
+    var w = voucherContainerSize.width;
+    var vh = voucherContainerSize.height;
+
     // Container div instead of table
-    var h = '<div class="voucher" style="width: 200px; height: 100px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bgStyle + '">';
+    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: 1px dashed #ccc; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bgStyle + '">';
 
     // Price
     var cPrice = voucherElementsConfig.price;
     if (cPrice && cPrice.visible) {
         var sidebarBg = templateBg ? 'transparent' : cfg.color;
-        h += '<div style="position: absolute; left: ' + cPrice.left + 'px; top: ' + cPrice.top + 'px; width: 30px; height: 100px; background-color: ' + sidebarBg + '; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">';
+        h += '<div style="position: absolute; left: ' + cPrice.left + 'px; top: ' + cPrice.top + 'px; width: 30px; height: ' + vh + 'px; background-color: ' + sidebarBg + '; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;">';
         h += cfg.currency + ' ' + cfg.price;
         h += '</div>';
     }
@@ -444,6 +448,7 @@ function copyCode() {
 }
 
 // ---- Drag and Drop Functionality ----
+var voucherContainerSize = { width: 200, height: 100 };
 var voucherElementsConfig = {
     price: { id: 'dragPrice', visible: true, left: 0, top: 0 },
     vendor: { id: 'dragVendor', visible: true, left: 35, top: 5 },
@@ -456,6 +461,16 @@ var voucherElementsConfig = {
 function initDraggables() {
     var container = document.getElementById('dragVoucherContainer');
     if (!container) return;
+
+    // Load saved sizes if any
+    try {
+        var savedSize = localStorage.getItem('qv_container_size');
+        if (savedSize) {
+            voucherContainerSize = JSON.parse(savedSize);
+            container.style.width = voucherContainerSize.width + 'px';
+            container.style.height = voucherContainerSize.height + 'px';
+        }
+    } catch (e) {}
 
     // Load saved positions/visibility if any
     try {
@@ -575,6 +590,22 @@ function initDraggables() {
             saveElementsConfig();
         });
     }
+
+    // Resize tracking
+    var resizeObserver = new ResizeObserver(function (entries) {
+        for (let entry of entries) {
+            if (entry.target === container) {
+                var newWidth = entry.contentRect.width;
+                var newHeight = entry.contentRect.height;
+                if (newWidth > 0 && newHeight > 0) {
+                    voucherContainerSize.width = Math.round(newWidth);
+                    voucherContainerSize.height = Math.round(newHeight);
+                    localStorage.setItem('qv_container_size', JSON.stringify(voucherContainerSize));
+                }
+            }
+        }
+    });
+    resizeObserver.observe(container);
 }
 
 function saveElementsConfig() {
