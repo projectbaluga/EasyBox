@@ -225,25 +225,13 @@
                         </div>
                     </div>
 
-                    <!-- Template Upload -->
-                    <div class="template-upload-section">
-                        <label class="form-label">Voucher Background Template <span class="optional">Optional</span></label>
-                        <div class="template-drop-zone" id="dropZone">
-                            <input type="file" id="templateFile" accept="image/*" class="template-file-input">
-                            <div class="template-drop-content" id="dropContent">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="17 8 12 3 7 8"/>
-                                    <line x1="12" y1="3" x2="12" y2="15"/>
-                                </svg>
-                                <span>Drop image here or click to upload</span>
-                                <small>PNG, JPG, WEBP &mdash; Recommended: 200 x 100 px</small>
-                            </div>
-                            <div class="template-preview-wrap" id="templatePreviewWrap" style="display:none">
-                                <img id="templatePreviewImg" class="template-preview-img" alt="Template preview">
-                                <button type="button" class="template-remove-btn" onclick="removeTemplate()" title="Remove template">&times;</button>
-                            </div>
+                    <!-- Template Selector -->
+                    <div class="tpl-selector-section">
+                        <div class="tpl-selector-header">
+                            <label class="form-label mb-0">Voucher Template</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="openTemplateManager()">Manage Templates</button>
                         </div>
+                        <div class="tpl-selector-strip" id="templateSelector"></div>
                     </div>
 
                     <div class="row g-3 mt-2">
@@ -263,6 +251,45 @@
                             <button class="btn btn-primary btn-sm" onclick="color()" type="button">Apply</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Manager Modal -->
+    <div class="modal fade" id="templateManager" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Template Manager</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="tpl-upload-card">
+                        <h6 class="section-title">Upload New Template</h6>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Template Name</label>
+                                <input class="form-control" id="tplUploadName" placeholder="e.g. Blue Wave" maxlength="24">
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Image File <span class="hint">PNG, JPG, WEBP &mdash; max 500KB</span></label>
+                                <div class="tpl-upload-zone" id="tplDropZone">
+                                    <input type="file" id="tplUploadFile" accept="image/*" class="template-file-input">
+                                    <div class="tpl-upload-inner">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        <span>Drop image or click to browse</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="section-title mt-4">Saved Templates</h6>
+                    <div class="tpl-gallery" id="managerGallery"></div>
                 </div>
             </div>
         </div>

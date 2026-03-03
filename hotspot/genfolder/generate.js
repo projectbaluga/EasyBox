@@ -1,5 +1,5 @@
 // ============================================
-// QuickVoucher v2.0 - Voucher Generator
+// QuickVoucher v2.1 - Voucher Generator
 // ============================================
 
 // CSS path for print window (override before loading this script for hotspot deployments)
@@ -7,10 +7,220 @@ if (typeof VOUCHER_CSS === 'undefined') {
     var VOUCHER_CSS = 'css/voucher.css';
 }
 
-// Template background image (base64 data URL)
+// ---- Template Manager (localStorage) ----
+var STORAGE_KEY = 'qv_templates';
+var ACTIVE_KEY = 'qv_active_template';
 var templateBg = '';
 
-// Character sets
+function getTemplates() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveTemplates(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function getActiveTemplateId() {
+    return localStorage.getItem(ACTIVE_KEY) || '';
+}
+
+function setActiveTemplateId(id) {
+    if (id) {
+        localStorage.setItem(ACTIVE_KEY, id);
+    } else {
+        localStorage.removeItem(ACTIVE_KEY);
+    }
+}
+
+function addTemplate(name, data) {
+    var list = getTemplates();
+    var tpl = {
+        id: Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        name: name || 'Template ' + (list.length + 1),
+        data: data,
+        created: new Date().toLocaleDateString()
+    };
+    list.push(tpl);
+    saveTemplates(list);
+    return tpl;
+}
+
+function deleteTemplate(id) {
+    var list = getTemplates().filter(function (t) { return t.id !== id; });
+    saveTemplates(list);
+    if (getActiveTemplateId() === id) {
+        setActiveTemplateId('');
+        templateBg = '';
+    }
+}
+
+function renameTemplate(id, newName) {
+    var list = getTemplates();
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) { list[i].name = newName; break; }
+    }
+    saveTemplates(list);
+}
+
+function selectTemplate(id) {
+    if (!id) {
+        setActiveTemplateId('');
+        templateBg = '';
+    } else {
+        var list = getTemplates();
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].id === id) {
+                setActiveTemplateId(id);
+                templateBg = list[i].data;
+                break;
+            }
+        }
+    }
+    renderTemplateSelector();
+    renderManagerGallery();
+    updateVoucherPreviews();
+}
+
+function loadActiveTemplate() {
+    var id = getActiveTemplateId();
+    if (!id) { templateBg = ''; return; }
+    var list = getTemplates();
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) { templateBg = list[i].data; return; }
+    }
+    setActiveTemplateId('');
+    templateBg = '';
+}
+
+// ---- Render Template Selector (Customize modal) ----
+function renderTemplateSelector() {
+    var container = document.getElementById('templateSelector');
+    if (!container) return;
+    var list = getTemplates();
+    var activeId = getActiveTemplateId();
+
+    var html = '';
+    // "None" option
+    html += '<div class="tpl-thumb' + (!activeId ? ' active' : '') + '" onclick="selectTemplate(\'\')" title="No template (default)">';
+    html += '<div class="tpl-thumb-img tpl-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>';
+    html += '<span class="tpl-thumb-name">None</span></div>';
+
+    for (var i = 0; i < list.length; i++) {
+        var t = list[i];
+        var isActive = t.id === activeId;
+        html += '<div class="tpl-thumb' + (isActive ? ' active' : '') + '" onclick="selectTemplate(\'' + t.id + '\')" title="' + t.name + '">';
+        html += '<img class="tpl-thumb-img" src="' + t.data + '" alt="' + t.name + '">';
+        html += '<span class="tpl-thumb-name">' + t.name + '</span></div>';
+    }
+
+    // "Add" button
+    html += '<div class="tpl-thumb tpl-add" onclick="openTemplateManager()" title="Manage templates">';
+    html += '<div class="tpl-thumb-img tpl-none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>';
+    html += '<span class="tpl-thumb-name">Add</span></div>';
+
+    container.innerHTML = html;
+}
+
+// ---- Render Manager Gallery (Template Manager modal) ----
+function renderManagerGallery() {
+    var container = document.getElementById('managerGallery');
+    if (!container) return;
+    var list = getTemplates();
+    var activeId = getActiveTemplateId();
+
+    if (list.length === 0) {
+        container.innerHTML = '<div class="tpl-empty">No saved templates yet. Upload one above to get started.</div>';
+        return;
+    }
+
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+        var t = list[i];
+        var isActive = t.id === activeId;
+        html += '<div class="tpl-card' + (isActive ? ' selected' : '') + '" data-id="' + t.id + '">';
+        html += '<div class="tpl-card-img-wrap"><img class="tpl-card-img" src="' + t.data + '" alt="' + t.name + '">';
+        if (isActive) html += '<span class="tpl-active-badge">Active</span>';
+        html += '</div>';
+        html += '<div class="tpl-card-body">';
+        html += '<input class="tpl-card-name" value="' + t.name + '" onchange="renameTemplate(\'' + t.id + '\', this.value); renderTemplateSelector()" maxlength="24">';
+        html += '<span class="tpl-card-date">' + t.created + '</span>';
+        html += '</div>';
+        html += '<div class="tpl-card-actions">';
+        if (!isActive) {
+            html += '<button class="btn btn-sm btn-primary tpl-btn" onclick="selectTemplate(\'' + t.id + '\')">Use</button>';
+        } else {
+            html += '<button class="btn btn-sm btn-outline-secondary tpl-btn" onclick="selectTemplate(\'\')">Deselect</button>';
+        }
+        html += '<button class="btn btn-sm btn-outline-danger tpl-btn" onclick="confirmDeleteTemplate(\'' + t.id + '\', \'' + t.name.replace(/'/g, "\\'") + '\')">Delete</button>';
+        html += '</div></div>';
+    }
+
+    container.innerHTML = html;
+}
+
+function confirmDeleteTemplate(id, name) {
+    if (confirm('Delete template "' + name + '"? This cannot be undone.')) {
+        deleteTemplate(id);
+        renderManagerGallery();
+        renderTemplateSelector();
+        updateVoucherPreviews();
+    }
+}
+
+function openTemplateManager() {
+    var customizeModal = bootstrap.Modal.getInstance(document.getElementById('customize'));
+    if (customizeModal) customizeModal.hide();
+
+    setTimeout(function () {
+        renderManagerGallery();
+        var mgr = new bootstrap.Modal(document.getElementById('templateManager'));
+        mgr.show();
+    }, 300);
+}
+
+function updateVoucherPreviews() {
+    var tables = document.querySelectorAll('.voucher-preview table.voucher');
+    tables.forEach(function (t) {
+        if (templateBg) {
+            t.style.backgroundImage = 'url(' + templateBg + ')';
+            t.style.backgroundSize = 'cover';
+            t.style.backgroundRepeat = 'no-repeat';
+            t.style.backgroundPosition = 'center';
+        } else {
+            t.style.backgroundImage = '';
+            t.style.backgroundSize = '';
+            t.style.backgroundRepeat = '';
+            t.style.backgroundPosition = '';
+        }
+    });
+}
+
+// ---- Upload Handler (Template Manager) ----
+function handleManagerUpload(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    if (file.size > 512000) {
+        alert('Image too large. Please use an image under 500KB.');
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var nameInput = document.getElementById('tplUploadName');
+        var name = (nameInput && nameInput.value.trim()) || file.name.replace(/\.[^.]+$/, '');
+        addTemplate(name, e.target.result);
+        if (nameInput) nameInput.value = '';
+        var fileInput = document.getElementById('tplUploadFile');
+        if (fileInput) fileInput.value = '';
+        renderManagerGallery();
+        renderTemplateSelector();
+    };
+    reader.readAsDataURL(file);
+}
+
+// ---- Character sets ----
 var CHARSETS = {
     '1': '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     '2': 'abcdefghijklmnopqrstuvwxyz',
@@ -60,11 +270,7 @@ function buildScript(code, userpass, cfg) {
     s += ' server="' + cfg.server + '"';
     s += ' profile="' + cfg.profile + '"';
     s += ' limit-uptime="' + cfg.uptime + '"';
-    if (cfg.validity && cfg.validity !== '0m') {
-        s += ' comment="' + cfg.vendo + '"';
-    } else {
-        s += ' comment="' + cfg.vendo + '"';
-    }
+    s += ' comment="' + cfg.vendo + '"';
     if (cfg.data && cfg.data !== '0' && cfg.data !== '') {
         s += ' limit-bytes-total="' + cfg.data + '"';
     }
@@ -217,88 +423,53 @@ function copyCode() {
     }
 }
 
-// ---- Template Image Upload ----
-function handleTemplateFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        templateBg = e.target.result;
-        showTemplatePreview(templateBg);
-        updateVoucherPreviews();
-    };
-    reader.readAsDataURL(file);
-}
-
-function showTemplatePreview(src) {
-    var wrap = document.getElementById('templatePreviewWrap');
-    var img = document.getElementById('templatePreviewImg');
-    var content = document.getElementById('dropContent');
-    if (wrap && img && content) {
-        img.src = src;
-        wrap.style.display = '';
-        content.style.display = 'none';
-    }
-}
-
-function removeTemplate() {
-    templateBg = '';
-    var wrap = document.getElementById('templatePreviewWrap');
-    var img = document.getElementById('templatePreviewImg');
-    var content = document.getElementById('dropContent');
-    var input = document.getElementById('templateFile');
-    if (wrap) wrap.style.display = 'none';
-    if (content) content.style.display = '';
-    if (img) img.src = '';
-    if (input) input.value = '';
-    updateVoucherPreviews();
-}
-
-function updateVoucherPreviews() {
-    var tables = document.querySelectorAll('.voucher-preview table.voucher');
-    tables.forEach(function (t) {
-        if (templateBg) {
-            t.style.backgroundImage = 'url(' + templateBg + ')';
-            t.style.backgroundSize = 'cover';
-            t.style.backgroundRepeat = 'no-repeat';
-            t.style.backgroundPosition = 'center';
-        } else {
-            t.style.backgroundImage = '';
-            t.style.backgroundSize = '';
-            t.style.backgroundRepeat = '';
-            t.style.backgroundPosition = '';
-        }
-    });
-}
-
-// Init upload listeners after DOM is ready
+// ---- Init ----
 $(function () {
-    var fileInput = document.getElementById('templateFile');
-    var dropZone = document.getElementById('dropZone');
+    loadActiveTemplate();
+    renderTemplateSelector();
 
-    if (fileInput) {
-        fileInput.addEventListener('change', function () {
-            if (this.files && this.files[0]) handleTemplateFile(this.files[0]);
+    // Template Manager upload
+    var uploadFile = document.getElementById('tplUploadFile');
+    var uploadZone = document.getElementById('tplDropZone');
+
+    if (uploadFile) {
+        uploadFile.addEventListener('change', function () {
+            if (this.files && this.files[0]) handleManagerUpload(this.files[0]);
         });
     }
 
-    if (dropZone) {
-        dropZone.addEventListener('dragover', function (e) {
+    if (uploadZone) {
+        uploadZone.addEventListener('dragover', function (e) {
             e.preventDefault();
-            e.stopPropagation();
             this.classList.add('drag-over');
         });
-        dropZone.addEventListener('dragleave', function (e) {
+        uploadZone.addEventListener('dragleave', function (e) {
             e.preventDefault();
-            e.stopPropagation();
             this.classList.remove('drag-over');
         });
-        dropZone.addEventListener('drop', function (e) {
+        uploadZone.addEventListener('drop', function (e) {
             e.preventDefault();
-            e.stopPropagation();
             this.classList.remove('drag-over');
             if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                handleTemplateFile(e.dataTransfer.files[0]);
+                handleManagerUpload(e.dataTransfer.files[0]);
             }
+        });
+    }
+
+    // Re-render selector when Customize modal opens
+    var customizeEl = document.getElementById('customize');
+    if (customizeEl) {
+        customizeEl.addEventListener('show.bs.modal', function () {
+            renderTemplateSelector();
+            updateVoucherPreviews();
+        });
+    }
+
+    // Re-render gallery when Manager modal opens
+    var managerEl = document.getElementById('templateManager');
+    if (managerEl) {
+        managerEl.addEventListener('show.bs.modal', function () {
+            renderManagerGallery();
         });
     }
 });
