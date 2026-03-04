@@ -1495,6 +1495,12 @@ body {
     }
 }
 
+/* Template Manager over Editor */
+#templateManager + .modal-backdrop,
+#templateManager ~ .modal-backdrop:last-of-type {
+    z-index: 1055;
+}
+
 /* ---- Print Utility ---- */
 @media print {
     .app-header,

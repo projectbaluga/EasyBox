@@ -163,13 +163,34 @@ function confirmDeleteTemplate(id, name) {
 }
 
 function openTemplateManager() {
-    var customizeModal = bootstrap.Modal.getInstance(document.getElementById('customize'));
-    if (customizeModal) customizeModal.hide();
-    setTimeout(function () {
-        renderManagerGallery();
-        var mgr = new bootstrap.Modal(document.getElementById('templateManager'));
-        mgr.show();
-    }, 300);
+    renderManagerGallery();
+    var mgrEl = document.getElementById('templateManager');
+    var mgr = bootstrap.Modal.getOrCreateInstance(mgrEl);
+    mgr.show();
+}
+
+// ============================================
+// EDITOR FULLSCREEN TOGGLE
+// ============================================
+function toggleEditorFullscreen() {
+    var dialog = document.querySelector('#customize .modal-dialog');
+    if (!dialog) return;
+    var isFullscreen = dialog.classList.contains('modal-fullscreen');
+    dialog.classList.toggle('modal-fullscreen', !isFullscreen);
+    dialog.classList.toggle('modal-xl', isFullscreen);
+
+    var btn = document.getElementById('btnFullscreen');
+    if (btn) {
+        if (!isFullscreen) {
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+            btn.title = 'Exit Fullscreen';
+        } else {
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+            btn.title = 'Toggle Fullscreen';
+        }
+    }
+    // Refit zoom after resize
+    setTimeout(function () { editorZoomFit(); }, 200);
 }
 
 function updateVoucherPreviews() {
@@ -2209,6 +2230,13 @@ $(function () {
     if (managerEl) {
         managerEl.addEventListener('show.bs.modal', function () {
             renderManagerGallery();
+        });
+        managerEl.addEventListener('hidden.bs.modal', function () {
+            // Refresh editor when template manager closes
+            renderTemplateSelector();
+            updateVoucherPreviews();
+            // Restore body scroll class for editor modal
+            document.body.classList.add('modal-open');
         });
     }
 

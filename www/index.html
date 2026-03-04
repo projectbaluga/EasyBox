@@ -240,6 +240,9 @@
                             </button>
                         </div>
                     </div>
+                    <button class="tb-btn" id="btnFullscreen" title="Toggle Fullscreen" onclick="toggleEditorFullscreen()" style="margin-left:4px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                    </button>
                     <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -505,7 +508,7 @@
     </div>
 
     <!-- Template Manager Modal -->
-    <div class="modal fade" id="templateManager" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="templateManager" tabindex="-1" aria-hidden="true" style="z-index:1060;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
