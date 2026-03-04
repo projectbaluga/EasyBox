@@ -26,6 +26,14 @@
                 <p class="brand-tagline">Hotspot Voucher Generator</p>
             </div>
             <div class="header-actions">
+                                <button class="icon-btn" title="Manage Users" data-bs-target="#usersModal" data-bs-toggle="modal">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </button>
                 <button class="icon-btn" title="Router Settings" data-bs-target="#routerSettingsModal" data-bs-toggle="modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
@@ -294,7 +302,22 @@
                     <h5 class="modal-title">Router Connection Settings</h5>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Router Profile</label>
+                        <div class="input-group">
+                            <select class="form-select" id="routerProfileSelect" onchange="loadSelectedRouterProfile()">
+                                <option value="default">Default Profile</option>
+                            </select>
+                            <button class="btn btn-outline-success" type="button" onclick="addNewRouterProfile()" title="Add New Profile">+</button>
+                            <button class="btn btn-outline-danger" type="button" onclick="deleteCurrentRouterProfile()" title="Delete Current Profile">-</button>
+                        </div>
+                    </div>
+                    <div class="mb-3" id="profileNameContainer" style="display:none;">
+                        <label class="form-label">Profile Name</label>
+                        <input type="text" class="form-control" id="routerProfileName" placeholder="e.g. Main Router">
+                    </div>
+                    <hr>
                     <div class="mb-3">
                         <label class="form-label">Router IP Address</label>
                         <input type="text" class="form-control" id="routerIp" placeholder="e.g. 192.168.88.1">
@@ -326,7 +349,80 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-info me-auto" id="btnTestConn" onclick="testRouterConnection()">Test Connection</button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveRouterSettings()">Save Settings</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRouterSettingsForm()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Users Management Modal -->
+    <div class="modal fade" id="usersModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Hotspot Users</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-success" onclick="openAddUserForm()">+ Add User</button>
+                        <button class="btn btn-outline-secondary" onclick="loadHotspotUsersModal()">Refresh</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm" id="manageUsersTable">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Profile</th>
+                                    <th>Uptime</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal fade" id="userFormModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userFormTitle">Add User</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="formUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="text" class="form-control" id="formPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Profile</label>
+                        <input type="text" class="form-control" id="formProfile" placeholder="default">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Limit Uptime (e.g. 1d 12h)</label>
+                        <input type="text" class="form-control" id="formUptimeLimit">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Limit Bytes Total</label>
+                        <input type="number" class="form-control" id="formBytesLimit" placeholder="Bytes">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveHotspotUser()">Save User</button>
                 </div>
             </div>
         </div>
