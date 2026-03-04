@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- EasyBox Favicon -->
+  <rect width="32" height="32" rx="6" fill="#2ECC71"/>
+
+  <!-- Simplified box -->
+  <path d="M7,18 L7,25 C7,26 8,27 9,27 L23,27 C24,27 25,26 25,25 L25,18 Z" fill="#FFF" opacity="0.9"/>
+
+  <!-- Box flaps -->
+  <path d="M7,18 L11,15 L6,11 L3,15 Z" fill="#FFF" opacity="0.8"/>
+  <path d="M25,18 L21,15 L26,11 L29,15 Z" fill="#FFF" opacity="0.8"/>
+
+  <!-- Wi-Fi dot -->
+  <circle cx="16" cy="13" r="2" fill="#FFF"/>
+
+  <!-- Wi-Fi arcs -->
+  <path d="M12,10 A6,6 0 0,1 20,10" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M9,7 A10,10 0 0,1 23,7" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

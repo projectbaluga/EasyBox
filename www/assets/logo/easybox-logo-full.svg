@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200">
+  <!-- EasyBox Full Logo: Icon + Text -->
+
+  <!-- === Icon (scaled to fit left side) === -->
+  <g transform="translate(20,10) scale(0.9)">
+    <!-- Box body -->
+    <path d="M30,110 L30,160 C30,168 37,175 45,175 L155,175 C163,175 170,168 170,160 L170,110 Z" fill="#2C3E50"/>
+
+    <!-- Box left inner wall -->
+    <path d="M30,110 L60,88 L60,150 L30,160 Z" fill="#34495E"/>
+
+    <!-- Box right inner wall -->
+    <path d="M170,110 L140,88 L140,150 L170,160 Z" fill="#34495E"/>
+
+    <!-- Box back wall -->
+    <path d="M60,88 L140,88 L140,150 L60,150 Z" fill="#3D566E"/>
+
+    <!-- Left lid flap -->
+    <path d="M30,110 L60,88 L24,64 L2,92 Z" fill="#2ECC71"/>
+
+    <!-- Right lid flap -->
+    <path d="M170,110 L140,88 L176,64 L198,92 Z" fill="#2ECC71"/>
+
+    <!-- Front rim -->
+    <path d="M30,107 L170,107 L170,115 L30,115 Z" fill="#25A25A"/>
+
+    <!-- Wi-Fi dot -->
+    <circle cx="100" cy="78" r="9" fill="#2ECC71"/>
+
+    <!-- Wi-Fi arc 1 -->
+    <path d="M80,62 A28,28 0 0,1 120,62" fill="none" stroke="#2ECC71" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Wi-Fi arc 2 -->
+    <path d="M62,46 A52,52 0 0,1 138,46" fill="none" stroke="#2ECC71" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Wi-Fi arc 3 -->
+    <path d="M44,30 A78,78 0 0,1 156,30" fill="none" stroke="#2ECC71" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- === Text === -->
+  <!-- "Easy" in Emerald Green -->
+  <text x="220" y="130" font-family="'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif" font-size="80" font-weight="300" fill="#2ECC71" letter-spacing="-1">Easy</text>
+
+  <!-- "Box" in Slate Dark -->
+  <text x="430" y="130" font-family="'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif" font-size="80" font-weight="700" fill="#2C3E50" letter-spacing="-1">Box</text>
+
+  <!-- Tagline -->
+  <text x="222" y="160" font-family="'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="400" fill="#7F8C8D" letter-spacing="3">NETWORK MANAGEMENT TOOL</text>
+</svg>
