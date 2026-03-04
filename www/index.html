@@ -188,47 +188,48 @@
         </div> <!-- End Generator View -->
 
         <!-- Hotspot View -->
-        <div id="hotspot-view" class="app-view">
-            <div class="alert alert-warning mb-3" role="alert" style="font-size: 13px;">
+                <div id="hotspot-view" class="app-view">
+            <div class="alert alert-warning mb-3 d-none d-md-block" role="alert" style="font-size: 13px;">
                 <strong>Browser Notice:</strong> Due to CORS security restrictions in standard web browsers, connecting to your Mikrotik router may fail with a "Network Error". Please use the Android App for full functionality.
             </div>
-            <div class="qv-card">
-                <div class="output-header">
-                    <h6 class="output-title">Hotspot Users</h6>
-                    <button class="btn btn-sm btn-primary" onclick="loadHotspotUsers()">Refresh</button>
+
+            <div class="qv-card p-0 overflow-hidden" style="display: flex; flex-direction: column; height: calc(100vh - 160px); min-height: 500px;">
+                <!-- Winbox Style Tabs -->
+                <div class="winbox-tabs-container">
+                    <ul class="nav nav-tabs winbox-tabs flex-nowrap overflow-auto" id="hotspotTabs" role="tablist">
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="servers" type="button">Servers</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="server-profiles" type="button">Server Profiles</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab active" data-tab="users" type="button">Users</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="user-profiles" type="button">User Profiles</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="active" type="button">Active</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="hosts" type="button">Hosts</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="ip-bindings" type="button">IP Bindings</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="service-ports" type="button">Service Ports</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="walled-garden" type="button">Walled Garden</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="walled-garden-ip" type="button">Walled Garden IP List</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="cookies" type="button">Cookies</button></li>
+                    </ul>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-sm" id="hotspotUsersTable">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Profile</th>
-                                <th>Uptime</th>
-                                <th>Actions</th>
-                            </tr>
+
+                <!-- Winbox Style Toolbar -->
+                <div class="winbox-toolbar">
+                    <button class="btn btn-sm btn-light tb-action-btn" onclick="openHotspotGenericModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> New</button>
+                    <div class="tb-divider"></div>
+                    <button class="btn btn-sm btn-light tb-action-btn text-success" onclick="toggleHotspotSelected('enable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Enable</button>
+                    <button class="btn btn-sm btn-light tb-action-btn text-warning" onclick="toggleHotspotSelected('disable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Disable</button>
+                    <button class="btn btn-sm btn-light tb-action-btn text-danger" onclick="deleteHotspotSelected()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove</button>
+                    <div class="tb-divider"></div>
+                    <button class="btn btn-sm btn-light tb-action-btn ms-auto" onclick="loadHotspotCurrentTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Refresh</button>
+                </div>
+
+                <!-- Generic Table Container -->
+                <div class="table-responsive flex-grow-1 winbox-table-wrapper" style="background: #fff;">
+                    <table class="table table-sm table-hover winbox-table m-0" id="hotspotDynamicTable">
+                        <thead id="hotspotDynamicThead" style="position: sticky; top: 0; background: #f8f9fa; z-index: 1;">
+                            <tr><th>Loading...</th></tr>
                         </thead>
-                        <tbody>
-                            <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="qv-card">
-                <div class="output-header">
-                    <h6 class="output-title">Active Hotspot Connections</h6>
-                    <button class="btn btn-sm btn-primary" onclick="loadHotspotActive()">Refresh</button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-sm" id="hotspotActiveTable">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>IP Address</th>
-                                <th>Uptime</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
+                        <tbody id="hotspotDynamicTbody">
+                            <tr><td class="text-center text-muted py-4">Select a tab to load data</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -414,6 +415,28 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="saveHotspotUser()">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Generic Hotspot Modal -->
+    <div class="modal fade" id="hotspotGenericModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="hotspotGenericModalTitle">Add Item</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="hotspotGenericForm">
+                        <!-- Dynamic fields will be injected here -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveHotspotGeneric()">Save</button>
                 </div>
             </div>
         </div>

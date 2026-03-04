@@ -577,3 +577,418 @@ async function deleteUserModal(id, name) {
 document.getElementById('usersModal')?.addEventListener('show.bs.modal', function () {
     loadHotspotUsersModal();
 });
+
+// ==========================================
+// WINBOX-STYLE DYNAMIC HOTSPOT CONTROLLER
+// ==========================================
+
+const HOTSPOT_TABS_CONFIG = {
+    'servers': {
+        endpoint: '/rest/ip/hotspot',
+        title: 'Servers',
+        columns: ['name', 'interface', 'profile', 'idle-timeout'],
+        fields: [
+            { id: 'name', label: 'Name', type: 'text', required: true },
+            { id: 'interface', label: 'Interface', type: 'text', required: true, hint: 'e.g. bridge' },
+            { id: 'profile', label: 'Profile', type: 'text', required: false, default: 'default' },
+            { id: 'idle-timeout', label: 'Idle Timeout', type: 'text', required: false, default: '5m' }
+        ]
+    },
+    'server-profiles': {
+        endpoint: '/rest/ip/hotspot/profile',
+        title: 'Server Profiles',
+        columns: ['name', 'hotspot-address', 'dns-name', 'html-directory', 'login-by'],
+        fields: [
+            { id: 'name', label: 'Name', type: 'text', required: true },
+            { id: 'hotspot-address', label: 'Hotspot Address', type: 'text', required: true },
+            { id: 'dns-name', label: 'DNS Name', type: 'text', required: false },
+            { id: 'html-directory', label: 'HTML Directory', type: 'text', required: true, default: 'hotspot' },
+            { id: 'login-by', label: 'Login By', type: 'text', required: false, default: 'mac,cookie,http-chap' }
+        ]
+    },
+    'users': {
+        endpoint: '/rest/ip/hotspot/user',
+        title: 'Users',
+        columns: ['name', 'profile', 'uptime', 'bytes-in', 'bytes-out', 'limit-uptime'],
+        fields: [
+            { id: 'name', label: 'Name / Username', type: 'text', required: true },
+            { id: 'password', label: 'Password', type: 'text', required: false },
+            { id: 'profile', label: 'Profile', type: 'text', required: false, default: 'default' },
+            { id: 'limit-uptime', label: 'Limit Uptime', type: 'text', required: false, hint: 'e.g. 1d 12h' },
+            { id: 'limit-bytes-total', label: 'Limit Bytes Total', type: 'number', required: false }
+        ]
+    },
+    'user-profiles': {
+        endpoint: '/rest/ip/hotspot/user/profile',
+        title: 'User Profiles',
+        columns: ['name', 'shared-users', 'rate-limit', 'mac-cookie-timeout'],
+        fields: [
+            { id: 'name', label: 'Name', type: 'text', required: true },
+            { id: 'shared-users', label: 'Shared Users', type: 'number', required: false, default: '1' },
+            { id: 'rate-limit', label: 'Rate Limit (Rx/Tx)', type: 'text', required: false, hint: 'e.g. 5M/5M' },
+            { id: 'mac-cookie-timeout', label: 'MAC Cookie Timeout', type: 'text', required: false, default: '3d' }
+        ]
+    },
+    'active': {
+        endpoint: '/rest/ip/hotspot/active',
+        title: 'Active Connections',
+        columns: ['user', 'address', 'mac-address', 'uptime', 'session-time-left'],
+        readonly: true // Cannot Add directly, can only Remove/Disconnect
+    },
+    'hosts': {
+        endpoint: '/rest/ip/hotspot/host',
+        title: 'Hosts',
+        columns: ['mac-address', 'address', 'to-address', 'server', 'uptime'],
+        readonly: true
+    },
+    'ip-bindings': {
+        endpoint: '/rest/ip/hotspot/ip-binding',
+        title: 'IP Bindings',
+        columns: ['mac-address', 'address', 'to-address', 'server', 'type'],
+        fields: [
+            { id: 'mac-address', label: 'MAC Address', type: 'text', required: false },
+            { id: 'address', label: 'Address', type: 'text', required: false },
+            { id: 'to-address', label: 'To Address', type: 'text', required: false },
+            { id: 'server', label: 'Server', type: 'text', required: false, default: 'all' },
+            { id: 'type', label: 'Type', type: 'select', options: ['regular', 'bypassed', 'blocked'], default: 'bypassed' }
+        ]
+    },
+    'service-ports': {
+        endpoint: '/rest/ip/firewall/service-port',
+        title: 'Service Ports',
+        columns: ['name', 'ports'],
+        readonly: true // Complex to add generically
+    },
+    'walled-garden': {
+        endpoint: '/rest/ip/hotspot/walled-garden',
+        title: 'Walled Garden',
+        columns: ['action', 'server', 'dst-host', 'dst-port', 'hits'],
+        fields: [
+            { id: 'action', label: 'Action', type: 'select', options: ['allow', 'deny'], default: 'allow' },
+            { id: 'server', label: 'Server', type: 'text', required: false, default: 'all' },
+            { id: 'dst-host', label: 'Dst Host', type: 'text', required: true, hint: 'e.g. *facebook.com*' },
+            { id: 'dst-port', label: 'Dst Port', type: 'text', required: false }
+        ]
+    },
+    'walled-garden-ip': {
+        endpoint: '/rest/ip/hotspot/walled-garden/ip',
+        title: 'Walled Garden IP List',
+        columns: ['action', 'server', 'dst-address', 'protocol', 'dst-port'],
+        fields: [
+            { id: 'action', label: 'Action', type: 'select', options: ['accept', 'drop', 'reject'], default: 'accept' },
+            { id: 'server', label: 'Server', type: 'text', required: false, default: 'all' },
+            { id: 'dst-address', label: 'Dst Address', type: 'text', required: true, hint: 'e.g. 8.8.8.8/32' },
+            { id: 'protocol', label: 'Protocol', type: 'text', required: false, default: 'tcp' },
+            { id: 'dst-port', label: 'Dst Port', type: 'text', required: false }
+        ]
+    },
+    'cookies': {
+        endpoint: '/rest/ip/hotspot/cookie',
+        title: 'Cookies',
+        columns: ['user', 'mac-address', 'expires-in'],
+        readonly: true
+    }
+};
+
+let currentHotspotTab = 'users';
+
+function initHotspotTabs() {
+    document.querySelectorAll('.winbox-tab').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.winbox-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            currentHotspotTab = e.target.dataset.tab;
+            loadHotspotCurrentTab();
+        });
+    });
+}
+
+async function loadHotspotCurrentTab() {
+    const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
+    if (!config) return;
+
+    const thead = document.getElementById('hotspotDynamicThead');
+    const tbody = document.getElementById('hotspotDynamicTbody');
+
+    // Setup columns
+    let thHtml = '<tr><th style="width:30px;"><input type="checkbox" id="selectAllItems" onchange="toggleSelectAllItems(this)"></th>';
+    config.columns.forEach(col => {
+        thHtml += `<th>${col.toUpperCase().replace(/-/g, ' ')}</th>`;
+    });
+    thHtml += '</tr>';
+    thead.innerHTML = thHtml;
+    tbody.innerHTML = `<tr><td colspan="${config.columns.length + 1}" class="text-center text-muted py-4">Loading ${config.title}...</td></tr>`;
+
+    try {
+        const url = getApiUrl(config.endpoint);
+        const method = 'GET';
+
+        let response;
+        if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
+            response = await CapacitorHttp.request({ method: method, url: url, headers: getAuthHeaders() });
+        } else {
+            response = await fetch(url, { method: method, headers: getAuthHeaders() });
+        }
+
+        let data = [];
+        if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
+            data = response.data;
+        } else {
+            if (response.ok) {
+                data = await response.json();
+            } else {
+                throw new Error('Failed to fetch data');
+            }
+        }
+
+        if (!Array.isArray(data)) data = [];
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${config.columns.length + 1}" class="text-center text-muted py-4">No records found.</td></tr>`;
+            return;
+        }
+
+        let tbHtml = '';
+        data.forEach(item => {
+            const id = item['.id'];
+            const disabled = item.disabled === "true" || item.disabled === true ? "text-muted" : "";
+
+            tbHtml += `<tr class="${disabled}">`;
+            tbHtml += `<td><input type="checkbox" class="item-checkbox" value="${id}"></td>`;
+
+            config.columns.forEach(col => {
+                let val = item[col] || '';
+                // Format uptime or large bytes if needed
+                if (col.includes('bytes')) {
+                    const b = parseInt(val);
+                    if (!isNaN(b) && val !== "") val = (b / 1024 / 1024).toFixed(2) + ' MB';
+                }
+
+                // Add icons for status
+                let prefix = '';
+                if (col === config.columns[0]) {
+                    if (item.disabled === "true" || item.disabled === true) {
+                        prefix = '<span class="text-danger fw-bold" title="Disabled">X</span> ';
+                    } else if (config.endpoint.includes('/active')) {
+                        prefix = '<span class="text-success fw-bold" title="Active">A</span> ';
+                    } else if (item.dynamic === "true" || item.dynamic === true) {
+                        prefix = '<span class="text-primary fw-bold" title="Dynamic">D</span> ';
+                    } else if (item.blocked === "true" || item.blocked === true) {
+                         prefix = '<span class="text-warning fw-bold" title="Blocked">B</span> ';
+                    }
+                }
+
+                tbHtml += `<td>${prefix}${val}</td>`;
+            });
+            tbHtml += `</tr>`;
+        });
+
+        tbody.innerHTML = tbHtml;
+
+    } catch (error) {
+        console.error(`Error loading ${currentHotspotTab}:`, error);
+        tbody.innerHTML = `<tr><td colspan="${config.columns.length + 1}" class="text-center text-danger py-4">Connection failed. Check router settings.</td></tr>`;
+    }
+}
+
+function toggleSelectAllItems(checkbox) {
+    document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = checkbox.checked);
+}
+
+function getSelectedIds() {
+    return Array.from(document.querySelectorAll('.item-checkbox:checked')).map(cb => cb.value);
+}
+
+async function deleteHotspotSelected() {
+    const ids = getSelectedIds();
+    if (ids.length === 0) {
+        alert("Please select items to remove.");
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to remove ${ids.length} item(s)?`)) return;
+
+    const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
+    let successCount = 0;
+
+    for (const id of ids) {
+        try {
+            const url = getApiUrl(`${config.endpoint}/${id}`);
+            if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
+                const r = await CapacitorHttp.request({ method: 'DELETE', url: url, headers: getAuthHeaders() });
+                if(r.status >= 200 && r.status < 300) successCount++;
+            } else {
+                const r = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
+                if(r.ok) successCount++;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    alert(`Removed ${successCount} out of ${ids.length} items.`);
+    loadHotspotCurrentTab();
+}
+
+async function toggleHotspotSelected(action) {
+    // action is 'enable' or 'disable'
+    const ids = getSelectedIds();
+    if (ids.length === 0) {
+        alert("Please select items to modify.");
+        return;
+    }
+
+    const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
+    if (config.readonly) {
+        alert("Cannot enable/disable items in this tab.");
+        return;
+    }
+
+    const disabledVal = action === 'disable' ? 'true' : 'false';
+    let successCount = 0;
+
+    for (const id of ids) {
+        try {
+            const url = getApiUrl(`${config.endpoint}/${id}`);
+            const payload = { disabled: disabledVal };
+
+            if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
+                const r = await CapacitorHttp.request({
+                    method: 'PATCH',
+                    url: url,
+                    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                    data: payload
+                });
+                if(r.status >= 200 && r.status < 300) successCount++;
+            } else {
+                const r = await fetch(url, {
+                    method: 'PATCH',
+                    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if(r.ok) successCount++;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    loadHotspotCurrentTab();
+}
+
+function openHotspotGenericModal() {
+    const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
+    if (config.readonly) {
+        alert(`Adding items to ${config.title} is not supported directly via this interface.`);
+        return;
+    }
+
+    document.getElementById('hotspotGenericModalTitle').innerText = `Add ${config.title.slice(0, -1)}`;
+    const form = document.getElementById('hotspotGenericForm');
+
+    let html = '';
+    config.fields.forEach(f => {
+        const hint = f.hint ? ` <small class="text-muted">(${f.hint})</small>` : '';
+        const req = f.required ? 'required' : '';
+        const def = f.default || '';
+
+        if (f.type === 'select') {
+            let opts = f.options.map(o => `<option value="${o}" ${def===o?'selected':''}>${o}</option>`).join('');
+            html += `
+            <div class="mb-2">
+                <label class="form-label mb-1" style="font-size: 13px; font-weight: 500;">${f.label}${hint}</label>
+                <select class="form-select form-select-sm" id="genf_${f.id}" ${req}>${opts}</select>
+            </div>`;
+        } else {
+            html += `
+            <div class="mb-2">
+                <label class="form-label mb-1" style="font-size: 13px; font-weight: 500;">${f.label}${hint}</label>
+                <input type="${f.type}" class="form-control form-control-sm" id="genf_${f.id}" value="${def}" ${req}>
+            </div>`;
+        }
+    });
+
+    form.innerHTML = html;
+
+    var myModal = new bootstrap.Modal(document.getElementById('hotspotGenericModal'));
+    myModal.show();
+}
+
+async function saveHotspotGeneric() {
+    const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
+    const payload = {};
+
+    // Validate and collect
+    for (const f of config.fields) {
+        const el = document.getElementById(`genf_${f.id}`);
+        if (!el) continue;
+        const val = el.value.trim();
+
+        if (f.required && !val) {
+            alert(`${f.label} is required.`);
+            return;
+        }
+
+        if (val) {
+            if (f.type === 'number') {
+                payload[f.id] = parseInt(val);
+            } else {
+                payload[f.id] = val;
+            }
+        }
+    }
+
+    try {
+        const url = getApiUrl(config.endpoint);
+        let status = 0;
+        let responseBody = null;
+
+        if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
+            const r = await CapacitorHttp.request({
+                method: 'PUT',
+                url: url,
+                headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                data: payload
+            });
+            status = r.status;
+            responseBody = r.data;
+        } else {
+            const r = await fetch(url, {
+                method: 'PUT',
+                headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            status = r.status;
+            if(!r.ok) {
+                 responseBody = await r.json();
+            }
+        }
+
+        if (status >= 200 && status < 300) {
+            bootstrap.Modal.getInstance(document.getElementById('hotspotGenericModal')).hide();
+            loadHotspotCurrentTab();
+        } else {
+            alert(`Failed to save: ${responseBody?.detail || JSON.stringify(responseBody) || 'Unknown error'}`);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Network error while saving.');
+    }
+}
+
+// Intercept navigation to load data when hotspot view is opened
+document.addEventListener('DOMContentLoaded', () => {
+    initHotspotTabs();
+
+    // Override app-nav clicking for hotspot to load the current tab data
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const target = e.currentTarget.dataset.target;
+            if (target === 'hotspot-view') {
+                setTimeout(() => {
+                    loadHotspotCurrentTab();
+                }, 100);
+            }
+        });
+    });
+});

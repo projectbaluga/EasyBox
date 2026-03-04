@@ -1657,3 +1657,113 @@ body {
         display: none !important;
     }
 }
+
+/* Winbox Style Tabs & Toolbar for Hotspot */
+.winbox-tabs-container {
+    background: #e1eaf1;
+    border-bottom: 1px solid #c5d4e0;
+    padding-top: 4px;
+}
+.winbox-tabs {
+    border-bottom: none;
+    padding: 0 4px;
+    margin: 0;
+}
+.winbox-tab {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-bottom: none !important;
+    color: #495057 !important;
+    padding: 6px 16px !important;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 2px;
+    border-radius: 4px 4px 0 0 !important;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.winbox-tab:hover {
+    background: rgba(255,255,255,0.4) !important;
+}
+.winbox-tab.active {
+    background: #fff !important;
+    border-color: #c5d4e0 #c5d4e0 #fff !important;
+    color: #2c3e50 !important;
+    z-index: 2;
+    position: relative;
+    margin-bottom: -1px;
+}
+.winbox-toolbar {
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    overflow-x: auto;
+}
+.tb-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+    color: #495057;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+.tb-action-btn:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+.tb-action-btn svg {
+    opacity: 0.8;
+}
+.tb-divider {
+    width: 1px;
+    height: 16px;
+    background: #cbd5e1;
+    margin: 0 4px;
+}
+.winbox-table-wrapper {
+    overflow: auto;
+}
+.winbox-table {
+    font-size: 12.5px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.winbox-table th {
+    background: #f1f5f9;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    padding: 6px 8px;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.winbox-table th:last-child {
+    border-right: none;
+}
+.winbox-table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    border-right: 1px solid #f1f5f9;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.winbox-table tr:hover td {
+    background: #e2e8f0;
+}
+.winbox-table td:last-child {
+    border-right: none;
+}
+.item-checkbox {
+    margin: 0;
+    cursor: pointer;
+}
