@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- EasyBox Logo: Minimalist open box with Wi-Fi signal -->
+  <!-- Primary: Emerald Green #2ECC71 | Secondary: Slate Dark #2C3E50 -->
+
+  <!-- Box Body (bottom half) -->
+  <path d="M100,280 L100,400 C100,414 112,426 126,426 L386,426 C400,426 412,414 412,400 L412,280 Z" fill="#2C3E50"/>
+
+  <!-- Box left inner wall (gives 3D open-box feel) -->
+  <path d="M100,280 L160,230 L160,370 L100,400 Z" fill="#34495E"/>
+
+  <!-- Box right inner wall -->
+  <path d="M412,280 L352,230 L352,370 L412,400 Z" fill="#34495E"/>
+
+  <!-- Box back wall visible through opening -->
+  <path d="M160,230 L352,230 L352,370 L160,370 Z" fill="#3D566E"/>
+
+  <!-- Box left lid flap (opened outward) -->
+  <path d="M100,280 L160,230 L80,175 L30,240 Z" fill="#2ECC71"/>
+
+  <!-- Box right lid flap (opened outward) -->
+  <path d="M412,280 L352,230 L432,175 L482,240 Z" fill="#2ECC71"/>
+
+  <!-- Box front rim highlight -->
+  <path d="M100,275 L412,275 L412,290 L100,290 Z" fill="#25A25A"/>
+
+  <!-- Wi-Fi Signal (radiating upward from box opening) -->
+  <!-- Center dot -->
+  <circle cx="256" cy="215" r="16" fill="#2ECC71"/>
+
+  <!-- Arc 1 (small) -->
+  <path d="M224,185 A45,45 0 0,1 288,185" fill="none" stroke="#2ECC71" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Arc 2 (medium) -->
+  <path d="M196,155 A84,84 0 0,1 316,155" fill="none" stroke="#2ECC71" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Arc 3 (large) -->
+  <path d="M168,125 A123,123 0 0,1 344,125" fill="none" stroke="#2ECC71" stroke-width="14" stroke-linecap="round"/>
+</svg>
