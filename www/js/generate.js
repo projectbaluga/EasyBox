@@ -1699,12 +1699,116 @@ function DownloadScript() {
 }
 
 // ---- Print Vouchers ----
+var printSelectedTemplate = null; // null = use current, '' = none, or template id
+
 function printvoucher() {
     var body = document.getElementById('PrintBody');
-    if (!body || !body.innerHTML.trim()) return;
+    if (!body || !body.innerHTML.trim()) {
+        alert('Generate vouchers first before printing.');
+        return;
+    }
+    printSelectedTemplate = null;
+    renderPrintTemplateGallery();
+    updatePrintPreview();
+    var modal = new bootstrap.Modal(document.getElementById('printOptionsModal'));
+    modal.show();
+}
+
+function renderPrintTemplateGallery() {
+    var container = document.getElementById('printTemplateGallery');
+    if (!container) return;
+    var list = getTemplates();
+    var activeId = getActiveTemplateId();
+
+    var html = '';
+    // "Current" option - uses whatever is currently set
+    html += '<div class="print-tpl-item selected" data-tpl-id="__current__" onclick="selectPrintTemplate(this, \'__current__\')">';
+    if (templateBg) {
+        html += '<img src="' + templateBg + '" alt="Current">';
+    } else {
+        html += '<div class="tpl-none-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>';
+    }
+    html += '<div class="print-tpl-item-name">Current</div></div>';
+
+    // "None" option
+    html += '<div class="print-tpl-item" data-tpl-id="" onclick="selectPrintTemplate(this, \'\')">';
+    html += '<div class="tpl-none-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>';
+    html += '<div class="print-tpl-item-name">None</div></div>';
+
+    // All saved templates
+    for (var i = 0; i < list.length; i++) {
+        var t = list[i];
+        html += '<div class="print-tpl-item" data-tpl-id="' + t.id + '" onclick="selectPrintTemplate(this, \'' + t.id + '\')">';
+        html += '<img src="' + t.data + '" alt="' + t.name + '">';
+        html += '<div class="print-tpl-item-name">' + t.name + '</div></div>';
+    }
+
+    container.innerHTML = html;
+}
+
+function selectPrintTemplate(el, tplId) {
+    // Update selection UI
+    var items = document.querySelectorAll('#printTemplateGallery .print-tpl-item');
+    for (var i = 0; i < items.length; i++) items[i].classList.remove('selected');
+    el.classList.add('selected');
+
+    printSelectedTemplate = tplId;
+    updatePrintPreview();
+}
+
+function updatePrintPreview() {
+    var previewArea = document.getElementById('printPreviewArea');
+    if (!previewArea) return;
+
+    var body = document.getElementById('PrintBody');
+    if (!body || !body.innerHTML.trim()) {
+        previewArea.innerHTML = '<p class="text-muted">Generate vouchers first to see preview.</p>';
+        return;
+    }
+
+    if (printSelectedTemplate === null || printSelectedTemplate === '__current__') {
+        // Use current PrintBody as-is
+        previewArea.innerHTML = body.innerHTML;
+    } else {
+        // Rebuild vouchers with selected template
+        var bgData = '';
+        if (printSelectedTemplate !== '') {
+            var list = getTemplates();
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].id === printSelectedTemplate) { bgData = list[i].data; break; }
+            }
+        }
+        // Replace background in all voucher divs
+        var temp = document.createElement('div');
+        temp.innerHTML = body.innerHTML;
+        var vouchers = temp.querySelectorAll('.voucher');
+        for (var j = 0; j < vouchers.length; j++) {
+            if (bgData) {
+                vouchers[j].style.backgroundImage = 'url(' + bgData + ')';
+                vouchers[j].style.backgroundSize = 'cover';
+                vouchers[j].style.backgroundRepeat = 'no-repeat';
+                vouchers[j].style.backgroundPosition = 'center';
+            } else {
+                vouchers[j].style.backgroundImage = '';
+            }
+        }
+        previewArea.innerHTML = temp.innerHTML;
+    }
+}
+
+function executePrint() {
+    var previewArea = document.getElementById('printPreviewArea');
+    if (!previewArea || !previewArea.innerHTML.trim()) return;
+
     copyCode();
     var title = ($('#Vendo').val() || 'voucher') + '_' + ($('#Prefix').val() || '') + '_' + ($('#Quantity').val() || '0') + 'pcs_' + getDateStr();
-    var html = body.innerHTML;
+    var html = previewArea.innerHTML;
+
+    // Close modal
+    var modalEl = document.getElementById('printOptionsModal');
+    var modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) modal.hide();
+
     var win = window.open('', '', 'height=800,width=800');
     win.document.write('<link href="' + VOUCHER_CSS + '" rel="stylesheet">');
     setTimeout(function () {

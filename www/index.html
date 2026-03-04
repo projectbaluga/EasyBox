@@ -549,6 +549,30 @@
         </div>
     </div>
 
+    <!-- Print Options Modal -->
+    <div class="modal fade" id="printOptionsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Print Options</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="section-title">Select Template</h6>
+                    <div class="print-tpl-gallery" id="printTemplateGallery"></div>
+                    <h6 class="section-title mt-3">Preview</h6>
+                    <div class="print-preview-area" id="printPreviewArea">
+                        <p class="text-muted">Generate vouchers first to see preview.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-warning" type="button" onclick="executePrint()">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hidden Print Body -->
     <div style="display:none">
         <div id="PrintBody"></div>
