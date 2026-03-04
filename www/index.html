@@ -298,7 +298,9 @@
                     <div class="mb-3">
                         <label class="form-label">Router IP Address</label>
                         <input type="text" class="form-control" id="routerIp" placeholder="e.g. 192.168.88.1">
-                        <div class="form-text">Ensure the REST API is enabled in RouterOS v7.</div>
+                        <div class="form-text text-danger mt-2" style="font-weight: 500;">
+                            <strong>Crucial:</strong> You must enable <code>www</code> (port 80) or <code>www-ssl</code> (port 443) in Winbox (IP &rarr; Services). The <code>api</code> service (port 8728) is a different protocol and will not work here.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">API Username</label>
