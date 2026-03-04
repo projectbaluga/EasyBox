@@ -1,6 +1,6 @@
 {
   "appId": "com.mtvoucher.app",
-  "appName": "Mikrotik Voucher",
+  "appName": "EasyBox",
   "webDir": "www",
   "server": {
     "cleartext": true
