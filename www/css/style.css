@@ -1220,6 +1220,31 @@ body {
     color: #fff;
 }
 
+/* Custom Text Items */
+.custom-texts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.custom-text-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.custom-text-item .prop-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.custom-text-item .prop-style-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 16px !important;
+    flex-shrink: 0;
+}
+
 .prop-range {
     flex: 1;
     height: 4px;

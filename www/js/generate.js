@@ -1,5 +1,5 @@
 // ============================================
-// QuickVoucher v2.4 - Voucher Generator
+// QuickVoucher v2.5 - Voucher Generator
 // Enhanced Voucher Editor with Photoshop-style UI
 // ============================================
 
@@ -266,7 +266,11 @@ var LAYER_NAMES = {
     code: 'Code',
     duration: 'Duration',
     login: 'Login Info',
-    qr: 'QR Code'
+    qr: 'QR Code',
+    custom1: 'Custom 1',
+    custom2: 'Custom 2',
+    custom3: 'Custom 3',
+    custom4: 'Custom 4'
 };
 
 var layerOrder = ['qr', 'login', 'duration', 'code', 'vendor', 'price'];
@@ -281,6 +285,9 @@ var voucherElementsConfig = {
     login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 75, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
     qr:       { id: 'dragQR',       visible: false, left: 135, top: 5,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false }
 };
+
+var customTexts = {};
+var MAX_CUSTOM_TEXTS = 4;
 
 var qrCodeSize = 60;
 var copiedStyle = null;
@@ -411,6 +418,10 @@ function updatePropertiesPanel() {
 
     var cfg = voucherElementsConfig[selectedElementKey];
     var name = LAYER_NAMES[selectedElementKey] || selectedElementKey;
+    // For custom elements, show their actual text content
+    if (selectedElementKey && selectedElementKey.indexOf('custom') === 0 && customTexts[selectedElementKey]) {
+        name = customTexts[selectedElementKey];
+    }
 
     document.getElementById('propName').textContent = name;
     document.getElementById('propX').value = cfg.left || 0;
@@ -727,6 +738,240 @@ function pasteElementStyle() {
     applyElementStyle(selectedElementKey);
     saveElementsConfig();
     updatePropertiesPanel();
+}
+
+// ============================================
+// CUSTOM TEXT FIELDS
+// ============================================
+function loadCustomTexts() {
+    try {
+        var saved = localStorage.getItem('qv_custom_texts');
+        if (saved) customTexts = JSON.parse(saved);
+    } catch (e) { customTexts = {}; }
+}
+
+function saveCustomTexts() {
+    localStorage.setItem('qv_custom_texts', JSON.stringify(customTexts));
+}
+
+function getCustomTextCount() {
+    var count = 0;
+    for (var key in voucherElementsConfig) {
+        if (key.indexOf('custom') === 0) count++;
+    }
+    return count;
+}
+
+function addCustomText() {
+    var count = getCustomTextCount();
+    if (count >= MAX_CUSTOM_TEXTS) {
+        alert('Maximum ' + MAX_CUSTOM_TEXTS + ' custom text fields allowed.');
+        return;
+    }
+
+    var num = count + 1;
+    // Find next available slot
+    while (voucherElementsConfig['custom' + num]) num++;
+    var key = 'custom' + num;
+    var id = 'dragCustom' + num;
+
+    pushUndo();
+
+    // Add to config
+    voucherElementsConfig[key] = {
+        id: id,
+        visible: true,
+        left: 35,
+        top: 50,
+        fontSize: 11,
+        fontFamily: 'Arial, sans-serif',
+        color: '#000000',
+        bold: false,
+        italic: false,
+        opacity: 1,
+        textTransform: 'none',
+        textDecoration: 'none',
+        letterSpacing: 0,
+        textShadow: false,
+        rotation: 0,
+        bgColor: 'transparent',
+        lineHeight: 1.2,
+        padding: 0,
+        boxShadow: false
+    };
+
+    // Set default text
+    customTexts[key] = 'Custom Text ' + num;
+
+    // Add to layer order (at top)
+    layerOrder.unshift(key);
+    localStorage.setItem('qv_layer_order', JSON.stringify(layerOrder));
+
+    // Create DOM element in editor canvas
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) {
+        var div = document.createElement('div');
+        div.id = id;
+        div.className = 'drag-el';
+        div.setAttribute('data-key', key);
+        div.style.cssText = 'position: absolute; left: 35px; top: 50px; font-size: 11px; cursor: move; white-space: nowrap;';
+        div.textContent = customTexts[key];
+        container.appendChild(div);
+        initSingleDraggable(div);
+    }
+
+    applyElementStyle(key);
+    saveElementsConfig();
+    saveCustomTexts();
+    renderLayers();
+    updateCustomTextsList();
+
+    // Update z-indices
+    for (var i = 0; i < layerOrder.length; i++) {
+        var lKey = layerOrder[i];
+        if (voucherElementsConfig[lKey]) {
+            var lEl = document.getElementById(voucherElementsConfig[lKey].id);
+            if (lEl) lEl.style.zIndex = layerOrder.length - i;
+        }
+    }
+
+    selectElement(key);
+}
+
+function removeCustomText(key) {
+    if (key.indexOf('custom') !== 0) return;
+    pushUndo();
+
+    // Remove DOM element
+    var el = document.getElementById(voucherElementsConfig[key].id);
+    if (el) el.remove();
+
+    // Remove from config
+    delete voucherElementsConfig[key];
+    delete customTexts[key];
+
+    // Remove from layer order
+    var idx = layerOrder.indexOf(key);
+    if (idx !== -1) layerOrder.splice(idx, 1);
+    localStorage.setItem('qv_layer_order', JSON.stringify(layerOrder));
+
+    deselectAll();
+    saveElementsConfig();
+    saveCustomTexts();
+    renderLayers();
+    updateCustomTextsList();
+}
+
+function updateCustomTextContent(key) {
+    if (key.indexOf('custom') !== 0) return;
+    var input = document.getElementById('customTextInput_' + key);
+    if (!input) return;
+    customTexts[key] = input.value || 'Text';
+    var el = document.getElementById(voucherElementsConfig[key].id);
+    if (el) el.textContent = customTexts[key];
+    saveCustomTexts();
+}
+
+function updateCustomTextsList() {
+    var container = document.getElementById('customTextsList');
+    if (!container) return;
+    var html = '';
+    for (var key in voucherElementsConfig) {
+        if (key.indexOf('custom') !== 0) continue;
+        var text = customTexts[key] || 'Text';
+        html += '<div class="custom-text-item">';
+        html += '<input type="text" id="customTextInput_' + key + '" class="prop-input" value="' + text.replace(/"/g, '&quot;') + '" onchange="updateCustomTextContent(\'' + key + '\')" style="flex:1;">';
+        html += '<button class="prop-style-btn" title="Remove" onclick="removeCustomText(\'' + key + '\')" style="font-size:11px;color:#ef4444;flex-shrink:0;">&times;</button>';
+        html += '</div>';
+    }
+    container.innerHTML = html;
+    // Update add button state
+    var addBtn = document.getElementById('btnAddCustomText');
+    if (addBtn) addBtn.disabled = getCustomTextCount() >= MAX_CUSTOM_TEXTS;
+    // Toggle empty hint
+    var emptyHint = document.getElementById('customTextsEmpty');
+    if (emptyHint) emptyHint.style.display = getCustomTextCount() > 0 ? 'none' : 'block';
+}
+
+function initSingleDraggable(el) {
+    var isDragging = false;
+    var hasMoved = false;
+    var startX, startY, initialLeft, initialTop;
+
+    el.addEventListener('mousedown', dragStart);
+    el.addEventListener('touchstart', dragStart, { passive: false });
+
+    function dragStart(e) {
+        if (e.target.tagName.toLowerCase() === 'input') return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        var elKey = el.getAttribute('data-key');
+        selectElement(elKey);
+
+        isDragging = true;
+        hasMoved = false;
+        var clientX = e.clientX || e.touches[0].clientX;
+        var clientY = e.clientY || e.touches[0].clientY;
+
+        startX = clientX;
+        startY = clientY;
+        initialLeft = parseInt(el.style.left || 0);
+        initialTop = parseInt(el.style.top || 0);
+
+        document.addEventListener('mousemove', dragMove);
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchmove', dragMove, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+    }
+
+    function dragMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        if (!hasMoved) {
+            pushUndo();
+            hasMoved = true;
+        }
+
+        var clientX = e.clientX || e.touches[0].clientX;
+        var clientY = e.clientY || e.touches[0].clientY;
+
+        var dx = (clientX - startX) / editorZoom;
+        var dy = (clientY - startY) / editorZoom;
+
+        var elKey = el.getAttribute('data-key');
+        var cfg = voucherElementsConfig[elKey];
+        if (cfg) {
+            cfg.left = Math.round(initialLeft + dx);
+            cfg.top = Math.round(initialTop + dy);
+            el.style.left = cfg.left + 'px';
+            el.style.top = cfg.top + 'px';
+
+            checkSnap(elKey);
+            el.style.left = cfg.left + 'px';
+            el.style.top = cfg.top + 'px';
+
+            var coords = document.getElementById('canvasCoords');
+            if (coords) coords.textContent = 'X: ' + cfg.left + '  Y: ' + cfg.top;
+
+            var propX = document.getElementById('propX');
+            var propY = document.getElementById('propY');
+            if (propX) propX.value = cfg.left;
+            if (propY) propY.value = cfg.top;
+        }
+    }
+
+    function dragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        document.removeEventListener('mousemove', dragMove);
+        document.removeEventListener('mouseup', dragEnd);
+        document.removeEventListener('touchmove', dragMove);
+        document.removeEventListener('touchend', dragEnd);
+        hideSnapGuides();
+        saveElementsConfig();
+    }
 }
 
 // ============================================
@@ -1358,6 +1603,15 @@ function buildVoucher(code, userpass, qr, cfg) {
         h += '</div>';
     }
 
+    // Custom text fields
+    for (var ck in voucherElementsConfig) {
+        if (ck.indexOf('custom') !== 0) continue;
+        var cCustom = voucherElementsConfig[ck];
+        if (cCustom && cCustom.visible && customTexts[ck]) {
+            h += '<div style="' + buildElementInlineStyle(cCustom, false, vh) + '">' + customTexts[ck] + '</div>';
+        }
+    }
+
     h += '</div>';
     return h;
 }
@@ -1597,7 +1851,7 @@ function initDraggables() {
         var savedOrder = localStorage.getItem('qv_layer_order');
         if (savedOrder) {
             var parsedOrder = JSON.parse(savedOrder);
-            if (Array.isArray(parsedOrder) && parsedOrder.length === layerOrder.length) {
+            if (Array.isArray(parsedOrder) && parsedOrder.length >= 6) {
                 layerOrder = parsedOrder;
             }
         }
@@ -1805,6 +2059,28 @@ function initDraggables() {
         }
     });
     resizeObserver.observe(container);
+
+    // Load custom texts and create their DOM elements
+    loadCustomTexts();
+    for (var ck in voucherElementsConfig) {
+        if (ck.indexOf('custom') !== 0) continue;
+        var cCfg = voucherElementsConfig[ck];
+        if (!document.getElementById(cCfg.id)) {
+            var div = document.createElement('div');
+            div.id = cCfg.id;
+            div.className = 'drag-el';
+            div.setAttribute('data-key', ck);
+            div.style.cssText = 'position: absolute; left: ' + cCfg.left + 'px; top: ' + cCfg.top + 'px; font-size: ' + cCfg.fontSize + 'px; cursor: move; white-space: nowrap;';
+            div.textContent = customTexts[ck] || 'Text';
+            container.appendChild(div);
+            initSingleDraggable(div);
+        }
+        // Ensure custom keys are in layer order
+        if (layerOrder.indexOf(ck) === -1) {
+            layerOrder.unshift(ck);
+        }
+    }
+    updateCustomTextsList();
 
     // Render layers
     renderLayers();
