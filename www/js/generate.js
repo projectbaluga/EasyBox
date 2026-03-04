@@ -1,5 +1,5 @@
 // ============================================
-// QuickVoucher v2.2 - Voucher Generator
+// QuickVoucher v2.3 - Voucher Generator
 // Enhanced Voucher Editor with Photoshop-style UI
 // ============================================
 
@@ -256,6 +256,8 @@ var undoStack = [];
 var redoStack = [];
 var MAX_UNDO = 30;
 var voucherBorderStyle = '1px dashed #aaa';
+var voucherBgColor = '#ffffff';
+var voucherBorderRadius = 0;
 
 var LAYER_NAMES = {
     price: 'Price',
@@ -271,12 +273,12 @@ var layerOrder = ['qr', 'login', 'duration', 'code', 'vendor', 'price'];
 var voucherContainerSize = { width: 200, height: 100 };
 
 var voucherElementsConfig = {
-    price:    { id: 'dragPrice',    visible: true,  left: 0,   top: 0,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1 },
-    vendor:   { id: 'dragVendor',   visible: true,  left: 35,  top: 5,  fontSize: 14, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1 },
-    code:     { id: 'dragCode',     visible: true,  left: 35,  top: 30, fontSize: 18, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1 },
-    duration: { id: 'dragDuration', visible: true,  left: 35,  top: 60, fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1 },
-    login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 75, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1 },
-    qr:       { id: 'dragQR',       visible: false, left: 135, top: 5,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1 }
+    price:    { id: 'dragPrice',    visible: true,  left: 0,   top: 0,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
+    vendor:   { id: 'dragVendor',   visible: true,  left: 35,  top: 5,  fontSize: 14, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
+    code:     { id: 'dragCode',     visible: true,  left: 35,  top: 30, fontSize: 18, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
+    duration: { id: 'dragDuration', visible: true,  left: 35,  top: 60, fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
+    login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 75, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
+    qr:       { id: 'dragQR',       visible: false, left: 135, top: 5,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' }
 };
 
 // Ensure backward compatibility when loading saved configs
@@ -298,6 +300,12 @@ function ensureDefaults(cfg) {
         if (el.bold === undefined) el.bold = def.bold || false;
         if (el.italic === undefined) el.italic = false;
         if (el.opacity === undefined) el.opacity = 1;
+        if (el.textTransform === undefined) el.textTransform = 'none';
+        if (el.textDecoration === undefined) el.textDecoration = 'none';
+        if (el.letterSpacing === undefined) el.letterSpacing = 0;
+        if (el.textShadow === undefined) el.textShadow = false;
+        if (el.rotation === undefined) el.rotation = 0;
+        if (el.bgColor === undefined) el.bgColor = 'transparent';
     }
     return cfg;
 }
@@ -433,6 +441,24 @@ function updatePropertiesPanel() {
 
         var italicBtn = document.getElementById('propItalic');
         if (italicBtn) italicBtn.classList.toggle('active', !!cfg.italic);
+
+        // Advanced typography
+        var textTransformSelect = document.getElementById('propTextTransform');
+        if (textTransformSelect) textTransformSelect.value = cfg.textTransform || 'none';
+
+        var textDecoSelect = document.getElementById('propTextDecoration');
+        if (textDecoSelect) textDecoSelect.value = cfg.textDecoration || 'none';
+
+        var letterSpacingInput = document.getElementById('propLetterSpacing');
+        if (letterSpacingInput) letterSpacingInput.value = cfg.letterSpacing || 0;
+        var letterSpacingVal = document.getElementById('propLetterSpacingVal');
+        if (letterSpacingVal) letterSpacingVal.textContent = (cfg.letterSpacing || 0) + 'px';
+
+        var textShadowBtn = document.getElementById('propTextShadow');
+        if (textShadowBtn) textShadowBtn.classList.toggle('active', !!cfg.textShadow);
+
+        var bgColorInput = document.getElementById('propBgColor');
+        if (bgColorInput) bgColorInput.value = (cfg.bgColor && cfg.bgColor !== 'transparent') ? cfg.bgColor : '#ffffff';
     }
 
     var opacitySlider = document.getElementById('propOpacity');
@@ -443,6 +469,12 @@ function updatePropertiesPanel() {
     if (opacityVal) {
         opacityVal.textContent = Math.round((cfg.opacity !== undefined ? cfg.opacity : 1) * 100) + '%';
     }
+
+    // Rotation (applies to all elements)
+    var rotationInput = document.getElementById('propRotation');
+    if (rotationInput) rotationInput.value = cfg.rotation || 0;
+    var rotationVal = document.getElementById('propRotationVal');
+    if (rotationVal) rotationVal.textContent = (cfg.rotation || 0) + '\u00B0';
 }
 
 function setPropPosition() {
@@ -498,6 +530,103 @@ function setPropOpacity() {
 }
 
 // ============================================
+// ADVANCED TYPOGRAPHY & ELEMENT PROPERTIES
+// ============================================
+function setPropTextTransform() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    cfg.textTransform = document.getElementById('propTextTransform').value || 'none';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function setPropTextDecoration() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    cfg.textDecoration = document.getElementById('propTextDecoration').value || 'none';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function setPropLetterSpacing() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    var val = parseFloat(document.getElementById('propLetterSpacing').value) || 0;
+    cfg.letterSpacing = val;
+    var label = document.getElementById('propLetterSpacingVal');
+    if (label) label.textContent = val + 'px';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function togglePropTextShadow() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    cfg.textShadow = !cfg.textShadow;
+    document.getElementById('propTextShadow').classList.toggle('active', cfg.textShadow);
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function setPropRotation() {
+    if (!selectedElementKey) return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    var val = parseInt(document.getElementById('propRotation').value) || 0;
+    cfg.rotation = val;
+    var label = document.getElementById('propRotationVal');
+    if (label) label.textContent = val + '\u00B0';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function setPropBgColor() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    cfg.bgColor = document.getElementById('propBgColor').value || 'transparent';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function clearPropBgColor() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    cfg.bgColor = 'transparent';
+    document.getElementById('propBgColor').value = '#ffffff';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+// ============================================
+// VOUCHER-LEVEL STYLE PROPERTIES
+// ============================================
+function applyVoucherBgColor() {
+    var c = document.getElementById('voucherBgColor').value;
+    voucherBgColor = c;
+    var label = document.getElementById('voucherBgColorLabel');
+    if (label) label.textContent = c;
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) container.style.backgroundColor = c;
+    localStorage.setItem('qv_bg_color', c);
+}
+
+function applyBorderRadius() {
+    var val = parseInt(document.getElementById('voucherBorderRadius').value) || 0;
+    voucherBorderRadius = val;
+    var label = document.getElementById('borderRadiusVal');
+    if (label) label.textContent = val + 'px';
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) container.style.borderRadius = val + 'px';
+    localStorage.setItem('qv_border_radius', val);
+}
+
+// ============================================
 // APPLY ELEMENT STYLES
 // ============================================
 function applyElementStyle(key) {
@@ -524,6 +653,21 @@ function applyElementStyle(key) {
         el.style.color = cfg.color || '#000000';
         el.style.fontWeight = cfg.bold ? 'bold' : 'normal';
         el.style.fontStyle = cfg.italic ? 'italic' : 'normal';
+        el.style.textTransform = cfg.textTransform || 'none';
+        el.style.textDecoration = cfg.textDecoration || 'none';
+        el.style.letterSpacing = (cfg.letterSpacing || 0) + 'px';
+        el.style.textShadow = cfg.textShadow ? '1px 1px 2px rgba(0,0,0,0.5)' : 'none';
+        el.style.backgroundColor = cfg.bgColor || 'transparent';
+    }
+
+    // Rotation (for all elements including QR, but skip price's built-in rotation)
+    if (key === 'price') {
+        // Price has built-in vertical rotation; user rotation adds on top
+        el.style.transform = 'rotate(180deg)' + (cfg.rotation ? ' rotate(' + cfg.rotation + 'deg)' : '');
+    } else if (cfg.rotation) {
+        el.style.transform = 'rotate(' + cfg.rotation + 'deg)';
+    } else {
+        el.style.transform = '';
     }
 }
 
@@ -744,11 +888,22 @@ function buildElementInlineStyle(elCfg, isPrice, containerHeight) {
     s += ' font-style: ' + (elCfg.italic ? 'italic' : 'normal') + ';';
     s += ' opacity: ' + (elCfg.opacity !== undefined ? elCfg.opacity : 1) + ';';
     s += ' white-space: nowrap;';
+    // Advanced typography
+    if (elCfg.textTransform && elCfg.textTransform !== 'none') s += ' text-transform: ' + elCfg.textTransform + ';';
+    if (elCfg.textDecoration && elCfg.textDecoration !== 'none') s += ' text-decoration: ' + elCfg.textDecoration + ';';
+    if (elCfg.letterSpacing) s += ' letter-spacing: ' + elCfg.letterSpacing + 'px;';
+    if (elCfg.textShadow) s += ' text-shadow: 1px 1px 2px rgba(0,0,0,0.5);';
+    if (elCfg.bgColor && elCfg.bgColor !== 'transparent') s += ' background-color: ' + elCfg.bgColor + '; padding: 1px 3px; -webkit-print-color-adjust: exact;';
     if (isPrice) {
         s += ' width: 30px; height: ' + containerHeight + 'px;';
-        s += ' writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);';
+        s += ' writing-mode: vertical-rl; text-orientation: mixed;';
+        var priceTransform = 'rotate(180deg)';
+        if (elCfg.rotation) priceTransform += ' rotate(' + elCfg.rotation + 'deg)';
+        s += ' transform: ' + priceTransform + ';';
         s += ' display: flex; align-items: center; justify-content: center;';
         s += ' border-right: 1px solid #ccc; -webkit-print-color-adjust: exact;';
+    } else if (elCfg.rotation) {
+        s += ' transform: rotate(' + elCfg.rotation + 'deg);';
     }
     return s;
 }
@@ -763,7 +918,9 @@ function buildVoucher(code, userpass, qr, cfg) {
     var vh = voucherContainerSize.height;
     var border = voucherBorderStyle || '1px dashed #ccc';
 
-    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bgStyle + '">';
+    var bgColor = voucherBgColor || '#ffffff';
+    var bRadius = voucherBorderRadius ? 'border-radius: ' + voucherBorderRadius + 'px;' : '';
+    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bRadius + ' ' + bgStyle + '">';
 
     // Price
     var cPrice = voucherElementsConfig.price;
@@ -1069,6 +1226,32 @@ function initDraggables() {
                     }
                 }
             }
+        }
+    } catch (e) {}
+
+    // Load saved background color
+    try {
+        var savedBgColor = localStorage.getItem('qv_bg_color');
+        if (savedBgColor) {
+            voucherBgColor = savedBgColor;
+            container.style.backgroundColor = savedBgColor;
+            var bgColorInput = document.getElementById('voucherBgColor');
+            if (bgColorInput) bgColorInput.value = savedBgColor;
+            var bgColorLabel = document.getElementById('voucherBgColorLabel');
+            if (bgColorLabel) bgColorLabel.textContent = savedBgColor;
+        }
+    } catch (e) {}
+
+    // Load saved border radius
+    try {
+        var savedRadius = localStorage.getItem('qv_border_radius');
+        if (savedRadius) {
+            voucherBorderRadius = parseInt(savedRadius) || 0;
+            container.style.borderRadius = voucherBorderRadius + 'px';
+            var radiusInput = document.getElementById('voucherBorderRadius');
+            if (radiusInput) radiusInput.value = voucherBorderRadius;
+            var radiusVal = document.getElementById('borderRadiusVal');
+            if (radiusVal) radiusVal.textContent = voucherBorderRadius + 'px';
         }
     } catch (e) {}
 

@@ -287,6 +287,14 @@
                                             <option value="'Courier New', monospace">Courier New</option>
                                             <option value="Tahoma, sans-serif">Tahoma</option>
                                             <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                                            <option value="Impact, sans-serif">Impact</option>
+                                            <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                                            <option value="'Lucida Console', monospace">Lucida Console</option>
+                                            <option value="'Palatino Linotype', serif">Palatino</option>
+                                            <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                                            <option value="'Gill Sans', sans-serif">Gill Sans</option>
+                                            <option value="'Century Gothic', sans-serif">Century Gothic</option>
+                                            <option value="'Copperplate', serif">Copperplate</option>
                                         </select>
                                         <div class="prop-row mt-1">
                                             <div class="prop-field"><label>Size</label><input type="number" id="propFontSize" class="prop-input" min="6" max="72" onchange="setPropTypography()"></div>
@@ -295,6 +303,29 @@
                                         <div class="prop-style-row">
                                             <button class="prop-style-btn" id="propBold" title="Bold" onclick="togglePropBold()"><b>B</b></button>
                                             <button class="prop-style-btn" id="propItalic" title="Italic" onclick="togglePropItalic()"><i>I</i></button>
+                                            <button class="prop-style-btn" id="propTextShadow" title="Text Shadow" onclick="togglePropTextShadow()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707"/><circle cx="12" cy="12" r="4"/></svg></button>
+                                        </div>
+                                        <div class="prop-row mt-1">
+                                            <select id="propTextTransform" class="prop-select prop-select-half" onchange="setPropTextTransform()" title="Text Transform">
+                                                <option value="none">Aa (Normal)</option>
+                                                <option value="uppercase">AA (Upper)</option>
+                                                <option value="lowercase">aa (Lower)</option>
+                                                <option value="capitalize">Aa (Title)</option>
+                                            </select>
+                                            <select id="propTextDecoration" class="prop-select prop-select-half" onchange="setPropTextDecoration()" title="Text Decoration">
+                                                <option value="none">No Deco</option>
+                                                <option value="underline">Underline</option>
+                                                <option value="line-through">Strikethrough</option>
+                                                <option value="overline">Overline</option>
+                                            </select>
+                                        </div>
+                                        <div class="prop-row mt-1">
+                                            <div class="prop-field" style="flex:2"><label>Spacing</label><input type="range" id="propLetterSpacing" class="prop-range" min="-2" max="10" step="0.5" value="0" oninput="setPropLetterSpacing()"></div>
+                                            <span id="propLetterSpacingVal" class="prop-range-val">0px</span>
+                                        </div>
+                                        <div class="prop-row mt-1">
+                                            <div class="prop-field"><label>BG</label><input type="color" id="propBgColor" class="prop-color" value="#ffffff" onchange="setPropBgColor()"></div>
+                                            <button class="prop-style-btn" title="Clear Background" onclick="clearPropBgColor()" style="font-size:11px;">CLR</button>
                                         </div>
                                     </div>
                                     <div class="prop-group">
@@ -302,6 +333,13 @@
                                         <div class="prop-row">
                                             <input type="range" id="propOpacity" class="prop-range" min="0" max="100" value="100" oninput="setPropOpacity()">
                                             <span id="propOpacityVal" class="prop-range-val">100%</span>
+                                        </div>
+                                    </div>
+                                    <div class="prop-group">
+                                        <div class="prop-label">Rotation</div>
+                                        <div class="prop-row">
+                                            <input type="range" id="propRotation" class="prop-range" min="-180" max="180" value="0" oninput="setPropRotation()">
+                                            <span id="propRotationVal" class="prop-range-val">0&deg;</span>
                                         </div>
                                     </div>
                                 </div>
@@ -334,13 +372,31 @@
                                     </div>
                                 </div>
                                 <div class="prop-group">
+                                    <div class="prop-label">Background</div>
+                                    <div class="prop-row">
+                                        <input type="color" id="voucherBgColor" class="prop-color" value="#ffffff" onchange="applyVoucherBgColor()">
+                                        <span class="prop-color-label" id="voucherBgColorLabel">#ffffff</span>
+                                    </div>
+                                </div>
+                                <div class="prop-group">
                                     <div class="prop-label">Border</div>
                                     <select id="voucherBorder" class="prop-select" onchange="applyBorderStyle()">
                                         <option value="1px dashed #aaa">Dashed</option>
                                         <option value="1px solid #ccc">Solid</option>
                                         <option value="2px solid #333">Bold</option>
+                                        <option value="1px solid #3b82f6">Blue</option>
+                                        <option value="2px solid #10b981">Green</option>
+                                        <option value="2px double #333">Double</option>
+                                        <option value="3px dotted #666">Dotted</option>
                                         <option value="none">None</option>
                                     </select>
+                                </div>
+                                <div class="prop-group">
+                                    <div class="prop-label">Corners</div>
+                                    <div class="prop-row">
+                                        <input type="range" id="voucherBorderRadius" class="prop-range" min="0" max="20" value="0" oninput="applyBorderRadius()">
+                                        <span id="borderRadiusVal" class="prop-range-val">0px</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -416,7 +472,7 @@
         <div id="PrintBody"></div>
     </div>
 
-    <footer class="app-footer">QuickVoucher v2.2</footer>
+    <footer class="app-footer">QuickVoucher v2.3</footer>
 
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

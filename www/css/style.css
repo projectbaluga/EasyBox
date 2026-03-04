@@ -1189,6 +1189,11 @@ body {
     color: #fff;
 }
 
+.prop-select-half {
+    width: 48% !important;
+    flex: 1;
+}
+
 .prop-range {
     flex: 1;
     height: 4px;

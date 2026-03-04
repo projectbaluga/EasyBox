@@ -24,6 +24,8 @@ div.voucher {
     overflow: hidden;
     page-break-inside: avoid;
     float: left;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
 @page {
