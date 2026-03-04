@@ -99,45 +99,85 @@ async function mikrotikApi(endpoint, method = 'GET', body = null, customSettings
 
     var portPart = settings.port ? ':' + settings.port : '';
     var url = `${settings.proto}://${settings.ip}${portPart}/rest${endpoint}`;
-    var headers = new Headers();
 
-    // Basic Auth
-    headers.set('Authorization', 'Basic ' + btoa(settings.user + ':' + settings.pass));
-
-    if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
-        headers.set('Content-Type', 'application/json');
-    }
-
-    var options = {
-        method: method,
-        headers: headers
+    var headers = {
+        'Authorization': 'Basic ' + btoa(settings.user + ':' + settings.pass)
     };
 
-    if (body) {
-        options.body = JSON.stringify(body);
+    if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+        headers['Content-Type'] = 'application/json';
     }
 
     try {
-        var response = await fetch(url, options);
-        if (!response.ok) {
-            if (response.status === 401) {
+        var isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+        var responseData;
+        var responseStatus;
+        var responseOk;
+
+        if (isCapacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp) {
+            // Use native Capacitor HTTP plugin to bypass CORS and allow cleartext
+            var options = {
+                url: url,
+                method: method,
+                headers: headers
+            };
+            if (body) {
+                options.data = body;
+            }
+
+            var response = await window.Capacitor.Plugins.CapacitorHttp.request(options);
+            responseStatus = response.status;
+            responseOk = responseStatus >= 200 && responseStatus < 300;
+            responseData = response.data;
+
+        } else {
+            // Fallback to standard fetch (will hit CORS issues in browser)
+            var fetchOptions = {
+                method: method,
+                headers: headers
+            };
+            if (body) {
+                fetchOptions.body = JSON.stringify(body);
+            }
+            var response = await fetch(url, fetchOptions);
+            responseStatus = response.status;
+            responseOk = response.ok;
+
+            if (responseOk && method !== 'DELETE') {
+                responseData = await response.json();
+            } else if (!responseOk) {
+                responseData = await response.text();
+            }
+        }
+
+        if (!responseOk) {
+            if (responseStatus === 401) {
                 throw new Error('Authentication Failed (401). Check Username/Password.');
             }
-            if (response.status === 404) {
+            if (responseStatus === 404) {
                 throw new Error('Endpoint not found (404). Ensure REST API is enabled in RouterOS v7.');
             }
-            var errText = await response.text();
-            throw new Error(`API Error ${response.status}: ${errText || 'Unknown Error'}`);
+            var errText = (typeof responseData === 'object' ? JSON.stringify(responseData) : responseData) || 'Unknown Error';
+            throw new Error(`API Error ${responseStatus}: ${errText}`);
         }
+
         // DELETE often returns empty body
         if (method === 'DELETE') return true;
 
-        return await response.json();
+        return responseData;
     } catch (error) {
         console.error('Mikrotik API Error:', error);
 
+        var isNetworkError = false;
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-            throw new Error(`Network Error: Failed to connect to ${settings.ip}. Check the IP, Port, Protocol (HTTP/HTTPS), or if the REST API is enabled on the router. (CORS issues may also cause this if running outside the Capacitor App).`);
+            isNetworkError = true;
+        } else if (error.message && error.message.includes('Network Error')) {
+            isNetworkError = true;
+        }
+
+        if (isNetworkError) {
+            var browserMsg = window.Capacitor && window.Capacitor.isNativePlatform() ? '' : 'If running in a PC Browser, CORS will block this. Use the Android App or launch Chrome with --disable-web-security. ';
+            throw new Error(`Network Error: Failed to connect to ${settings.ip}. ${browserMsg}Check the IP, Port, Protocol (HTTP/HTTPS), or if the REST API is enabled in Winbox (IP -> Services -> www).`);
         }
 
         throw error;
