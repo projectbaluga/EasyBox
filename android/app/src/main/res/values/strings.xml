@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Mikrotik Voucher</string>
-    <string name="title_activity_main">Mikrotik Voucher</string>
+    <string name="app_name">EasyBox</string>
+    <string name="title_activity_main">EasyBox</string>
     <string name="package_name">com.mtvoucher.app</string>
     <string name="custom_url_scheme">com.mtvoucher.app</string>
 </resources>

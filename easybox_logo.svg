@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Soft shadow for the box -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Background: White -->
+  <rect width="1024" height="1024" fill="#FFFFFF"/>
+
+  <!-- Center Group -->
+  <g transform="translate(512, 512)">
+
+    <!-- Wi-Fi Signal (Vibrant Emerald Green) -->
+    <g fill="none" stroke="#2ECC71" stroke-linecap="round" stroke-width="48">
+      <!-- Outer Arc -->
+      <path d="M-200 -220 A 280 280 0 0 1 200 -220"/>
+      <!-- Middle Arc -->
+      <path d="M-130 -150 A 180 180 0 0 1 130 -150"/>
+      <!-- Inner Arc -->
+      <path d="M-60 -80 A 80 80 0 0 1 60 -80"/>
+      <!-- Core Dot -->
+      <circle cx="0" cy="0" r="30" fill="#2ECC71" stroke="none"/>
+    </g>
+
+    <!-- Stylized "E" and "B" Box (Slate Dark Gray) -->
+    <!-- We will draw a soft geometric open box that hints at an 'E' on the left and 'B' on the right -->
+
+    <!-- Base / Bottom of the Box -->
+    <path d="M-240 240 L240 240" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64" filter="url(#shadow)"/>
+
+    <!-- Left side: The 'E' shape -->
+    <!-- Vertical stem -->
+    <path d="M-240 240 L-240 40" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
+    <!-- Middle prong of E -->
+    <path d="M-240 140 L-120 140" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
+    <!-- Top prong of E -->
+    <path d="M-240 40 L-120 40" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
+
+    <!-- Right side: The 'B' shape -->
+    <!-- Vertical stem -->
+    <path d="M240 240 L240 40" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
+    <!-- Bottom loop of B -->
+    <path d="M240 240 C320 240, 320 140, 240 140" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
+    <!-- Top loop of B -->
+    <path d="M240 140 C300 140, 300 40, 240 40" fill="none" stroke="#34495E" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
+
+  </g>
+</svg>

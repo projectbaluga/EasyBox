@@ -3,9 +3,9 @@
    ============================================ */
 
 :root {
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --primary-light: rgba(59, 130, 246, 0.1);
+    --primary: #2ecc71;
+    --primary-hover: #27ae60;
+    --primary-light: rgba(46, 204, 113, 0.1);
     --success: #10b981;
     --success-hover: #059669;
     --danger: #ef4444;
@@ -63,7 +63,7 @@ body {
 .brand-icon {
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, var(--primary), #3b82f6);
+    background: linear-gradient(135deg, var(--primary), #27ae60);
     border-radius: 11px;
     display: flex;
     align-items: center;
