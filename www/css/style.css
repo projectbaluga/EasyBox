@@ -1194,6 +1194,32 @@ body {
     flex: 1;
 }
 
+/* Preset Layout Grid */
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.preset-btn {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 5px 4px;
+    background: #3a3a3a;
+    border: 1px solid #505050;
+    border-radius: 3px;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.preset-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
 .prop-range {
     flex: 1;
     height: 4px;

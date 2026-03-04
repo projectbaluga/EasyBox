@@ -1,5 +1,5 @@
 // ============================================
-// QuickVoucher v2.3 - Voucher Generator
+// QuickVoucher v2.4 - Voucher Generator
 // Enhanced Voucher Editor with Photoshop-style UI
 // ============================================
 
@@ -258,6 +258,7 @@ var MAX_UNDO = 30;
 var voucherBorderStyle = '1px dashed #aaa';
 var voucherBgColor = '#ffffff';
 var voucherBorderRadius = 0;
+var voucherGradient = '';
 
 var LAYER_NAMES = {
     price: 'Price',
@@ -273,13 +274,16 @@ var layerOrder = ['qr', 'login', 'duration', 'code', 'vendor', 'price'];
 var voucherContainerSize = { width: 200, height: 100 };
 
 var voucherElementsConfig = {
-    price:    { id: 'dragPrice',    visible: true,  left: 0,   top: 0,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
-    vendor:   { id: 'dragVendor',   visible: true,  left: 35,  top: 5,  fontSize: 14, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
-    code:     { id: 'dragCode',     visible: true,  left: 35,  top: 30, fontSize: 18, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
-    duration: { id: 'dragDuration', visible: true,  left: 35,  top: 60, fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
-    login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 75, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' },
-    qr:       { id: 'dragQR',       visible: false, left: 135, top: 5,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent' }
+    price:    { id: 'dragPrice',    visible: true,  left: 0,   top: 0,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    vendor:   { id: 'dragVendor',   visible: true,  left: 35,  top: 5,  fontSize: 14, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    code:     { id: 'dragCode',     visible: true,  left: 35,  top: 30, fontSize: 18, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    duration: { id: 'dragDuration', visible: true,  left: 35,  top: 60, fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 75, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    qr:       { id: 'dragQR',       visible: false, left: 135, top: 5,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false }
 };
+
+var qrCodeSize = 60;
+var copiedStyle = null;
 
 // Ensure backward compatibility when loading saved configs
 function ensureDefaults(cfg) {
@@ -306,6 +310,9 @@ function ensureDefaults(cfg) {
         if (el.textShadow === undefined) el.textShadow = false;
         if (el.rotation === undefined) el.rotation = 0;
         if (el.bgColor === undefined) el.bgColor = 'transparent';
+        if (el.lineHeight === undefined) el.lineHeight = 1.2;
+        if (el.padding === undefined) el.padding = 0;
+        if (el.boxShadow === undefined) el.boxShadow = false;
     }
     return cfg;
 }
@@ -459,6 +466,16 @@ function updatePropertiesPanel() {
 
         var bgColorInput = document.getElementById('propBgColor');
         if (bgColorInput) bgColorInput.value = (cfg.bgColor && cfg.bgColor !== 'transparent') ? cfg.bgColor : '#ffffff';
+
+        var lineHeightInput = document.getElementById('propLineHeight');
+        if (lineHeightInput) lineHeightInput.value = cfg.lineHeight || 1.2;
+        var lineHeightVal = document.getElementById('propLineHeightVal');
+        if (lineHeightVal) lineHeightVal.textContent = (cfg.lineHeight || 1.2).toFixed(1);
+
+        var paddingInput = document.getElementById('propPadding');
+        if (paddingInput) paddingInput.value = cfg.padding || 0;
+        var paddingVal = document.getElementById('propPaddingVal');
+        if (paddingVal) paddingVal.textContent = (cfg.padding || 0) + 'px';
     }
 
     var opacitySlider = document.getElementById('propOpacity');
@@ -475,6 +492,20 @@ function updatePropertiesPanel() {
     if (rotationInput) rotationInput.value = cfg.rotation || 0;
     var rotationVal = document.getElementById('propRotationVal');
     if (rotationVal) rotationVal.textContent = (cfg.rotation || 0) + '\u00B0';
+
+    // Box shadow
+    var boxShadowBtn = document.getElementById('propBoxShadow');
+    if (boxShadowBtn) boxShadowBtn.classList.toggle('active', !!cfg.boxShadow);
+
+    // QR size (only for QR element)
+    var qrSizeGroup = document.getElementById('propQrSizeGroup');
+    if (qrSizeGroup) qrSizeGroup.style.display = selectedElementKey === 'qr' ? 'block' : 'none';
+    if (selectedElementKey === 'qr') {
+        var qrSizeInput = document.getElementById('propQrSize');
+        if (qrSizeInput) qrSizeInput.value = qrCodeSize;
+        var qrSizeVal = document.getElementById('propQrSizeVal');
+        if (qrSizeVal) qrSizeVal.textContent = qrCodeSize + 'px';
+    }
 }
 
 function setPropPosition() {
@@ -603,6 +634,312 @@ function clearPropBgColor() {
     saveElementsConfig();
 }
 
+function setPropLineHeight() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    var val = parseFloat(document.getElementById('propLineHeight').value) || 1.2;
+    cfg.lineHeight = val;
+    var label = document.getElementById('propLineHeightVal');
+    if (label) label.textContent = val.toFixed(1);
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function setPropPadding() {
+    if (!selectedElementKey || selectedElementKey === 'qr') return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    var val = parseInt(document.getElementById('propPadding').value) || 0;
+    cfg.padding = val;
+    var label = document.getElementById('propPaddingVal');
+    if (label) label.textContent = val + 'px';
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function togglePropBoxShadow() {
+    if (!selectedElementKey) return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    pushUndo();
+    cfg.boxShadow = !cfg.boxShadow;
+    document.getElementById('propBoxShadow').classList.toggle('active', cfg.boxShadow);
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+}
+
+function setQrCodeSize() {
+    var val = parseInt(document.getElementById('propQrSize').value) || 60;
+    qrCodeSize = Math.max(30, Math.min(120, val));
+    var label = document.getElementById('propQrSizeVal');
+    if (label) label.textContent = qrCodeSize + 'px';
+    var qrImg = document.querySelector('#dragQR img');
+    if (qrImg) {
+        qrImg.width = qrCodeSize;
+        qrImg.height = qrCodeSize;
+    }
+    localStorage.setItem('qv_qr_size', qrCodeSize);
+}
+
+// ============================================
+// COPY / PASTE STYLE
+// ============================================
+function copyElementStyle() {
+    if (!selectedElementKey) return;
+    var cfg = voucherElementsConfig[selectedElementKey];
+    copiedStyle = {
+        fontSize: cfg.fontSize,
+        fontFamily: cfg.fontFamily,
+        color: cfg.color,
+        bold: cfg.bold,
+        italic: cfg.italic,
+        opacity: cfg.opacity,
+        textTransform: cfg.textTransform,
+        textDecoration: cfg.textDecoration,
+        letterSpacing: cfg.letterSpacing,
+        textShadow: cfg.textShadow,
+        rotation: cfg.rotation,
+        bgColor: cfg.bgColor,
+        lineHeight: cfg.lineHeight,
+        padding: cfg.padding,
+        boxShadow: cfg.boxShadow
+    };
+    var btn = document.getElementById('btnPasteStyle');
+    if (btn) btn.disabled = false;
+}
+
+function pasteElementStyle() {
+    if (!selectedElementKey || !copiedStyle) return;
+    if (selectedElementKey === 'qr') {
+        // Only paste applicable props for QR
+        var cfg = voucherElementsConfig[selectedElementKey];
+        pushUndo();
+        cfg.opacity = copiedStyle.opacity;
+        cfg.rotation = copiedStyle.rotation;
+        cfg.boxShadow = copiedStyle.boxShadow;
+    } else {
+        var cfg = voucherElementsConfig[selectedElementKey];
+        pushUndo();
+        for (var prop in copiedStyle) {
+            cfg[prop] = copiedStyle[prop];
+        }
+    }
+    applyElementStyle(selectedElementKey);
+    saveElementsConfig();
+    updatePropertiesPanel();
+}
+
+// ============================================
+// PRESET LAYOUTS
+// ============================================
+var presetLayouts = {
+    classic: {
+        label: 'Classic',
+        size: { width: 200, height: 100 },
+        border: '1px dashed #aaa',
+        bgColor: '#ffffff',
+        borderRadius: 0,
+        gradient: '',
+        elements: {
+            price:    { visible: true,  left: 0,   top: 0,  fontSize: 12, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
+            vendor:   { visible: true,  left: 35,  top: 5,  fontSize: 14, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
+            code:     { visible: true,  left: 35,  top: 30, fontSize: 18, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
+            duration: { visible: true,  left: 35,  top: 60, fontSize: 11, bold: false, color: '#000000', fontFamily: 'Arial, sans-serif' },
+            login:    { visible: true,  left: 35,  top: 75, fontSize: 12, bold: false, color: '#000000', fontFamily: 'Arial, sans-serif' },
+            qr:       { visible: false, left: 135, top: 5 }
+        }
+    },
+    modern: {
+        label: 'Modern',
+        size: { width: 240, height: 120 },
+        border: '2px solid #333',
+        bgColor: '#f8f9fa',
+        borderRadius: 8,
+        gradient: '',
+        elements: {
+            price:    { visible: true,  left: 0,   top: 0,  fontSize: 11, bold: true,  color: '#ffffff', fontFamily: "'Segoe UI', sans-serif" },
+            vendor:   { visible: true,  left: 40,  top: 8,  fontSize: 16, bold: true,  color: '#1a1a2e', fontFamily: "'Segoe UI', sans-serif", letterSpacing: 2, textTransform: 'uppercase' },
+            code:     { visible: true,  left: 40,  top: 35, fontSize: 22, bold: true,  color: '#3b82f6', fontFamily: "'Courier New', monospace", letterSpacing: 3 },
+            duration: { visible: true,  left: 40,  top: 70, fontSize: 11, bold: false, color: '#666666', fontFamily: "'Segoe UI', sans-serif" },
+            login:    { visible: true,  left: 40,  top: 88, fontSize: 10, bold: false, color: '#999999', fontFamily: "'Segoe UI', sans-serif" },
+            qr:       { visible: false, left: 170, top: 10 }
+        }
+    },
+    centered: {
+        label: 'Centered',
+        size: { width: 220, height: 130 },
+        border: '1px solid #3b82f6',
+        bgColor: '#ffffff',
+        borderRadius: 12,
+        gradient: '',
+        elements: {
+            price:    { visible: false, left: 0,   top: 0 },
+            vendor:   { visible: true,  left: 60,  top: 8,  fontSize: 13, bold: true,  color: '#3b82f6', fontFamily: "Arial, sans-serif", textTransform: 'uppercase', letterSpacing: 3 },
+            code:     { visible: true,  left: 40,  top: 40, fontSize: 24, bold: true,  color: '#000000', fontFamily: "'Courier New', monospace", letterSpacing: 2 },
+            duration: { visible: true,  left: 65,  top: 80, fontSize: 12, bold: false, color: '#555555', fontFamily: "Arial, sans-serif" },
+            login:    { visible: true,  left: 55,  top: 100, fontSize: 11, bold: false, color: '#888888', fontFamily: "Arial, sans-serif" },
+            qr:       { visible: false, left: 80,  top: 30 }
+        }
+    },
+    compact: {
+        label: 'Compact',
+        size: { width: 180, height: 80 },
+        border: '1px solid #ccc',
+        bgColor: '#ffffff',
+        borderRadius: 4,
+        gradient: '',
+        elements: {
+            price:    { visible: false, left: 0,   top: 0 },
+            vendor:   { visible: true,  left: 8,   top: 4,  fontSize: 10, bold: true,  color: '#666666', fontFamily: "Arial, sans-serif", textTransform: 'uppercase', letterSpacing: 1 },
+            code:     { visible: true,  left: 8,   top: 22, fontSize: 20, bold: true,  color: '#000000', fontFamily: "'Courier New', monospace" },
+            duration: { visible: true,  left: 8,   top: 52, fontSize: 10, bold: false, color: '#888888', fontFamily: "Arial, sans-serif" },
+            login:    { visible: true,  left: 8,   top: 64, fontSize: 9,  bold: false, color: '#aaaaaa', fontFamily: "Arial, sans-serif" },
+            qr:       { visible: false, left: 120, top: 5 }
+        }
+    },
+    elegant: {
+        label: 'Elegant',
+        size: { width: 260, height: 130 },
+        border: 'none',
+        bgColor: '#1a1a2e',
+        borderRadius: 10,
+        gradient: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+        elements: {
+            price:    { visible: false, left: 0,   top: 0 },
+            vendor:   { visible: true,  left: 15,  top: 12, fontSize: 11, bold: false, color: '#e94560', fontFamily: "Georgia, serif", textTransform: 'uppercase', letterSpacing: 4 },
+            code:     { visible: true,  left: 15,  top: 40, fontSize: 26, bold: true,  color: '#ffffff', fontFamily: "'Courier New', monospace", letterSpacing: 4, textShadow: true },
+            duration: { visible: true,  left: 15,  top: 85, fontSize: 11, bold: false, color: '#cccccc', fontFamily: "Georgia, serif" },
+            login:    { visible: true,  left: 15,  top: 105, fontSize: 10, bold: false, color: '#888888', fontFamily: "Georgia, serif" },
+            qr:       { visible: false, left: 185, top: 15 }
+        }
+    },
+    qrFocus: {
+        label: 'QR Focus',
+        size: { width: 250, height: 120 },
+        border: '1px solid #ddd',
+        bgColor: '#ffffff',
+        borderRadius: 6,
+        gradient: '',
+        elements: {
+            price:    { visible: false, left: 0,   top: 0 },
+            vendor:   { visible: true,  left: 10,  top: 8,  fontSize: 12, bold: true,  color: '#333333', fontFamily: "Arial, sans-serif", textTransform: 'uppercase', letterSpacing: 1 },
+            code:     { visible: true,  left: 10,  top: 32, fontSize: 18, bold: true,  color: '#000000', fontFamily: "'Courier New', monospace" },
+            duration: { visible: true,  left: 10,  top: 65, fontSize: 10, bold: false, color: '#666666', fontFamily: "Arial, sans-serif" },
+            login:    { visible: true,  left: 10,  top: 80, fontSize: 10, bold: false, color: '#999999', fontFamily: "Arial, sans-serif" },
+            qr:       { visible: true,  left: 170, top: 15 }
+        }
+    }
+};
+
+function applyPresetLayout(presetKey) {
+    var preset = presetLayouts[presetKey];
+    if (!preset) return;
+    pushUndo();
+
+    // Apply voucher size
+    voucherContainerSize = { width: preset.size.width, height: preset.size.height };
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) {
+        container.style.width = preset.size.width + 'px';
+        container.style.height = preset.size.height + 'px';
+    }
+    localStorage.setItem('qv_container_size', JSON.stringify(voucherContainerSize));
+    var cw = document.getElementById('canvasW');
+    var ch = document.getElementById('canvasH');
+    if (cw) cw.value = preset.size.width;
+    if (ch) ch.value = preset.size.height;
+
+    // Apply border
+    voucherBorderStyle = preset.border;
+    if (container) container.style.border = preset.border;
+    localStorage.setItem('qv_border_style', preset.border);
+    var borderSelect = document.getElementById('voucherBorder');
+    if (borderSelect) {
+        var found = false;
+        for (var i = 0; i < borderSelect.options.length; i++) {
+            if (borderSelect.options[i].value === preset.border) {
+                borderSelect.selectedIndex = i;
+                found = true;
+                break;
+            }
+        }
+        if (!found) borderSelect.selectedIndex = 0;
+    }
+
+    // Apply bg color
+    voucherBgColor = preset.bgColor;
+    if (container) container.style.backgroundColor = preset.bgColor;
+    localStorage.setItem('qv_bg_color', preset.bgColor);
+    var bgInput = document.getElementById('voucherBgColor');
+    if (bgInput) bgInput.value = preset.bgColor;
+    var bgLabel = document.getElementById('voucherBgColorLabel');
+    if (bgLabel) bgLabel.textContent = preset.bgColor;
+
+    // Apply border radius
+    voucherBorderRadius = preset.borderRadius;
+    if (container) container.style.borderRadius = preset.borderRadius + 'px';
+    localStorage.setItem('qv_border_radius', preset.borderRadius);
+    var radiusInput = document.getElementById('voucherBorderRadius');
+    if (radiusInput) radiusInput.value = preset.borderRadius;
+    var radiusVal = document.getElementById('borderRadiusVal');
+    if (radiusVal) radiusVal.textContent = preset.borderRadius + 'px';
+
+    // Apply gradient
+    voucherGradient = preset.gradient || '';
+    if (container) container.style.backgroundImage = voucherGradient || 'none';
+    localStorage.setItem('qv_gradient', voucherGradient);
+    var gradSelect = document.getElementById('voucherGradient');
+    if (gradSelect) {
+        var gFound = false;
+        for (var i = 0; i < gradSelect.options.length; i++) {
+            if (gradSelect.options[i].value === voucherGradient) {
+                gradSelect.selectedIndex = i;
+                gFound = true;
+                break;
+            }
+        }
+        if (!gFound) gradSelect.selectedIndex = 0;
+    }
+
+    // Apply element configs
+    for (var key in preset.elements) {
+        if (!voucherElementsConfig[key]) continue;
+        var pe = preset.elements[key];
+        var cfg = voucherElementsConfig[key];
+        cfg.visible = pe.visible !== undefined ? pe.visible : cfg.visible;
+        cfg.left = pe.left !== undefined ? pe.left : cfg.left;
+        cfg.top = pe.top !== undefined ? pe.top : cfg.top;
+        if (pe.fontSize !== undefined) cfg.fontSize = pe.fontSize;
+        if (pe.bold !== undefined) cfg.bold = pe.bold;
+        if (pe.color !== undefined) cfg.color = pe.color;
+        if (pe.fontFamily !== undefined) cfg.fontFamily = pe.fontFamily;
+        if (pe.letterSpacing !== undefined) cfg.letterSpacing = pe.letterSpacing;
+        if (pe.textTransform !== undefined) cfg.textTransform = pe.textTransform;
+        if (pe.textShadow !== undefined) cfg.textShadow = pe.textShadow;
+        // Reset other advanced props to defaults
+        if (pe.letterSpacing === undefined) cfg.letterSpacing = 0;
+        if (pe.textTransform === undefined) cfg.textTransform = 'none';
+        if (pe.textShadow === undefined) cfg.textShadow = false;
+        cfg.textDecoration = 'none';
+        cfg.italic = false;
+        cfg.rotation = 0;
+        cfg.bgColor = 'transparent';
+        cfg.lineHeight = 1.2;
+        cfg.padding = 0;
+        cfg.boxShadow = false;
+        cfg.opacity = 1;
+    }
+
+    applyAllElementStyles();
+    saveElementsConfig();
+    renderLayers();
+    updatePropertiesPanel();
+    // Update price bar height
+    var priceEl = document.getElementById('dragPrice');
+    if (priceEl) priceEl.style.height = preset.size.height + 'px';
+    editorZoomFit();
+}
+
 // ============================================
 // VOUCHER-LEVEL STYLE PROPERTIES
 // ============================================
@@ -624,6 +961,45 @@ function applyBorderRadius() {
     var container = document.getElementById('dragVoucherContainer');
     if (container) container.style.borderRadius = val + 'px';
     localStorage.setItem('qv_border_radius', val);
+}
+
+function applyVoucherGradient() {
+    var val = document.getElementById('voucherGradient').value;
+    voucherGradient = val;
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) container.style.backgroundImage = val || 'none';
+    localStorage.setItem('qv_gradient', val);
+}
+
+function distributeElements(axis) {
+    // Distribute visible elements evenly along axis
+    var visibleKeys = [];
+    for (var i = 0; i < layerOrder.length; i++) {
+        var key = layerOrder[i];
+        if (voucherElementsConfig[key] && voucherElementsConfig[key].visible) {
+            visibleKeys.push(key);
+        }
+    }
+    if (visibleKeys.length < 2) return;
+    pushUndo();
+
+    if (axis === 'horizontal') {
+        var total = voucherContainerSize.width;
+        var step = Math.round(total / (visibleKeys.length + 1));
+        for (var j = 0; j < visibleKeys.length; j++) {
+            voucherElementsConfig[visibleKeys[j]].left = step * (j + 1) - 20;
+        }
+    } else {
+        var total = voucherContainerSize.height;
+        var step = Math.round(total / (visibleKeys.length + 1));
+        for (var j = 0; j < visibleKeys.length; j++) {
+            voucherElementsConfig[visibleKeys[j]].top = step * (j + 1) - 8;
+        }
+    }
+
+    applyAllElementStyles();
+    saveElementsConfig();
+    updatePropertiesPanel();
 }
 
 // ============================================
@@ -658,11 +1034,19 @@ function applyElementStyle(key) {
         el.style.letterSpacing = (cfg.letterSpacing || 0) + 'px';
         el.style.textShadow = cfg.textShadow ? '1px 1px 2px rgba(0,0,0,0.5)' : 'none';
         el.style.backgroundColor = cfg.bgColor || 'transparent';
+        el.style.lineHeight = (cfg.lineHeight || 1.2).toString();
+        if (cfg.padding) {
+            el.style.padding = cfg.padding + 'px';
+        } else {
+            el.style.padding = '';
+        }
     }
+
+    // Box shadow (all elements)
+    el.style.boxShadow = cfg.boxShadow ? '0 2px 8px rgba(0,0,0,0.25)' : '';
 
     // Rotation (for all elements including QR, but skip price's built-in rotation)
     if (key === 'price') {
-        // Price has built-in vertical rotation; user rotation adds on top
         el.style.transform = 'rotate(180deg)' + (cfg.rotation ? ' rotate(' + cfg.rotation + 'deg)' : '');
     } else if (cfg.rotation) {
         el.style.transform = 'rotate(' + cfg.rotation + 'deg)';
@@ -893,7 +1277,11 @@ function buildElementInlineStyle(elCfg, isPrice, containerHeight) {
     if (elCfg.textDecoration && elCfg.textDecoration !== 'none') s += ' text-decoration: ' + elCfg.textDecoration + ';';
     if (elCfg.letterSpacing) s += ' letter-spacing: ' + elCfg.letterSpacing + 'px;';
     if (elCfg.textShadow) s += ' text-shadow: 1px 1px 2px rgba(0,0,0,0.5);';
-    if (elCfg.bgColor && elCfg.bgColor !== 'transparent') s += ' background-color: ' + elCfg.bgColor + '; padding: 1px 3px; -webkit-print-color-adjust: exact;';
+    if (elCfg.lineHeight && elCfg.lineHeight !== 1.2) s += ' line-height: ' + elCfg.lineHeight + ';';
+    if (elCfg.bgColor && elCfg.bgColor !== 'transparent') s += ' background-color: ' + elCfg.bgColor + '; -webkit-print-color-adjust: exact;';
+    if (elCfg.padding) s += ' padding: ' + elCfg.padding + 'px;';
+    else if (elCfg.bgColor && elCfg.bgColor !== 'transparent') s += ' padding: 1px 3px;';
+    if (elCfg.boxShadow) s += ' box-shadow: 0 2px 8px rgba(0,0,0,0.25);';
     if (isPrice) {
         s += ' width: 30px; height: ' + containerHeight + 'px;';
         s += ' writing-mode: vertical-rl; text-orientation: mixed;';
@@ -920,7 +1308,8 @@ function buildVoucher(code, userpass, qr, cfg) {
 
     var bgColor = voucherBgColor || '#ffffff';
     var bRadius = voucherBorderRadius ? 'border-radius: ' + voucherBorderRadius + 'px;' : '';
-    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; ' + bRadius + ' ' + bgStyle + '">';
+    var gradientStyle = voucherGradient ? 'background-image: ' + voucherGradient + ';' : '';
+    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; ' + bRadius + ' ' + gradientStyle + ' ' + bgStyle + '">';
 
     // Price
     var cPrice = voucherElementsConfig.price;
@@ -960,9 +1349,12 @@ function buildVoucher(code, userpass, qr, cfg) {
     if (qr && cQR && cQR.visible) {
         var url = 'http://' + cfg.ip + '/login?username=' + code;
         if (userpass) url += '&password=' + code;
+        var qs = qrCodeSize || 60;
         var qrStyle = 'position: absolute; left: ' + cQR.left + 'px; top: ' + cQR.top + 'px; opacity: ' + (cQR.opacity !== undefined ? cQR.opacity : 1) + ';';
+        if (cQR.rotation) qrStyle += ' transform: rotate(' + cQR.rotation + 'deg);';
+        if (cQR.boxShadow) qrStyle += ' box-shadow: 0 2px 8px rgba(0,0,0,0.25);';
         h += '<div style="' + qrStyle + '">';
-        h += '<img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=' + encodeURIComponent(url) + '" width="60" height="60" style="background: white;">';
+        h += '<img class="qr-img p-1" src="https://api.qrserver.com/v1/create-qr-code/?size=' + qs + 'x' + qs + '&data=' + encodeURIComponent(url) + '" width="' + qs + '" height="' + qs + '" style="background: white;">';
         h += '</div>';
     }
 
@@ -1255,6 +1647,37 @@ function initDraggables() {
         }
     } catch (e) {}
 
+    // Load saved gradient
+    try {
+        var savedGradient = localStorage.getItem('qv_gradient');
+        if (savedGradient) {
+            voucherGradient = savedGradient;
+            container.style.backgroundImage = savedGradient;
+            var gradSelect = document.getElementById('voucherGradient');
+            if (gradSelect) {
+                for (var i = 0; i < gradSelect.options.length; i++) {
+                    if (gradSelect.options[i].value === savedGradient) {
+                        gradSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+    } catch (e) {}
+
+    // Load saved QR size
+    try {
+        var savedQrSize = localStorage.getItem('qv_qr_size');
+        if (savedQrSize) {
+            qrCodeSize = parseInt(savedQrSize) || 60;
+            var qrImg = document.querySelector('#dragQR img');
+            if (qrImg) {
+                qrImg.width = qrCodeSize;
+                qrImg.height = qrCodeSize;
+            }
+        }
+    } catch (e) {}
+
     // Apply config to elements
     applyAllElementStyles();
 
@@ -1412,6 +1835,18 @@ function initKeyboardShortcuts() {
             if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) return;
             e.preventDefault();
             toggleLayerVisibility(selectedElementKey);
+        }
+        // Ctrl+C = copy style (when element selected and not in input)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c' && selectedElementKey) {
+            if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) return;
+            e.preventDefault();
+            copyElementStyle();
+        }
+        // Ctrl+V = paste style (when element selected and not in input)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && selectedElementKey && copiedStyle) {
+            if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) return;
+            e.preventDefault();
+            pasteElementStyle();
         }
         // Escape = deselect
         if (e.key === 'Escape') {
