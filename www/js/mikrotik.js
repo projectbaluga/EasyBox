@@ -176,8 +176,11 @@ async function mikrotikApi(endpoint, method = 'GET', body = null, customSettings
         }
 
         if (isNetworkError) {
-            var browserMsg = window.Capacitor && window.Capacitor.isNativePlatform() ? '' : 'If running in a PC Browser, CORS will block this. Use the Android App or launch Chrome with --disable-web-security. ';
-            throw new Error(`Network Error: Failed to connect to ${settings.ip}. ${browserMsg}Check the IP, Port, Protocol (HTTP/HTTPS), or if the REST API is enabled in Winbox (IP -> Services -> www).`);
+            var browserMsg = '';
+            if (!(window.Capacitor && window.Capacitor.isNativePlatform())) {
+                browserMsg = `If testing on PC, CORS blocks requests to the router. Launch Chrome from Win+R: chrome.exe --user-data-dir="C:/ChromeDevSession" --disable-web-security \n\n`;
+            }
+            throw new Error(`Network Error: Failed to connect to ${settings.ip}. \n\n${browserMsg}Check IP, Port, Protocol (HTTP/HTTPS), or if the REST API is enabled in Winbox (IP -> Services -> www). Note: Android cleartext traffic is now enabled.`);
         }
 
         throw error;
