@@ -9,20 +9,26 @@ function getRouterSettings() {
             ip: '',
             user: 'admin',
             pass: '',
-            proto: 'http'
+            proto: 'http',
+            port: ''
         };
     } catch (e) {
-        return { ip: '', user: 'admin', pass: '', proto: 'http' };
+        return { ip: '', user: 'admin', pass: '', proto: 'http', port: '' };
     }
 }
 
-function saveRouterSettings() {
-    var settings = {
+function getSettingsFromForm() {
+    return {
         ip: document.getElementById('routerIp').value.trim(),
         user: document.getElementById('routerUser').value.trim(),
         pass: document.getElementById('routerPass').value,
-        proto: document.getElementById('routerProto').value
+        proto: document.getElementById('routerProto').value,
+        port: document.getElementById('routerPort').value.trim()
     };
+}
+
+function saveRouterSettings() {
+    var settings = getSettingsFromForm();
     localStorage.setItem('qv_router_settings', JSON.stringify(settings));
 
     var modalEl = document.getElementById('routerSettingsModal');
@@ -53,16 +59,46 @@ function populateRouterSettings() {
     document.getElementById('routerUser').value = settings.user || 'admin';
     document.getElementById('routerPass').value = settings.pass || '';
     document.getElementById('routerProto').value = settings.proto || 'http';
+    document.getElementById('routerPort').value = settings.port || '';
+}
+
+async function testRouterConnection() {
+    var btn = document.getElementById('btnTestConn');
+    var resultDiv = document.getElementById('testConnResult');
+    var settings = getSettingsFromForm();
+
+    if (!settings.ip || !settings.user) {
+        resultDiv.textContent = 'Please enter an IP address and Username.';
+        resultDiv.className = 'mt-2 text-center text-danger';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Testing...';
+    resultDiv.textContent = '';
+
+    try {
+        await mikrotikApi('/system/identity', 'GET', null, settings);
+        resultDiv.textContent = 'Connection Successful! ✅';
+        resultDiv.className = 'mt-2 text-center text-success';
+    } catch (e) {
+        resultDiv.textContent = 'Connection Failed: ' + e.message;
+        resultDiv.className = 'mt-2 text-center text-danger';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Test Connection';
+    }
 }
 
 // ---- REST API Client ----
-async function mikrotikApi(endpoint, method = 'GET', body = null) {
-    var settings = getRouterSettings();
+async function mikrotikApi(endpoint, method = 'GET', body = null, customSettings = null) {
+    var settings = customSettings || getRouterSettings();
     if (!settings.ip || !settings.user) {
         throw new Error('Router credentials not set.');
     }
 
-    var url = `${settings.proto}://${settings.ip}/rest${endpoint}`;
+    var portPart = settings.port ? ':' + settings.port : '';
+    var url = `${settings.proto}://${settings.ip}${portPart}/rest${endpoint}`;
     var headers = new Headers();
 
     // Basic Auth
@@ -84,8 +120,14 @@ async function mikrotikApi(endpoint, method = 'GET', body = null) {
     try {
         var response = await fetch(url, options);
         if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Authentication Failed (401). Check Username/Password.');
+            }
+            if (response.status === 404) {
+                throw new Error('Endpoint not found (404). Ensure REST API is enabled in RouterOS v7.');
+            }
             var errText = await response.text();
-            throw new Error(`API Error ${response.status}: ${errText}`);
+            throw new Error(`API Error ${response.status}: ${errText || 'Unknown Error'}`);
         }
         // DELETE often returns empty body
         if (method === 'DELETE') return true;
@@ -93,6 +135,11 @@ async function mikrotikApi(endpoint, method = 'GET', body = null) {
         return await response.json();
     } catch (error) {
         console.error('Mikrotik API Error:', error);
+
+        if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            throw new Error(`Network Error: Failed to connect to ${settings.ip}. Check the IP, Port, Protocol (HTTP/HTTPS), or if the REST API is enabled on the router. (CORS issues may also cause this if running outside the Capacitor App).`);
+        }
+
         throw error;
     }
 }
