@@ -103,6 +103,12 @@ Based on the current state of the application, here are the planned features and
 - [x] **Dark Mode Support:** Implement a system-wide Dark Mode toggle for night-time administration.
 - [ ] **Dashboard Analytics:** Add a visual dashboard showing active users, uptime, and bandwidth usage graphs.
 
+### 🌍 General Enhancements
+- [ ] **Export Settings as JSON:** Allow admins to backup and export their editor and router configurations.
+- [ ] **Multi-Language Support:** Localize the interface to support multiple languages for global operators.
+- [ ] **Customizable Dashboard Widgets:** Let users pin metrics like total bandwidth, live connections, and generated vouchers.
+- [ ] **Role-Based Access Control (RBAC):** Allow limiting access (e.g., staff can only generate vouchers, admins can edit router settings).
+
 ## 📄 License
 
 This project is open-source and free to use and modify.
