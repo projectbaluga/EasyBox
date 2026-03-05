@@ -306,7 +306,7 @@ function escapeHtml(unsafe) {
 
 const HOTSPOT_TABS_CONFIG = {
     'servers': {
-        endpoint: '/rest/ip/hotspot',
+        endpoint: '/ip/hotspot',
         title: 'Servers',
         columns: ['name', 'interface', 'profile', 'idle-timeout'],
         fields: [
@@ -317,7 +317,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'server-profiles': {
-        endpoint: '/rest/ip/hotspot/profile',
+        endpoint: '/ip/hotspot/profile',
         title: 'Server Profiles',
         columns: ['name', 'hotspot-address', 'dns-name', 'html-directory', 'login-by'],
         fields: [
@@ -329,7 +329,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'users': {
-        endpoint: '/rest/ip/hotspot/user',
+        endpoint: '/ip/hotspot/user',
         title: 'Users',
         columns: ['name', 'profile', 'uptime', 'bytes-in', 'bytes-out', 'limit-uptime'],
         fields: [
@@ -341,7 +341,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'user-profiles': {
-        endpoint: '/rest/ip/hotspot/user/profile',
+        endpoint: '/ip/hotspot/user/profile',
         title: 'User Profiles',
         columns: ['name', 'shared-users', 'rate-limit', 'mac-cookie-timeout'],
         fields: [
@@ -352,19 +352,19 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'active': {
-        endpoint: '/rest/ip/hotspot/active',
+        endpoint: '/ip/hotspot/active',
         title: 'Active Connections',
         columns: ['user', 'address', 'mac-address', 'uptime', 'session-time-left'],
         readonly: true // Cannot Add directly, can only Remove/Disconnect
     },
     'hosts': {
-        endpoint: '/rest/ip/hotspot/host',
+        endpoint: '/ip/hotspot/host',
         title: 'Hosts',
         columns: ['mac-address', 'address', 'to-address', 'server', 'uptime'],
         readonly: true
     },
     'ip-bindings': {
-        endpoint: '/rest/ip/hotspot/ip-binding',
+        endpoint: '/ip/hotspot/ip-binding',
         title: 'IP Bindings',
         columns: ['mac-address', 'address', 'to-address', 'server', 'type'],
         fields: [
@@ -376,13 +376,13 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'service-ports': {
-        endpoint: '/rest/ip/firewall/service-port',
+        endpoint: '/ip/firewall/service-port',
         title: 'Service Ports',
         columns: ['name', 'ports'],
         readonly: true // Complex to add generically
     },
     'walled-garden': {
-        endpoint: '/rest/ip/hotspot/walled-garden',
+        endpoint: '/ip/hotspot/walled-garden',
         title: 'Walled Garden',
         columns: ['action', 'server', 'dst-host', 'dst-port', 'hits'],
         fields: [
@@ -393,7 +393,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'walled-garden-ip': {
-        endpoint: '/rest/ip/hotspot/walled-garden/ip',
+        endpoint: '/ip/hotspot/walled-garden/ip',
         title: 'Walled Garden IP List',
         columns: ['action', 'server', 'dst-address', 'protocol', 'dst-port'],
         fields: [
@@ -405,7 +405,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'cookies': {
-        endpoint: '/rest/ip/hotspot/cookie',
+        endpoint: '/ip/hotspot/cookie',
         title: 'Cookies',
         columns: ['user', 'mac-address', 'expires-in'],
         readonly: true
@@ -637,7 +637,7 @@ async function loadPppoeSecrets() {
     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">Loading...</td></tr>';
 
     try {
-        let data = await mikrotikApi('/rest/ppp/secret');
+        let data = await mikrotikApi('/ppp/secret');
         if (!data) data = [];
         if (!Array.isArray(data)) data = [data];
 
@@ -678,7 +678,7 @@ async function loadPppoeActive() {
     tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Loading...</td></tr>';
 
     try {
-        let data = await mikrotikApi('/rest/ppp/active');
+        let data = await mikrotikApi('/ppp/active');
         if (!data) data = [];
         if (!Array.isArray(data)) data = [data];
 
