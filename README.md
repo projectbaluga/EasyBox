@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo/easybox-full-header.png" alt="EasyBox Logo" width="300"/>
+  <img src="logo.png" alt="EasyBox Logo" width="300"/>
 
   # EasyBox
 
