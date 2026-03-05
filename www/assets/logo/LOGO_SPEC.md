@@ -13,12 +13,14 @@
 - **Vibe:** "Friendly Utility" - easy to recognize at small sizes (like Grab or GCash icons)
 
 ## Logo Files
-| File | Purpose | Size |
-|------|---------|------|
-| `easybox-logo.svg` | Main icon/symbol (box + Wi-Fi) | 512x512 |
-| `easybox-icon.svg` | App icon with rounded background | 192x192 |
-| `easybox-logo-full.svg` | Full logo with text (icon + "EasyBox") | 800x200 |
-| `favicon.svg` | Browser favicon | 32x32 |
+| File | Purpose |
+|------|---------|
+| `easybox-logo.png` | Main icon/symbol (box + Wi-Fi) |
+| `easybox-icon.png` | App icon with rounded background |
+| `easybox-logo-full.png` | Full logo with text (icon + "EasyBox") |
+| `easybox-full-header.png` | Header logo variant for app header |
+| `easybox-text.png` | Text-only variant |
+| `favicon.png` | Browser favicon |
 
 ## AI Image Generator Prompt
 For Midjourney, DALL-E, or Canva Magic Media:

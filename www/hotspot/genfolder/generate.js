@@ -1,5 +1,5 @@
 // ============================================
-// QuickVoucher v2.1 - Voucher Generator
+// EasyBox v2.1 - Voucher Generator
 // ============================================
 
 // CSS path for print window (override before loading this script for hotspot deployments)
@@ -319,7 +319,7 @@ function buildVoucher(code, userpass, qr, cfg) {
 
 // ---- Main Generate Function ----
 function Generate() {
-    var vendo = $('#Vendo').val() || 'QuickVoucher';
+    var vendo = $('#Vendo').val() || 'EasyBox';
     var prefix = $('#Prefix').val() || '';
     var price = $('#Price').val() || '0';
     var qty = parseInt($('#Quantity').val()) || 1;

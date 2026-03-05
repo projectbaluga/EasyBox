@@ -60,6 +60,19 @@ body {
     gap: 14px;
 }
 
+.brand-logo {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.brand-logo img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
 .brand-icon {
     width: 42px;
     height: 42px;
