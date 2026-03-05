@@ -740,6 +740,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadPppoeActive();
                 }, 100);
             }
+            if (target === 'dashboard-view') {
+                setTimeout(() => {
+                    loadDashboardData();
+                }, 100);
+            }
         });
     });
 });
@@ -871,4 +876,75 @@ function importSettings(event) {
     };
     reader.readAsText(file);
     event.target.value = ''; // Reset input
+}
+
+// ==========================================
+// DASHBOARD ANALYTICS
+// ==========================================
+async function loadDashboardData() {
+    try {
+        // Fetch System Resources
+        let res = await mikrotikApi('/rest/system/resource', 'GET');
+        let data = res[0] || res;
+
+        if (data.uptime) document.getElementById('dash-uptime').textContent = formatUptime(data.uptime);
+        if (data['cpu-load'] !== undefined) document.getElementById('dash-cpu').textContent = data['cpu-load'] + '%';
+        if (data['board-name']) document.getElementById('dash-board').textContent = data['board-name'];
+        if (data.version) document.getElementById('dash-version').textContent = 'RouterOS Version: ' + data.version;
+
+        // Memory
+        if (data['free-memory'] !== undefined && data['total-memory'] !== undefined) {
+            var freeMem = parseInt(data['free-memory']);
+            var totMem = parseInt(data['total-memory']);
+            var usedMem = totMem - freeMem;
+            var memPct = Math.round((usedMem / totMem) * 100);
+
+            document.getElementById('dash-mem-text').textContent = formatBytes(usedMem) + ' / ' + formatBytes(totMem);
+            document.getElementById('dash-mem-pct').textContent = memPct + '%';
+            var memBar = document.getElementById('dash-mem-bar');
+            if (memBar) memBar.style.width = memPct + '%';
+        }
+
+        // HDD
+        if (data['free-hdd-space'] !== undefined && data['total-hdd-space'] !== undefined) {
+            var freeHdd = parseInt(data['free-hdd-space']);
+            var totHdd = parseInt(data['total-hdd-space']);
+            var usedHdd = totHdd - freeHdd;
+            var hddPct = Math.round((usedHdd / totHdd) * 100);
+
+            document.getElementById('dash-hdd-text').textContent = formatBytes(usedHdd) + ' / ' + formatBytes(totHdd);
+            document.getElementById('dash-hdd-pct').textContent = hddPct + '%';
+            var hddBar = document.getElementById('dash-hdd-bar');
+            if (hddBar) hddBar.style.width = hddPct + '%';
+        }
+    } catch (err) {
+        console.error("Dashboard resource error:", err);
+        document.getElementById('dash-uptime').textContent = "Error";
+        document.getElementById('dash-cpu').textContent = "Error";
+    }
+
+    try {
+        // Fetch Active Hotspot Users Count
+        let activeRes = await mikrotikApi('/rest/ip/hotspot/active', 'GET');
+        var activeUsersCount = Array.isArray(activeRes) ? activeRes.length : 0;
+        document.getElementById('dash-active-users').textContent = activeUsersCount;
+    } catch (err) {
+        console.error("Dashboard active users error:", err);
+        document.getElementById('dash-active-users').textContent = "Error";
+    }
+}
+
+// Utility: format uptime string from MikroTik (e.g. 1w2d3h4m5s)
+function formatUptime(uptimeStr) {
+    if (!uptimeStr) return '--';
+    return uptimeStr.replace('w', 'w ').replace('d', 'd ').replace('h', 'h ').replace('m', 'm ').trim();
+}
+
+// Utility: format bytes to KB/MB/GB
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    var k = 1024;
+    var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }

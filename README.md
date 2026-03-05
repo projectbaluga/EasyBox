@@ -101,7 +101,7 @@ Based on the current state of the application, here are the planned features and
 ### 📱 UI / UX Enhancements
 - [ ] **Enhanced Mobile Responsiveness:** Optimize the Voucher Editor canvas for smaller screens to make editing easier on phones.
 - [x] **Dark Mode Support:** Implement a system-wide Dark Mode toggle for night-time administration.
-- [ ] **Dashboard Analytics:** Add a visual dashboard showing active users, uptime, and bandwidth usage graphs.
+- [x] **Dashboard Analytics:** Add a visual dashboard showing active users, uptime, and bandwidth usage graphs.
 
 ### 🌍 General Enhancements
 - [x] **Export Settings as JSON:** Allow admins to backup and export their editor and router configurations.
