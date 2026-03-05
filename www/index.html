@@ -139,22 +139,34 @@
             </div>
 
             <div class="qv-card p-0 overflow-hidden" style="display: flex; flex-direction: column; height: calc(100vh - 160px); min-height: 500px;">
-                <!-- Winbox Style Tabs -->
-                <div class="winbox-tabs-container">
-                    <ul class="nav nav-tabs winbox-tabs flex-nowrap overflow-auto" id="hotspotTabs" role="tablist">
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="servers" type="button">Servers</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="server-profiles" type="button">Server Profiles</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab active" data-tab="users" type="button">Users</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="user-profiles" type="button">User Profiles</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="active" type="button">Active</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="hosts" type="button">Hosts</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="ip-bindings" type="button">IP Bindings</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="service-ports" type="button">Service Ports</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="walled-garden" type="button">Walled Garden</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="walled-garden-ip" type="button">Walled Garden IP List</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="cookies" type="button">Cookies</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="generator" type="button"><span data-i18n="nav_generator">Generator</span></button></li>
+                <!-- Beginner Friendly Tabs -->
+                <div class="winbox-tabs-container d-flex justify-content-between align-items-center pe-2">
+                    <ul class="nav nav-tabs winbox-tabs flex-nowrap overflow-auto border-0" id="hotspotTabs" role="tablist">
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="generator" type="button"><span data-i18n="nav_generator">Voucher Generator</span></button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab active" data-tab="users" type="button">All Vouchers</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="active" type="button">Online Users</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="user-profiles" type="button">Internet Packages</button></li>
                     </ul>
+
+                    <!-- Advanced Settings Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1" type="button" id="advancedTabsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px; padding: 4px 8px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Advanced
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm winbox-advanced-tabs" aria-labelledby="advancedTabsDropdown" style="font-size: 13px;">
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="servers" type="button">Servers</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="server-profiles" type="button">Server Profiles</button></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="hosts" type="button">Hosts (Connected Devices)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="ip-bindings" type="button">IP Bindings (Bypass/Block)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="cookies" type="button">Active Cookies</button></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="walled-garden" type="button">Allowed Websites (Walled Garden)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="walled-garden-ip" type="button">Allowed IPs (Walled Garden IP)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="service-ports" type="button">Service Ports</button></li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Winbox Style Toolbar -->

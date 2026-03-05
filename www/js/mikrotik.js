@@ -330,7 +330,7 @@ const HOTSPOT_TABS_CONFIG = {
     },
     'users': {
         endpoint: '/ip/hotspot/user',
-        title: 'Users',
+        title: 'All Vouchers',
         columns: ['name', 'profile', 'uptime', 'bytes-in', 'bytes-out', 'limit-uptime'],
         fields: [
             { id: 'name', label: 'Name / Username', type: 'text', required: true },
@@ -342,7 +342,7 @@ const HOTSPOT_TABS_CONFIG = {
     },
     'user-profiles': {
         endpoint: '/ip/hotspot/user/profile',
-        title: 'User Profiles',
+        title: 'Internet Packages',
         columns: ['name', 'shared-users', 'rate-limit', 'mac-cookie-timeout'],
         fields: [
             { id: 'name', label: 'Name', type: 'text', required: true },
@@ -353,7 +353,7 @@ const HOTSPOT_TABS_CONFIG = {
     },
     'active': {
         endpoint: '/ip/hotspot/active',
-        title: 'Active Connections',
+        title: 'Online Users',
         columns: ['user', 'address', 'mac-address', 'uptime', 'session-time-left'],
         readonly: true // Cannot Add directly, can only Remove/Disconnect
     },
@@ -415,31 +415,41 @@ const HOTSPOT_TABS_CONFIG = {
 let currentHotspotTab = 'users';
 
 function initHotspotTabs() {
-    const tabs = document.querySelectorAll('.winbox-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            tabs.forEach(t => t.classList.remove('active'));
+    const mainTabs = document.querySelectorAll('.winbox-tab');
+    const advTabs = document.querySelectorAll('.winbox-tab-adv');
+
+    const handleTabSwitch = (e, isAdv = false) => {
+        // Remove active from all main tabs
+        mainTabs.forEach(t => t.classList.remove('active'));
+
+        if (!isAdv) {
             e.currentTarget.classList.add('active');
+        } else {
+            // Keep Advanced visually active or similar, for now just de-select others
+            // Could add active class to the dropdown button if desired
+        }
 
-            currentHotspotTab = e.currentTarget.dataset.tab;
+        currentHotspotTab = e.currentTarget.dataset.tab;
 
-            const toolbar = document.querySelector('.winbox-toolbar');
-            const tableWrap = document.querySelector('.winbox-table-wrapper');
-            const genContent = document.getElementById('generator-content');
+        const toolbar = document.querySelector('.winbox-toolbar');
+        const tableWrap = document.querySelector('.winbox-table-wrapper');
+        const genContent = document.getElementById('generator-content');
 
-            if (currentHotspotTab === 'generator') {
-                toolbar.style.display = 'none';
-                tableWrap.style.display = 'none';
-                genContent.style.display = 'block';
-                if (typeof editorZoomFit === 'function') setTimeout(editorZoomFit, 50);
-            } else {
-                toolbar.style.display = 'flex';
-                tableWrap.style.display = 'block';
-                genContent.style.display = 'none';
-                loadHotspotCurrentTab();
-            }
-        });
-    });
+        if (currentHotspotTab === 'generator') {
+            toolbar.style.display = 'none';
+            tableWrap.style.display = 'none';
+            genContent.style.display = 'block';
+            if (typeof editorZoomFit === 'function') setTimeout(editorZoomFit, 50);
+        } else {
+            toolbar.style.display = 'flex';
+            tableWrap.style.display = 'block';
+            genContent.style.display = 'none';
+            loadHotspotCurrentTab();
+        }
+    };
+
+    mainTabs.forEach(tab => tab.addEventListener('click', (e) => handleTabSwitch(e, false)));
+    advTabs.forEach(tab => tab.addEventListener('click', (e) => handleTabSwitch(e, true)));
 }
 
 async function loadHotspotCurrentTab() {
