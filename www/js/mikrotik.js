@@ -415,17 +415,35 @@ const HOTSPOT_TABS_CONFIG = {
 let currentHotspotTab = 'users';
 
 function initHotspotTabs() {
-    document.querySelectorAll('.winbox-tab').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.winbox-tab').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-            currentHotspotTab = e.target.dataset.tab;
-            loadHotspotCurrentTab();
+    const tabs = document.querySelectorAll('.winbox-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            tabs.forEach(t => t.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+
+            currentHotspotTab = e.currentTarget.dataset.tab;
+
+            const toolbar = document.querySelector('.winbox-toolbar');
+            const tableWrap = document.querySelector('.winbox-table-wrapper');
+            const genContent = document.getElementById('generator-content');
+
+            if (currentHotspotTab === 'generator') {
+                toolbar.style.display = 'none';
+                tableWrap.style.display = 'none';
+                genContent.style.display = 'block';
+                if (typeof editorZoomFit === 'function') setTimeout(editorZoomFit, 50);
+            } else {
+                toolbar.style.display = 'flex';
+                tableWrap.style.display = 'block';
+                genContent.style.display = 'none';
+                loadHotspotCurrentTab();
+            }
         });
     });
 }
 
 async function loadHotspotCurrentTab() {
+    if (currentHotspotTab === 'generator') return;
     const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
     if (!config) return;
 
@@ -835,7 +853,7 @@ function exportSettings() {
     var settings = {};
     for (var i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
-        if (key && key.startsWith('qv_')) {
+        if (key && (key.startsWith('qv_') || key.startsWith('eb_') || key.startsWith('router_'))) {
             settings[key] = localStorage.getItem(key);
         }
     }
@@ -859,7 +877,7 @@ function importSettings(event) {
             var settings = JSON.parse(e.target.result);
             var count = 0;
             for (var key in settings) {
-                if (key.startsWith('qv_')) {
+                if (key.startsWith('qv_') || key.startsWith('eb_') || key.startsWith('router_')) {
                     localStorage.setItem(key, settings[key]);
                     count++;
                 }
