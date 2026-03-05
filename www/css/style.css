@@ -1785,9 +1785,9 @@ body {
    EasyBox - Dark Theme overrides
    ============================================ */
 body.dark-mode {
-    --primary: #2ECC71;
-    --primary-hover: #27AE60;
-    --primary-light: rgba(46, 204, 113, 0.2);
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-light: rgba(59, 130, 246, 0.2);
     --success: #10b981;
     --success-hover: #059669;
     --danger: #ef4444;

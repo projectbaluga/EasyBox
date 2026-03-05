@@ -794,21 +794,21 @@ function scanQRImage(event) {
                 try {
                     // Try parsing as JSON first
                     const data = JSON.parse(code.data);
-                    if (data.ip) $('#ri').val(data.ip);
-                    if (data.user) $('#ru').val(data.user);
-                    if (data.pass) $('#rp').val(data.pass);
-                    if (data.port) $('#rpo').val(data.port);
-                    if (data.proto) $('#rpr').val(data.proto);
-                    if (data.name) $('#rn').val(data.name);
+                    if (data.ip) $('#routerIp').val(data.ip);
+                    if (data.user) $('#routerUser').val(data.user);
+                    if (data.pass) $('#routerPass').val(data.pass);
+                    if (data.port) $('#routerPort').val(data.port);
+                    if (data.proto) $('#routerProto').val(data.proto);
+                    if (data.name) $('#routerProfileName').val(data.name);
                     alert('QR Code imported successfully! Please save the settings.');
                 } catch (err) {
                     // If not JSON, maybe simple string format like IP,User,Pass,Port
                     const parts = code.data.split(',');
                     if (parts.length >= 3) {
-                        $('#ri').val(parts[0].trim());
-                        $('#ru').val(parts[1].trim());
-                        $('#rp').val(parts[2].trim());
-                        if (parts[3]) $('#rpo').val(parts[3].trim());
+                        $('#routerIp').val(parts[0].trim());
+                        $('#routerUser').val(parts[1].trim());
+                        $('#routerPass').val(parts[2].trim());
+                        if (parts[3]) $('#routerPort').val(parts[3].trim());
                         alert('QR Code imported successfully! Please save the settings.');
                     } else {
                         alert('Unrecognized QR code format. Please use JSON or IP,User,Pass,Port format.');
@@ -823,4 +823,52 @@ function scanQRImage(event) {
     reader.readAsDataURL(file);
     // Reset file input
     event.target.value = '';
+}
+
+// ---- Export / Import Settings ----
+function exportSettings() {
+    var settings = {};
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.startsWith('qv_')) {
+            settings[key] = localStorage.getItem(key);
+        }
+    }
+
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "easybox_settings_backup.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+function importSettings(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var settings = JSON.parse(e.target.result);
+            var count = 0;
+            for (var key in settings) {
+                if (key.startsWith('qv_')) {
+                    localStorage.setItem(key, settings[key]);
+                    count++;
+                }
+            }
+            if (count > 0) {
+                alert("Settings imported successfully. The application will now reload.");
+                window.location.reload();
+            } else {
+                alert("No valid EasyBox settings found in the selected file.");
+            }
+        } catch (err) {
+            alert("Error parsing settings file. Please ensure it is a valid JSON backup.");
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input
 }

@@ -346,10 +346,27 @@
                             <option value="https">HTTPS</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Port <span class="hint">(Optional)</span></label>
                         <input type="number" class="form-control" id="routerPort" placeholder="e.g. 80 or 443">
                     </div>
+
+                    <!-- EXPORT IMPORT SETTINGS -->
+                    <hr>
+                    <h6 class="section-title mt-4">Backup & Restore Settings</h6>
+                    <div class="mb-3">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" type="button" onclick="exportSettings()">Export JSON</button>
+                            <label class="btn btn-outline-secondary mb-0">
+                                Import JSON
+                                <input type="file" style="display: none;" accept=".json,application/json" onchange="importSettings(event)">
+                            </label>
+                        </div>
+                        <small class="text-muted d-block mt-1">Export all configurations, templates, and layouts to a file.</small>
+                    </div>
+                    <!-- /EXPORT IMPORT SETTINGS -->
+
                     <div id="testConnResult" class="mt-2 text-center" style="font-size: 13px; font-weight: 600;"></div>
                 </div>
                 <div class="modal-footer">

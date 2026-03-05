@@ -37,8 +37,14 @@ function pushUndo() {
     saveHistoryState();
 }
 
+var isUndoRedoing = false;
+
 function applyState(state) {
-    if (!state) return;
+    isUndoRedoing = true;
+    if (!state) {
+        isUndoRedoing = false;
+        return;
+    }
 
     voucherContainerSize = JSON.parse(JSON.stringify(state.voucherContainerSize));
     voucherElementsConfig = JSON.parse(JSON.stringify(state.voucherElementsConfig));
@@ -98,6 +104,7 @@ function applyState(state) {
     renderLayers();
     updatePropertiesPanel();
     updateCustomTextsList();
+    isUndoRedoing = false;
 }
 
 function undo() {
