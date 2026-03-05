@@ -2357,3 +2357,17 @@ $(function () {
         }, { passive: false });
     }
 });
+
+$(document).ready(function() {
+    // Basic navigation
+    $('.nav-tab').on('click', function() {
+        if($(this).hasClass('winbox-tab')) return; // Ignore the hotspot sub-tabs
+
+        $('.nav-tab').removeClass('active');
+        $(this).addClass('active');
+
+        var target = $(this).data('target');
+        $('.app-view').removeClass('active');
+        $('#' + target).addClass('active');
+    });
+});
