@@ -1402,13 +1402,26 @@ function editorZoomFit() {
     var container = document.getElementById('dragVoucherContainer');
     if (!workspace || !container) return;
 
-    var ww = workspace.clientWidth - 80;
-    var wh = workspace.clientHeight - 80;
+    // Adjust padding based on screen size (mobile needs less padding)
+    var isMobile = window.innerWidth <= 768;
+    var padding = isMobile ? 20 : 80;
+
+    var ww = workspace.clientWidth - padding;
+    var wh = workspace.clientHeight - padding;
     var cw = voucherContainerSize.width;
     var ch = voucherContainerSize.height;
 
+    // Prevent negative zoom if container is 0 (hidden)
+    if (ww <= 0 || wh <= 0) return;
+
     var zoom = Math.min(ww / cw, wh / ch, 4);
     zoom = Math.max(0.25, Math.round(zoom * 4) / 4); // Round to nearest 0.25
+
+    // Additional override for extremely small screens
+    if (isMobile && cw * zoom > workspace.clientWidth) {
+        zoom = (workspace.clientWidth - 20) / cw;
+    }
+
     editorSetZoom(zoom);
 }
 

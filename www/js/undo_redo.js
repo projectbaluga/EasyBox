@@ -98,6 +98,49 @@ function applyState(state) {
     if (qrSizeRange) qrSizeRange.value = qrCodeSize;
     if (qrSizeVal) qrSizeVal.textContent = qrCodeSize + 'px';
 
+
+    // Synchronize Custom Text DOM elements
+    var container = document.getElementById('dragVoucherContainer');
+    if (container) {
+        // 1. Remove elements from DOM that are no longer in config
+        var currentCustomDivs = container.querySelectorAll('.drag-el[id^="dragCustom"]');
+        currentCustomDivs.forEach(function(div) {
+            var key = div.getAttribute('data-key');
+            if (!voucherElementsConfig[key]) {
+                div.remove();
+            }
+        });
+
+        // 2. Create elements that are in config but not in DOM
+        for (var key in voucherElementsConfig) {
+            if (key.startsWith('custom') && !document.getElementById(voucherElementsConfig[key].id)) {
+                var div = document.createElement('div');
+                div.id = voucherElementsConfig[key].id;
+                div.className = 'drag-el';
+                div.setAttribute('data-key', key);
+                div.style.cssText = 'position: absolute; cursor: move; white-space: nowrap;';
+                div.textContent = customTexts[key] || 'Text';
+                container.appendChild(div);
+
+                // Needs draggable init if function exists
+                if (typeof initSingleDraggable === 'function') {
+                    initSingleDraggable(div);
+                }
+            }
+        }
+    }
+
+
+        // 3. Update textContent for existing custom text elements
+        for (var key in voucherElementsConfig) {
+            if (key.startsWith('custom')) {
+                var div = document.getElementById(voucherElementsConfig[key].id);
+                if (div) {
+                    div.textContent = customTexts[key] || 'Text';
+                }
+            }
+        }
+
     // Re-render elements
     applyAllElementStyles();
     saveElementsConfig();
