@@ -19,7 +19,7 @@
     --input-border: #cbd5e1;
     --input-bg: #ffffff;
     --code-bg: #f1f5f9;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --radius: 16px;
@@ -735,22 +735,25 @@ body {
 /* ---- Responsive ---- */
 @media (max-width: 576px) {
     .qv-card {
-        padding: 24px 16px;
-        border-radius: var(--radius);
+        padding: 20px 16px;
+        border-radius: 20px;
         margin-bottom: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
     }
 
     .main-container {
-        padding: 16px 10px 40px;
+        padding: 12px 8px 40px;
     }
 
     .actions-bar .btn {
-        font-size: 14px;
-        padding: 10px 12px;
+        font-size: 15px;
+        padding: 14px 16px;
+        border-radius: 12px;
     }
 
     .actions-row {
         flex-direction: column;
+        gap: 10px;
     }
 
     .header-inner {
@@ -763,6 +766,17 @@ body {
 
     .duration-group {
         gap: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 12px 14px;
+    }
+
+    .btn-generate {
+        border-radius: 16px !important;
+        padding: 16px 24px !important;
+        font-size: 17px !important;
     }
 }
 
@@ -1923,12 +1937,12 @@ body.dark-mode .qv-card {
     --border: #e5e7eb;
     --text: #1f2937;
     --text-secondary: #4b5563;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    --radius: 12px;
-    --radius-sm: 8px;
-    --radius-xs: 6px;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+    --shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 12px 20px -4px rgba(0, 0, 0, 0.06), 0 6px 10px -2px rgba(0, 0, 0, 0.04);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
 }
 
 /* Modern Header */
@@ -1982,14 +1996,15 @@ body.dark-mode .qv-card {
     box-shadow: var(--shadow);
     padding: 24px;
     margin-bottom: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Form Controls */
 .form-control, .form-select {
     border-radius: var(--radius-sm);
     border: 1px solid var(--input-border);
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 12px 16px;
+    font-size: 15px;
     transition: all 0.2s;
 }
 
@@ -2029,7 +2044,7 @@ body.dark-mode .editor-canvas-area {
 .btn {
     border-radius: var(--radius-sm);
     font-weight: 500;
-    padding: 8px 16px;
+    padding: 10px 18px;
     transition: all 0.2s;
 }
 
