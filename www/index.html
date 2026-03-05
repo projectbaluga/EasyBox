@@ -19,6 +19,9 @@
             </div>
 
             <div class="header-actions">
+                <button class="btn btn-sm btn-outline-secondary d-flex align-items-center me-2" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278zM4.858 1.311A7.269 7.269 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.316 7.316 0 0 0 5.205-2.162c-.337.042-.68.063-1.029.063-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286z"/></svg>
+                </button>
                                 <button class="icon-btn" title="Manage Users" data-bs-target="#usersModal" data-bs-toggle="modal">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -306,6 +309,15 @@
                             <button class="btn btn-outline-success" type="button" onclick="addNewRouterProfile()" title="Add New Profile">+</button>
                             <button class="btn btn-outline-danger" type="button" onclick="deleteCurrentRouterProfile()" title="Delete Current Profile">-</button>
                         </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Import from QR Code</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="qrImageInput" accept="image/*" onchange="scanQRImage(event)">
+                        </div>
+                        <small class="text-muted">Upload an image containing router settings QR code.</small>
+                    </div>
+
                     </div>
                     <div class="mb-3" id="profileNameContainer" style="display:none;">
                         <label class="form-label">Profile Name</label>
@@ -553,6 +565,16 @@
                                     <input type="number" id="canvasH" class="canvas-dim-input" value="100" min="50" max="600" onchange="setCanvasSize()">
                                     <span class="canvas-dim-unit">px</span>
                                 </div>
+
+                                <div class="canvas-actions ms-auto">
+                                    <button class="btn btn-sm btn-outline-secondary" id="undoBtn" onclick="undo()" title="Undo" disabled>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/></svg>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="redoBtn" onclick="redo()" title="Redo" disabled>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+                                    </button>
+                                </div>
+
                                 <div class="canvas-coords" id="canvasCoords">X: 0 &nbsp; Y: 0</div>
                             </div>
                         </div>
@@ -860,9 +882,11 @@
 
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jsQR.js"></script>
     <script src="js/mikrotik.js"></script>
     <!-- Capacitor Core -->
     <script src="https://unpkg.com/@capacitor/core@8.1.0/dist/capacitor.js"></script>
+    <script src="js/undo_redo.js"></script>
     <script src="js/generate.js"></script>
 </body>
 </html>

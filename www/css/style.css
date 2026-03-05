@@ -1780,3 +1780,131 @@ body {
     margin: 0;
     cursor: pointer;
 }
+
+/* ============================================
+   EasyBox - Dark Theme overrides
+   ============================================ */
+body.dark-mode {
+    --primary: #2ECC71;
+    --primary-hover: #27AE60;
+    --primary-light: rgba(46, 204, 113, 0.2);
+    --success: #10b981;
+    --success-hover: #059669;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --input-border: #475569;
+    --input-bg: #0f172a;
+    --code-bg: #334155;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .app-header {
+    background: var(--card);
+}
+
+body.dark-mode .nav-link {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+body.dark-mode .form-control, body.dark-mode .form-select, body.dark-mode .prop-select, body.dark-mode .prop-input {
+    background-color: var(--input-bg);
+    color: var(--text);
+    border-color: var(--input-border);
+}
+
+body.dark-mode .form-control:focus, body.dark-mode .form-select:focus, body.dark-mode .prop-select:focus, body.dark-mode .prop-input:focus {
+    background-color: var(--input-bg);
+    color: var(--text);
+}
+
+body.dark-mode .table, body.dark-mode .modal-content, body.dark-mode .app-footer {
+    color: var(--text);
+    background-color: var(--card);
+    border-color: var(--border);
+}
+
+body.dark-mode .table td, body.dark-mode .table th {
+    border-color: var(--border);
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: var(--text-secondary);
+    border-color: var(--border);
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: var(--border);
+    color: var(--text);
+}
+
+body.dark-mode .card, body.dark-mode .settings-panel, body.dark-mode .preview-panel {
+    background-color: var(--card);
+    border-color: var(--border);
+}
+
+body.dark-mode .modal-header, body.dark-mode .modal-footer {
+    border-color: var(--border);
+}
+
+body.dark-mode .badge {
+    color: #fff;
+}
+
+body.dark-mode .text-muted {
+    color: var(--text-muted) !important;
+}
+
+body.dark-mode .alert-info {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+body.dark-mode .modal-content .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+
+/* Fixes for dark mode gaps */
+body.dark-mode .app-nav {
+    background-color: var(--card);
+    border-bottom: 1px solid var(--border);
+}
+
+body.dark-mode .nav-tab {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .nav-tab:hover {
+    color: var(--primary);
+    background-color: var(--primary-light);
+}
+
+body.dark-mode .nav-tab.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+/* Fix generator body background */
+body.dark-mode .main-container {
+    background-color: var(--bg);
+}
+
+body.dark-mode .qv-card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}

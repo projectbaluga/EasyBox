@@ -701,6 +701,7 @@ function togglePropBoxShadow() {
 }
 
 function setQrCodeSize() {
+    pushUndo();
     var val = parseInt(document.getElementById('propQrSize').value) || 60;
     qrCodeSize = Math.max(30, Math.min(120, val));
     var label = document.getElementById('propQrSizeVal');
@@ -784,6 +785,7 @@ function getCustomTextCount() {
 }
 
 function addCustomText() {
+    pushUndo();
     var count = getCustomTextCount();
     if (count >= MAX_CUSTOM_TEXTS) {
         alert('Maximum ' + MAX_CUSTOM_TEXTS + ' custom text fields allowed.');
@@ -884,6 +886,7 @@ function removeCustomText(key) {
 }
 
 function updateCustomTextContent(key) {
+    pushUndo();
     if (key.indexOf('custom') !== 0) return;
     var input = document.getElementById('customTextInput_' + key);
     if (!input) return;
@@ -1220,6 +1223,7 @@ function applyVoucherBgColor() {
 }
 
 function applyBorderRadius() {
+    pushUndo();
     var val = parseInt(document.getElementById('voucherBorderRadius').value) || 0;
     voucherBorderRadius = val;
     var label = document.getElementById('borderRadiusVal');
@@ -1230,6 +1234,7 @@ function applyBorderRadius() {
 }
 
 function applyVoucherGradient() {
+    pushUndo();
     var val = document.getElementById('voucherGradient').value;
     voucherGradient = val;
     var container = document.getElementById('dragVoucherContainer');
@@ -1368,6 +1373,7 @@ function renderLayers() {
 }
 
 function toggleLayerVisibility(key, e) {
+    pushUndo();
     if (e) e.stopPropagation();
     var cfg = voucherElementsConfig[key];
     if (!cfg) return;
@@ -1379,6 +1385,7 @@ function toggleLayerVisibility(key, e) {
 }
 
 function moveLayer(key, direction, e) {
+    pushUndo();
     if (e) e.stopPropagation();
     var idx = layerOrder.indexOf(key);
     if (idx === -1) return;
@@ -1470,6 +1477,7 @@ function alignElement(alignment) {
 // CANVAS SIZE
 // ============================================
 function setCanvasSize() {
+    pushUndo();
     var w = parseInt(document.getElementById('canvasW').value) || 200;
     var h = parseInt(document.getElementById('canvasH').value) || 100;
     w = Math.max(100, Math.min(800, w));

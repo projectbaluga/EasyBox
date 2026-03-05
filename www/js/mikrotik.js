@@ -743,3 +743,84 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// ---- Dark Mode ----
+function initDarkMode() {
+    var isDark = localStorage.getItem('qv_dark_mode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+function toggleDarkMode() {
+    var isDark = document.body.classList.contains('dark-mode');
+    if (isDark) {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('qv_dark_mode', 'false');
+    } else {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('qv_dark_mode', 'true');
+    }
+}
+
+// Initialize on load
+$(document).ready(function() {
+    initDarkMode();
+});
+
+// ---- QR Code Importer ----
+function scanQRImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0, img.width, img.height);
+
+            const imageData = context.getImageData(0, 0, img.width, img.height);
+            const code = jsQR(imageData.data, img.width, img.height, {
+                inversionAttempts: "dontInvert",
+            });
+
+            if (code) {
+                try {
+                    // Try parsing as JSON first
+                    const data = JSON.parse(code.data);
+                    if (data.ip) $('#ri').val(data.ip);
+                    if (data.user) $('#ru').val(data.user);
+                    if (data.pass) $('#rp').val(data.pass);
+                    if (data.port) $('#rpo').val(data.port);
+                    if (data.proto) $('#rpr').val(data.proto);
+                    if (data.name) $('#rn').val(data.name);
+                    alert('QR Code imported successfully! Please save the settings.');
+                } catch (err) {
+                    // If not JSON, maybe simple string format like IP,User,Pass,Port
+                    const parts = code.data.split(',');
+                    if (parts.length >= 3) {
+                        $('#ri').val(parts[0].trim());
+                        $('#ru').val(parts[1].trim());
+                        $('#rp').val(parts[2].trim());
+                        if (parts[3]) $('#rpo').val(parts[3].trim());
+                        alert('QR Code imported successfully! Please save the settings.');
+                    } else {
+                        alert('Unrecognized QR code format. Please use JSON or IP,User,Pass,Port format.');
+                    }
+                }
+            } else {
+                alert('No QR code found in the image. Please try another image.');
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    // Reset file input
+    event.target.value = '';
+}
