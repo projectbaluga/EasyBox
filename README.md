@@ -1,39 +1,89 @@
-# QuickVoucher
+<div align="center">
+  <img src="assets/logo/easybox-full-header.png" alt="EasyBox Logo" width="300"/>
 
-**Hotspot Voucher Generator** for MikroTik-based hotspot systems.
+  # EasyBox
 
-Generate, customize, and print WiFi access vouchers with MikroTik-compatible scripts.
+  **Advanced Hotspot & PPPoE Management Tool** for MikroTik RouterOS.
 
-## Features
+  [![Android App](https://img.shields.io/badge/Android-App-3DDC84?style=for-the-badge&logo=android&logoColor=white)](#android-application)
+  [![MikroTik REST API](https://img.shields.io/badge/MikroTik-REST_API-00A9E0?style=for-the-badge&logo=mikrotik&logoColor=white)](#mikrotik-integration)
+  [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#)
+  [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](#)
+  [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](#)
+  [![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](#)
+  [![Capacitor](https://img.shields.io/badge/Capacitor-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)](#)
+</div>
 
-- Generate vouchers with customizable prefix, length, and character types
-- User-only or User + Password authentication modes
-- Configurable duration, validity, and data limits
-- Export as `.rsc` script file (MikroTik-ready)
-- Copy script to clipboard
-- Print physical voucher cards with optional QR codes
-- Custom currency, tag colors, and branding
+---
 
-## Quick Start
+EasyBox is a dual-purpose application designed for WISP operators and hotspot administrators. It functions as a highly customizable **Hotspot Voucher Generator** and a **Mini-Winbox** directly communicating with MikroTik routers via the v7 REST API.
 
-Open `index.html` in any browser to start generating vouchers.
+## 🚀 Key Features
 
-## Hotspot Portal Integration
+### 🎟️ Voucher Generator
+- **Fully Customizable:** Drag-and-drop editor to design physical voucher cards (200px x 100px).
+- **Flexible Authentication:** Supports User-only or User + Password modes.
+- **Dynamic Settings:** Configurable prefix, length, character sets, duration, validity, and data limits.
+- **Export & Print:** Generate `.rsc` scripts, copy to clipboard, or print directly with optional QR codes.
+- **Branding:** Custom currency, tag colors, gradients, and custom text overlays.
 
-You can embed QuickVoucher directly into your MikroTik hotspot portal:
+### 🎛️ Mini-Winbox (MikroTik Integration)
+- **Direct REST API Connection:** Seamlessly connects to MikroTik RouterOS v7 via HTTP/HTTPS.
+- **Hotspot Management:** View and manage Servers, User Profiles, Active Connections, IP Bindings, and more.
+- **PPPoE Management:** View PPPoE Secrets and Active Connections.
+- **Profile Management:** Store multiple router profiles locally for quick switching.
 
-1. Download the `hotspot/` folder contents
-2. Copy `vcgen.html` and `genfolder/` into your MikroTik hotspot directory
-3. Access via `http://<hotspot-ip>/vcgen.html`
+## 🛠️ Installation & Setup
 
-## Usage
+### Web Application (Local Browser)
+To run EasyBox locally on a PC browser, you must bypass CORS restrictions to communicate with the MikroTik API.
 
-1. Fill in your **Tag Name**, **Prefix**, and voucher settings
-2. Set **Duration** and optional **Validity** / **Data Package**
-3. Configure your **Hotspot Server** and **IP**
-4. Click **Generate Vouchers**
-5. **Copy**, **Download .rsc**, or **Print** your vouchers
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/projectbaluga/Voucher-Generator.git
+   cd Voucher-Generator
+   ```
+2. Launch Google Chrome with CORS disabled:
+   ```bash
+   # Windows
+   chrome.exe --user-data-dir="C:/ChromeDevSession" --disable-web-security
+   ```
+3. Open `www/index.html` in the newly opened Chrome window.
 
-## License
+### Android Application (Recommended)
+The Android app bypasses CORS limitations natively using the Capacitor HTTP plugin.
 
-Open source. Free to use and modify.
+#### Download the APK
+You can download the latest pre-compiled `EasyBox.apk` directly from the repository root.
+
+#### Build from Source
+To build the Android APK yourself, ensure you have Node.js, npm, and Android Studio installed.
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Sync web assets with Capacitor:
+   ```bash
+   npx cap sync android
+   ```
+3. Build the Debug APK:
+   ```bash
+   cd android
+   ./gradlew assembleDebug
+   ```
+   *The compiled APK will be located at `android/app/build/outputs/apk/debug/app-debug.apk`.*
+
+> **Note:** The application requires cleartext HTTP traffic to be explicitly enabled to communicate with local MikroTik routers over non-HTTPS REST APIs. This is already configured in the `AndroidManifest.xml` and `capacitor.config.json`.
+
+## 📡 MikroTik Router Configuration
+
+Ensure your MikroTik router (RouterOS v7+) is configured to accept REST API connections:
+1. Open Winbox.
+2. Go to **IP** &rarr; **Services**.
+3. Enable `www` (port 80) or `www-ssl` (port 443).
+   > *Crucial: The standard `api` service (port 8728) is a different protocol and will not work with EasyBox.*
+
+## 📄 License
+
+This project is open-source and free to use and modify.
