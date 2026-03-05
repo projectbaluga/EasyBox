@@ -1,5 +1,5 @@
 // ============================================
-// QuickVoucher v2.5 - Voucher Generator
+// EasyBox v2.5 - Voucher Generator
 // Enhanced Voucher Editor with Photoshop-style UI
 // ============================================
 
@@ -1639,7 +1639,7 @@ function buildVoucher(code, userpass, qr, cfg) {
 
 // ---- Main Generate Function ----
 function Generate() {
-    var vendo = $('#Vendo').val() || 'QuickVoucher';
+    var vendo = $('#Vendo').val() || 'EasyBox';
     var prefix = $('#Prefix').val() || '';
     var price = $('#Price').val() || '0';
     var qty = parseInt($('#Quantity').val()) || 1;

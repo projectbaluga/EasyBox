@@ -306,7 +306,7 @@ function escapeHtml(unsafe) {
 
 const HOTSPOT_TABS_CONFIG = {
     'servers': {
-        endpoint: '/rest/ip/hotspot',
+        endpoint: '/ip/hotspot',
         title: 'Servers',
         columns: ['name', 'interface', 'profile', 'idle-timeout'],
         fields: [
@@ -317,7 +317,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'server-profiles': {
-        endpoint: '/rest/ip/hotspot/profile',
+        endpoint: '/ip/hotspot/profile',
         title: 'Server Profiles',
         columns: ['name', 'hotspot-address', 'dns-name', 'html-directory', 'login-by'],
         fields: [
@@ -329,7 +329,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'users': {
-        endpoint: '/rest/ip/hotspot/user',
+        endpoint: '/ip/hotspot/user',
         title: 'Users',
         columns: ['name', 'profile', 'uptime', 'bytes-in', 'bytes-out', 'limit-uptime'],
         fields: [
@@ -341,7 +341,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'user-profiles': {
-        endpoint: '/rest/ip/hotspot/user/profile',
+        endpoint: '/ip/hotspot/user/profile',
         title: 'User Profiles',
         columns: ['name', 'shared-users', 'rate-limit', 'mac-cookie-timeout'],
         fields: [
@@ -352,19 +352,19 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'active': {
-        endpoint: '/rest/ip/hotspot/active',
+        endpoint: '/ip/hotspot/active',
         title: 'Active Connections',
         columns: ['user', 'address', 'mac-address', 'uptime', 'session-time-left'],
         readonly: true // Cannot Add directly, can only Remove/Disconnect
     },
     'hosts': {
-        endpoint: '/rest/ip/hotspot/host',
+        endpoint: '/ip/hotspot/host',
         title: 'Hosts',
         columns: ['mac-address', 'address', 'to-address', 'server', 'uptime'],
         readonly: true
     },
     'ip-bindings': {
-        endpoint: '/rest/ip/hotspot/ip-binding',
+        endpoint: '/ip/hotspot/ip-binding',
         title: 'IP Bindings',
         columns: ['mac-address', 'address', 'to-address', 'server', 'type'],
         fields: [
@@ -376,13 +376,13 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'service-ports': {
-        endpoint: '/rest/ip/firewall/service-port',
+        endpoint: '/ip/firewall/service-port',
         title: 'Service Ports',
         columns: ['name', 'ports'],
         readonly: true // Complex to add generically
     },
     'walled-garden': {
-        endpoint: '/rest/ip/hotspot/walled-garden',
+        endpoint: '/ip/hotspot/walled-garden',
         title: 'Walled Garden',
         columns: ['action', 'server', 'dst-host', 'dst-port', 'hits'],
         fields: [
@@ -393,7 +393,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'walled-garden-ip': {
-        endpoint: '/rest/ip/hotspot/walled-garden/ip',
+        endpoint: '/ip/hotspot/walled-garden/ip',
         title: 'Walled Garden IP List',
         columns: ['action', 'server', 'dst-address', 'protocol', 'dst-port'],
         fields: [
@@ -405,7 +405,7 @@ const HOTSPOT_TABS_CONFIG = {
         ]
     },
     'cookies': {
-        endpoint: '/rest/ip/hotspot/cookie',
+        endpoint: '/ip/hotspot/cookie',
         title: 'Cookies',
         columns: ['user', 'mac-address', 'expires-in'],
         readonly: true
@@ -628,17 +628,116 @@ async function saveHotspotGeneric() {
     }
 }
 
-// Intercept navigation to load data when hotspot view is opened
+// ==========================================
+// PPPoE CONTROLLER
+// ==========================================
+
+async function loadPppoeSecrets() {
+    const tbody = document.querySelector('#pppoeSecretsTable tbody');
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">Loading...</td></tr>';
+
+    try {
+        let data = await mikrotikApi('/ppp/secret');
+        if (!data) data = [];
+        if (!Array.isArray(data)) data = [data];
+
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No PPPoE secrets found.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        data.forEach(item => {
+            const id = item['.id'];
+            const disabled = item.disabled === "true" || item.disabled === true;
+            const cls = disabled ? 'text-muted' : '';
+            const prefix = disabled ? '<span class="text-danger fw-bold" title="Disabled">X</span> ' : '';
+
+            html += `<tr class="${cls}">`;
+            html += `<td>${prefix}${escapeHtml(item.name || '')}</td>`;
+            html += `<td>${escapeHtml(item.profile || '')}</td>`;
+            html += `<td>${escapeHtml(item.service || '')}</td>`;
+            html += `<td>`;
+            if (!disabled) {
+                html += `<button class="btn btn-outline-danger btn-sm" onclick="deletePppoeSecret('${id}')">Remove</button>`;
+            } else {
+                html += `<button class="btn btn-outline-success btn-sm" onclick="enablePppoeSecret('${id}')">Enable</button>`;
+            }
+            html += `</td></tr>`;
+        });
+
+        tbody.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading PPPoE secrets:', error);
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-4">Connection failed. Check router settings.</td></tr>`;
+    }
+}
+
+async function loadPppoeActive() {
+    const tbody = document.querySelector('#pppoeActiveTable tbody');
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Loading...</td></tr>';
+
+    try {
+        let data = await mikrotikApi('/ppp/active');
+        if (!data) data = [];
+        if (!Array.isArray(data)) data = [data];
+
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">No active PPPoE connections.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        data.forEach(item => {
+            html += `<tr>`;
+            html += `<td><span class="text-success fw-bold" title="Active">A</span> ${escapeHtml(item.name || '')}</td>`;
+            html += `<td>${escapeHtml(item.address || '')}</td>`;
+            html += `<td>${escapeHtml(item.uptime || '')}</td>`;
+            html += `</tr>`;
+        });
+
+        tbody.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading PPPoE active:', error);
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger py-4">Connection failed. Check router settings.</td></tr>`;
+    }
+}
+
+async function deletePppoeSecret(id) {
+    if (!confirm('Are you sure you want to remove this PPPoE secret?')) return;
+    try {
+        await mikrotikApi(`/rest/ppp/secret/${id}`, 'DELETE');
+        loadPppoeSecrets();
+    } catch (e) {
+        alert('Failed to remove: ' + e.message);
+    }
+}
+
+async function enablePppoeSecret(id) {
+    try {
+        await mikrotikApi(`/rest/ppp/secret/${id}`, 'PATCH', { disabled: 'false' });
+        loadPppoeSecrets();
+    } catch (e) {
+        alert('Failed to enable: ' + e.message);
+    }
+}
+
+// Intercept navigation to load data when hotspot/pppoe view is opened
 document.addEventListener('DOMContentLoaded', () => {
     initHotspotTabs();
 
-    // Override app-nav clicking for hotspot to load the current tab data
     document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
             const target = e.currentTarget.dataset.target;
             if (target === 'hotspot-view') {
                 setTimeout(() => {
                     loadHotspotCurrentTab();
+                }, 100);
+            }
+            if (target === 'pppoe-view') {
+                setTimeout(() => {
+                    loadPppoeSecrets();
+                    loadPppoeActive();
                 }, 100);
             }
         });

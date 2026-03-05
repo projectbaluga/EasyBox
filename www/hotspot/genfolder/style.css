@@ -1,15 +1,15 @@
 /* ============================================
-   QuickVoucher - Clean Light Theme
+   EasyBox - Clean Light Theme
    ============================================ */
 
 :root {
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-light: rgba(37, 99, 235, 0.08);
-    --success: #059669;
-    --success-hover: #047857;
-    --danger: #dc2626;
-    --warning: #d97706;
+    --primary: #2ECC71;
+    --primary-hover: #27AE60;
+    --primary-light: rgba(46, 204, 113, 0.1);
+    --success: #10b981;
+    --success-hover: #059669;
+    --danger: #ef4444;
+    --warning: #f59e0b;
     --bg: #f0f2f5;
     --card: #ffffff;
     --border: #e2e8f0;
@@ -59,16 +59,29 @@ body {
     gap: 14px;
 }
 
+.brand-logo {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.brand-logo img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
 .brand-icon {
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, var(--primary), #3b82f6);
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
     border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
 }
 
 .brand-icon svg {
@@ -181,7 +194,7 @@ body {
     background: var(--primary);
     border-color: var(--primary);
     color: #fff;
-    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 1px 3px rgba(46, 204, 113, 0.3);
 }
 
 .type-toggle .btn-outline-primary:hover {
@@ -221,20 +234,20 @@ body {
 
 .btn-generate {
     flex: 1 1 100%;
-    background: linear-gradient(135deg, var(--primary), #3b82f6);
+    background: linear-gradient(135deg, var(--primary), #27AE60);
     border: none;
     color: #fff;
     font-weight: 600;
     font-size: 14px !important;
     padding: 11px 16px !important;
     border-radius: var(--radius-sm) !important;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 2px 6px rgba(46, 204, 113, 0.3);
 }
 
 .btn-generate:hover {
     background: linear-gradient(135deg, var(--primary-hover), var(--primary));
     color: #fff;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.35);
     transform: translateY(-1px);
 }
 
