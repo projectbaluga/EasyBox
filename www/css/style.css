@@ -2107,21 +2107,31 @@ body.dark-mode .qv-card {
 
 /* Editor Canvas Area */
 .editor-canvas-area {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    min-height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Remove padding, justify-content, and align-items so the child .canvas-workspace can fill the container */
+}
+
+/* Apply the grid pattern to the .canvas-workspace instead to fix the shrink-to-fit issue */
+.canvas-workspace {
     background-color: #f8fafc;
     background-image: linear-gradient(#e2e8f0 1px, transparent 1px),
                       linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
     background-size: 20px 20px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 40px;
+    flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 400px;
-    overflow: hidden;
+    justify-content: center;
+    overflow: auto;
+    padding: 40px;
+    position: relative;
 }
 
-body.dark-mode .editor-canvas-area {
+body.dark-mode .canvas-workspace {
     background-color: #0f172a;
     background-image: linear-gradient(#1e293b 1px, transparent 1px),
                       linear-gradient(90deg, #1e293b 1px, transparent 1px);
