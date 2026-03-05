@@ -1780,3 +1780,393 @@ body {
     margin: 0;
     cursor: pointer;
 }
+
+/* ============================================
+   EasyBox - Dark Theme overrides
+   ============================================ */
+body.dark-mode {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-light: rgba(59, 130, 246, 0.2);
+    --success: #10b981;
+    --success-hover: #059669;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --input-border: #475569;
+    --input-bg: #0f172a;
+    --code-bg: #334155;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .app-header {
+    background: var(--card);
+}
+
+body.dark-mode .nav-link {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+body.dark-mode .form-control, body.dark-mode .form-select, body.dark-mode .prop-select, body.dark-mode .prop-input {
+    background-color: var(--input-bg);
+    color: var(--text);
+    border-color: var(--input-border);
+}
+
+body.dark-mode .form-control:focus, body.dark-mode .form-select:focus, body.dark-mode .prop-select:focus, body.dark-mode .prop-input:focus {
+    background-color: var(--input-bg);
+    color: var(--text);
+}
+
+body.dark-mode .table, body.dark-mode .modal-content, body.dark-mode .app-footer {
+    color: var(--text);
+    background-color: var(--card);
+    border-color: var(--border);
+}
+
+body.dark-mode .table td, body.dark-mode .table th {
+    border-color: var(--border);
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: var(--text-secondary);
+    border-color: var(--border);
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: var(--border);
+    color: var(--text);
+}
+
+body.dark-mode .card, body.dark-mode .settings-panel, body.dark-mode .preview-panel {
+    background-color: var(--card);
+    border-color: var(--border);
+}
+
+body.dark-mode .modal-header, body.dark-mode .modal-footer {
+    border-color: var(--border);
+}
+
+body.dark-mode .badge {
+    color: #fff;
+}
+
+body.dark-mode .text-muted {
+    color: var(--text-muted) !important;
+}
+
+body.dark-mode .alert-info {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+body.dark-mode .modal-content .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+
+/* Fixes for dark mode gaps */
+body.dark-mode .app-nav {
+    background-color: var(--card);
+    border-bottom: 1px solid var(--border);
+}
+
+body.dark-mode .nav-tab {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .nav-tab:hover {
+    color: var(--primary);
+    background-color: var(--primary-light);
+}
+
+body.dark-mode .nav-tab.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+/* Fix generator body background */
+body.dark-mode .main-container {
+    background-color: var(--bg);
+}
+
+body.dark-mode .qv-card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+/* ============================================
+   EasyBox - Professional Design Enhancements
+   ============================================ */
+
+/* Soften shadows and borders */
+:root {
+    --primary: #3b82f6; /* Shift to a more professional blue from green */
+    --primary-hover: #2563eb;
+    --primary-light: rgba(59, 130, 246, 0.1);
+    --bg: #f3f4f6; /* Softer gray background */
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-secondary: #4b5563;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+}
+
+/* Modern Header */
+.app-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.brand-logo img {
+    height: 32px;
+    object-fit: contain;
+}
+
+/* Modern Navigation Tabs */
+.app-nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 24px;
+}
+
+.nav-tab {
+    padding: 16px 0;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-tab:hover {
+    color: var(--primary);
+}
+
+.nav-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* Card Improvements */
+.qv-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--input-border);
+    padding: 10px 14px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Editor Canvas Area */
+.editor-canvas-area {
+    background-color: #f8fafc;
+    background-image: linear-gradient(#e2e8f0 1px, transparent 1px),
+                      linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+    background-size: 20px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+body.dark-mode .editor-canvas-area {
+    background-color: #0f172a;
+    background-image: linear-gradient(#1e293b 1px, transparent 1px),
+                      linear-gradient(90deg, #1e293b 1px, transparent 1px);
+}
+
+.drag-voucher-container {
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border) !important;
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+/* Properties Panel */
+.properties-panel {
+    background: var(--card);
+    border-left: 1px solid var(--border);
+    padding: 20px;
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.panel-header {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+
+/* Update the form labels and sections for a cleaner look */
+.form-label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+
+.prop-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+/* ============================================
+   Enhanced Mobile Responsiveness (Voucher Editor)
+   ============================================ */
+@media (max-width: 768px) {
+    .editor-canvas-area {
+        padding: 10px;
+        min-height: 300px;
+        overflow: auto;
+    }
+    .canvas-workspace {
+        padding: 10px;
+        align-items: flex-start;
+        justify-content: center;
+    }
+    .drag-voucher-container {
+        transform-origin: top center;
+        /* Let JS handle dynamic scale based on screen width,
+           but give it a fallback scale if JS fails */
+    }
+
+    /* Make the settings modal inputs more stackable on small screens */
+    #rst .col-sm-6 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    /* Compact the properties panel if it shows up */
+    .properties-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 12px;
+    }
+
+    /* Hotspot tables on mobile */
+    .winbox-table-wrapper {
+        font-size: 11px;
+    }
+
+    .tb-action-btn {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .editor-canvas-area {
+        min-height: 250px;
+    }
+    .canvas-scaler {
+        transform: scale(0.8) !important;
+        transform-origin: top center;
+    }
+}
+
+/* Force touch actions for better drag experience on mobile */
+.drag-el {
+    touch-action: none;
+}
+
+@media (max-width: 576px) {
+    /* Collapse side panels or resize inputs for mobile */
+    .editor-panel {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        border-left: none;
+        border-top: 1px solid var(--border);
+    }
+    .panel-section {
+        flex: 1;
+        min-width: 150px;
+    }
+    .prop-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .prop-input, .prop-select {
+        width: 100%;
+    }
+}

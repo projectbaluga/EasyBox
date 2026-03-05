@@ -543,7 +543,6 @@ function updatePropertiesPanel() {
 function setPropPosition() {
     if (!selectedElementKey) return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.left = parseInt(document.getElementById('propX').value) || 0;
     cfg.top = parseInt(document.getElementById('propY').value) || 0;
     applyElementStyle(selectedElementKey);
@@ -553,7 +552,6 @@ function setPropPosition() {
 function setPropTypography() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.fontFamily = document.getElementById('propFont').value;
     cfg.fontSize = parseInt(document.getElementById('propFontSize').value) || 12;
     cfg.color = document.getElementById('propFontColor').value || '#000000';
@@ -564,7 +562,6 @@ function setPropTypography() {
 function togglePropBold() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.bold = !cfg.bold;
     document.getElementById('propBold').classList.toggle('active', cfg.bold);
     applyElementStyle(selectedElementKey);
@@ -574,7 +571,6 @@ function togglePropBold() {
 function togglePropItalic() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.italic = !cfg.italic;
     document.getElementById('propItalic').classList.toggle('active', cfg.italic);
     applyElementStyle(selectedElementKey);
@@ -584,7 +580,6 @@ function togglePropItalic() {
 function setPropOpacity() {
     if (!selectedElementKey) return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     var val = parseInt(document.getElementById('propOpacity').value) || 100;
     cfg.opacity = val / 100;
     document.getElementById('propOpacityVal').textContent = val + '%';
@@ -598,7 +593,6 @@ function setPropOpacity() {
 function setPropTextTransform() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.textTransform = document.getElementById('propTextTransform').value || 'none';
     applyElementStyle(selectedElementKey);
     saveElementsConfig();
@@ -607,7 +601,6 @@ function setPropTextTransform() {
 function setPropTextDecoration() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.textDecoration = document.getElementById('propTextDecoration').value || 'none';
     applyElementStyle(selectedElementKey);
     saveElementsConfig();
@@ -616,7 +609,6 @@ function setPropTextDecoration() {
 function setPropLetterSpacing() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     var val = parseFloat(document.getElementById('propLetterSpacing').value) || 0;
     cfg.letterSpacing = val;
     var label = document.getElementById('propLetterSpacingVal');
@@ -628,7 +620,6 @@ function setPropLetterSpacing() {
 function togglePropTextShadow() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.textShadow = !cfg.textShadow;
     document.getElementById('propTextShadow').classList.toggle('active', cfg.textShadow);
     applyElementStyle(selectedElementKey);
@@ -638,7 +629,6 @@ function togglePropTextShadow() {
 function setPropRotation() {
     if (!selectedElementKey) return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     var val = parseInt(document.getElementById('propRotation').value) || 0;
     cfg.rotation = val;
     var label = document.getElementById('propRotationVal');
@@ -650,7 +640,6 @@ function setPropRotation() {
 function setPropBgColor() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.bgColor = document.getElementById('propBgColor').value || 'transparent';
     applyElementStyle(selectedElementKey);
     saveElementsConfig();
@@ -659,7 +648,6 @@ function setPropBgColor() {
 function clearPropBgColor() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.bgColor = 'transparent';
     document.getElementById('propBgColor').value = '#ffffff';
     applyElementStyle(selectedElementKey);
@@ -669,7 +657,6 @@ function clearPropBgColor() {
 function setPropLineHeight() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     var val = parseFloat(document.getElementById('propLineHeight').value) || 1.2;
     cfg.lineHeight = val;
     var label = document.getElementById('propLineHeightVal');
@@ -681,7 +668,6 @@ function setPropLineHeight() {
 function setPropPadding() {
     if (!selectedElementKey || selectedElementKey === 'qr') return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     var val = parseInt(document.getElementById('propPadding').value) || 0;
     cfg.padding = val;
     var label = document.getElementById('propPaddingVal');
@@ -693,7 +679,6 @@ function setPropPadding() {
 function togglePropBoxShadow() {
     if (!selectedElementKey) return;
     var cfg = voucherElementsConfig[selectedElementKey];
-    pushUndo();
     cfg.boxShadow = !cfg.boxShadow;
     document.getElementById('propBoxShadow').classList.toggle('active', cfg.boxShadow);
     applyElementStyle(selectedElementKey);
@@ -745,13 +730,11 @@ function pasteElementStyle() {
     if (selectedElementKey === 'qr') {
         // Only paste applicable props for QR
         var cfg = voucherElementsConfig[selectedElementKey];
-        pushUndo();
         cfg.opacity = copiedStyle.opacity;
         cfg.rotation = copiedStyle.rotation;
         cfg.boxShadow = copiedStyle.boxShadow;
     } else {
         var cfg = voucherElementsConfig[selectedElementKey];
-        pushUndo();
         for (var prop in copiedStyle) {
             cfg[prop] = copiedStyle[prop];
         }
@@ -759,6 +742,7 @@ function pasteElementStyle() {
     applyElementStyle(selectedElementKey);
     saveElementsConfig();
     updatePropertiesPanel();
+    saveElementsConfig();
 }
 
 // ============================================
@@ -796,7 +780,6 @@ function addCustomText() {
     var key = 'custom' + num;
     var id = 'dragCustom' + num;
 
-    pushUndo();
 
     // Add to config
     voucherElementsConfig[key] = {
@@ -857,11 +840,11 @@ function addCustomText() {
     }
 
     selectElement(key);
+    saveElementsConfig();
 }
 
 function removeCustomText(key) {
     if (key.indexOf('custom') !== 0) return;
-    pushUndo();
 
     // Remove DOM element
     var el = document.getElementById(voucherElementsConfig[key].id);
@@ -881,6 +864,7 @@ function removeCustomText(key) {
     saveCustomTexts();
     renderLayers();
     updateCustomTextsList();
+    saveElementsConfig();
 }
 
 function updateCustomTextContent(key) {
@@ -891,6 +875,7 @@ function updateCustomTextContent(key) {
     var el = document.getElementById(voucherElementsConfig[key].id);
     if (el) el.textContent = customTexts[key];
     saveCustomTexts();
+    saveElementsConfig();
 }
 
 function updateCustomTextsList() {
@@ -951,7 +936,6 @@ function initSingleDraggable(el) {
         e.preventDefault();
 
         if (!hasMoved) {
-            pushUndo();
             hasMoved = true;
         }
 
@@ -1100,7 +1084,6 @@ var presetLayouts = {
 function applyPresetLayout(presetKey) {
     var preset = presetLayouts[presetKey];
     if (!preset) return;
-    pushUndo();
 
     // Apply voucher size
     voucherContainerSize = { width: preset.size.width, height: preset.size.height };
@@ -1204,6 +1187,7 @@ function applyPresetLayout(presetKey) {
     var priceEl = document.getElementById('dragPrice');
     if (priceEl) priceEl.style.height = preset.size.height + 'px';
     editorZoomFit();
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 // ============================================
@@ -1217,6 +1201,7 @@ function applyVoucherBgColor() {
     var container = document.getElementById('dragVoucherContainer');
     if (container) container.style.backgroundColor = c;
     localStorage.setItem('qv_bg_color', c);
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 function applyBorderRadius() {
@@ -1227,6 +1212,7 @@ function applyBorderRadius() {
     var container = document.getElementById('dragVoucherContainer');
     if (container) container.style.borderRadius = val + 'px';
     localStorage.setItem('qv_border_radius', val);
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 function applyVoucherGradient() {
@@ -1235,6 +1221,7 @@ function applyVoucherGradient() {
     var container = document.getElementById('dragVoucherContainer');
     if (container) container.style.backgroundImage = val || 'none';
     localStorage.setItem('qv_gradient', val);
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 function distributeElements(axis) {
@@ -1247,7 +1234,6 @@ function distributeElements(axis) {
         }
     }
     if (visibleKeys.length < 2) return;
-    pushUndo();
 
     if (axis === 'horizontal') {
         var total = voucherContainerSize.width;
@@ -1266,6 +1252,7 @@ function distributeElements(axis) {
     applyAllElementStyles();
     saveElementsConfig();
     updatePropertiesPanel();
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 // ============================================
@@ -1371,7 +1358,6 @@ function toggleLayerVisibility(key, e) {
     if (e) e.stopPropagation();
     var cfg = voucherElementsConfig[key];
     if (!cfg) return;
-    pushUndo();
     cfg.visible = !cfg.visible;
     applyElementStyle(key);
     saveElementsConfig();
@@ -1395,6 +1381,7 @@ function moveLayer(key, direction, e) {
     }
     localStorage.setItem('qv_layer_order', JSON.stringify(layerOrder));
     renderLayers();
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 // ============================================
@@ -1415,13 +1402,26 @@ function editorZoomFit() {
     var container = document.getElementById('dragVoucherContainer');
     if (!workspace || !container) return;
 
-    var ww = workspace.clientWidth - 80;
-    var wh = workspace.clientHeight - 80;
+    // Adjust padding based on screen size (mobile needs less padding)
+    var isMobile = window.innerWidth <= 768;
+    var padding = isMobile ? 20 : 80;
+
+    var ww = workspace.clientWidth - padding;
+    var wh = workspace.clientHeight - padding;
     var cw = voucherContainerSize.width;
     var ch = voucherContainerSize.height;
 
+    // Prevent negative zoom if container is 0 (hidden)
+    if (ww <= 0 || wh <= 0) return;
+
     var zoom = Math.min(ww / cw, wh / ch, 4);
     zoom = Math.max(0.25, Math.round(zoom * 4) / 4); // Round to nearest 0.25
+
+    // Additional override for extremely small screens
+    if (isMobile && cw * zoom > workspace.clientWidth) {
+        zoom = (workspace.clientWidth - 20) / cw;
+    }
+
     editorSetZoom(zoom);
 }
 
@@ -1445,7 +1445,6 @@ function alignElement(alignment) {
     var el = document.getElementById(cfg.id);
     if (!el || !cfg.visible) return;
 
-    pushUndo();
 
     var cw = voucherContainerSize.width;
     var ch = voucherContainerSize.height;
@@ -1485,6 +1484,7 @@ function setCanvasSize() {
     var priceEl = document.getElementById('dragPrice');
     if (priceEl) priceEl.style.height = h + 'px';
     localStorage.setItem('qv_container_size', JSON.stringify(voucherContainerSize));
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
 // ============================================
@@ -1932,6 +1932,11 @@ function saveElementsConfig() {
         }
     }
     localStorage.setItem('qv_elements_config', JSON.stringify(voucherElementsConfig));
+
+    // Auto-push to undo stack if we are not currently applying an undo/redo
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) {
+        if (typeof pushUndo === 'function') pushUndo();
+    }
 }
 
 // ============================================
@@ -2108,7 +2113,6 @@ function initDraggables() {
             e.preventDefault();
 
             if (!hasMoved) {
-                pushUndo();
                 hasMoved = true;
             }
 
@@ -2259,7 +2263,6 @@ function initKeyboardShortcuts() {
             e.preventDefault();
             var cfg = voucherElementsConfig[selectedElementKey];
             var step = e.shiftKey ? 10 : 1;
-            pushUndo();
             switch (e.key) {
                 case 'ArrowLeft':  cfg.left -= step; break;
                 case 'ArrowRight': cfg.left += step; break;

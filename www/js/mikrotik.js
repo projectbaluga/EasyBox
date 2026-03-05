@@ -330,7 +330,7 @@ const HOTSPOT_TABS_CONFIG = {
     },
     'users': {
         endpoint: '/ip/hotspot/user',
-        title: 'Users',
+        title: 'All Vouchers',
         columns: ['name', 'profile', 'uptime', 'bytes-in', 'bytes-out', 'limit-uptime'],
         fields: [
             { id: 'name', label: 'Name / Username', type: 'text', required: true },
@@ -342,7 +342,7 @@ const HOTSPOT_TABS_CONFIG = {
     },
     'user-profiles': {
         endpoint: '/ip/hotspot/user/profile',
-        title: 'User Profiles',
+        title: 'Internet Packages',
         columns: ['name', 'shared-users', 'rate-limit', 'mac-cookie-timeout'],
         fields: [
             { id: 'name', label: 'Name', type: 'text', required: true },
@@ -353,7 +353,7 @@ const HOTSPOT_TABS_CONFIG = {
     },
     'active': {
         endpoint: '/ip/hotspot/active',
-        title: 'Active Connections',
+        title: 'Online Users',
         columns: ['user', 'address', 'mac-address', 'uptime', 'session-time-left'],
         readonly: true // Cannot Add directly, can only Remove/Disconnect
     },
@@ -415,17 +415,45 @@ const HOTSPOT_TABS_CONFIG = {
 let currentHotspotTab = 'users';
 
 function initHotspotTabs() {
-    document.querySelectorAll('.winbox-tab').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.winbox-tab').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-            currentHotspotTab = e.target.dataset.tab;
+    const mainTabs = document.querySelectorAll('.winbox-tab');
+    const advTabs = document.querySelectorAll('.winbox-tab-adv');
+
+    const handleTabSwitch = (e, isAdv = false) => {
+        // Remove active from all main tabs
+        mainTabs.forEach(t => t.classList.remove('active'));
+
+        if (!isAdv) {
+            e.currentTarget.classList.add('active');
+        } else {
+            // Keep Advanced visually active or similar, for now just de-select others
+            // Could add active class to the dropdown button if desired
+        }
+
+        currentHotspotTab = e.currentTarget.dataset.tab;
+
+        const toolbar = document.querySelector('.winbox-toolbar');
+        const tableWrap = document.querySelector('.winbox-table-wrapper');
+        const genContent = document.getElementById('generator-content');
+
+        if (currentHotspotTab === 'generator') {
+            toolbar.style.display = 'none';
+            tableWrap.style.display = 'none';
+            genContent.style.display = 'block';
+            if (typeof editorZoomFit === 'function') setTimeout(editorZoomFit, 50);
+        } else {
+            toolbar.style.display = 'flex';
+            tableWrap.style.display = 'block';
+            genContent.style.display = 'none';
             loadHotspotCurrentTab();
-        });
-    });
+        }
+    };
+
+    mainTabs.forEach(tab => tab.addEventListener('click', (e) => handleTabSwitch(e, false)));
+    advTabs.forEach(tab => tab.addEventListener('click', (e) => handleTabSwitch(e, true)));
 }
 
 async function loadHotspotCurrentTab() {
+    if (currentHotspotTab === 'generator') return;
     const config = HOTSPOT_TABS_CONFIG[currentHotspotTab];
     if (!config) return;
 
@@ -740,6 +768,211 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadPppoeActive();
                 }, 100);
             }
+            if (target === 'dashboard-view') {
+                setTimeout(() => {
+                    loadDashboardData();
+                }, 100);
+            }
         });
     });
 });
+
+// ---- Dark Mode ----
+function initDarkMode() {
+    var isDark = localStorage.getItem('qv_dark_mode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+function toggleDarkMode() {
+    var isDark = document.body.classList.contains('dark-mode');
+    if (isDark) {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('qv_dark_mode', 'false');
+    } else {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('qv_dark_mode', 'true');
+    }
+}
+
+// Initialize on load
+$(document).ready(function() {
+    initDarkMode();
+});
+
+// ---- QR Code Importer ----
+function scanQRImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0, img.width, img.height);
+
+            const imageData = context.getImageData(0, 0, img.width, img.height);
+            const code = jsQR(imageData.data, img.width, img.height, {
+                inversionAttempts: "dontInvert",
+            });
+
+            if (code) {
+                try {
+                    // Try parsing as JSON first
+                    const data = JSON.parse(code.data);
+                    if (data.ip) $('#routerIp').val(data.ip);
+                    if (data.user) $('#routerUser').val(data.user);
+                    if (data.pass) $('#routerPass').val(data.pass);
+                    if (data.port) $('#routerPort').val(data.port);
+                    if (data.proto) $('#routerProto').val(data.proto);
+                    if (data.name) $('#routerProfileName').val(data.name);
+                    alert('QR Code imported successfully! Please save the settings.');
+                } catch (err) {
+                    // If not JSON, maybe simple string format like IP,User,Pass,Port
+                    const parts = code.data.split(',');
+                    if (parts.length >= 3) {
+                        $('#routerIp').val(parts[0].trim());
+                        $('#routerUser').val(parts[1].trim());
+                        $('#routerPass').val(parts[2].trim());
+                        if (parts[3]) $('#routerPort').val(parts[3].trim());
+                        alert('QR Code imported successfully! Please save the settings.');
+                    } else {
+                        alert('Unrecognized QR code format. Please use JSON or IP,User,Pass,Port format.');
+                    }
+                }
+            } else {
+                alert('No QR code found in the image. Please try another image.');
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    // Reset file input
+    event.target.value = '';
+}
+
+// ---- Export / Import Settings ----
+function exportSettings() {
+    var settings = {};
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && (key.startsWith('qv_') || key.startsWith('eb_') || key.startsWith('router_'))) {
+            settings[key] = localStorage.getItem(key);
+        }
+    }
+
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "easybox_settings_backup.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+function importSettings(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var settings = JSON.parse(e.target.result);
+            var count = 0;
+            for (var key in settings) {
+                if (key.startsWith('qv_') || key.startsWith('eb_') || key.startsWith('router_')) {
+                    localStorage.setItem(key, settings[key]);
+                    count++;
+                }
+            }
+            if (count > 0) {
+                alert("Settings imported successfully. The application will now reload.");
+                window.location.reload();
+            } else {
+                alert("No valid EasyBox settings found in the selected file.");
+            }
+        } catch (err) {
+            alert("Error parsing settings file. Please ensure it is a valid JSON backup.");
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input
+}
+
+// ==========================================
+// DASHBOARD ANALYTICS
+// ==========================================
+async function loadDashboardData() {
+    try {
+        // Fetch System Resources
+        let res = await mikrotikApi('/rest/system/resource', 'GET');
+        let data = res[0] || res;
+
+        if (data.uptime) document.getElementById('dash-uptime').textContent = formatUptime(data.uptime);
+        if (data['cpu-load'] !== undefined) document.getElementById('dash-cpu').textContent = data['cpu-load'] + '%';
+        if (data['board-name']) document.getElementById('dash-board').textContent = data['board-name'];
+        if (data.version) document.getElementById('dash-version').textContent = 'RouterOS Version: ' + data.version;
+
+        // Memory
+        if (data['free-memory'] !== undefined && data['total-memory'] !== undefined) {
+            var freeMem = parseInt(data['free-memory']);
+            var totMem = parseInt(data['total-memory']);
+            var usedMem = totMem - freeMem;
+            var memPct = Math.round((usedMem / totMem) * 100);
+
+            document.getElementById('dash-mem-text').textContent = formatBytes(usedMem) + ' / ' + formatBytes(totMem);
+            document.getElementById('dash-mem-pct').textContent = memPct + '%';
+            var memBar = document.getElementById('dash-mem-bar');
+            if (memBar) memBar.style.width = memPct + '%';
+        }
+
+        // HDD
+        if (data['free-hdd-space'] !== undefined && data['total-hdd-space'] !== undefined) {
+            var freeHdd = parseInt(data['free-hdd-space']);
+            var totHdd = parseInt(data['total-hdd-space']);
+            var usedHdd = totHdd - freeHdd;
+            var hddPct = Math.round((usedHdd / totHdd) * 100);
+
+            document.getElementById('dash-hdd-text').textContent = formatBytes(usedHdd) + ' / ' + formatBytes(totHdd);
+            document.getElementById('dash-hdd-pct').textContent = hddPct + '%';
+            var hddBar = document.getElementById('dash-hdd-bar');
+            if (hddBar) hddBar.style.width = hddPct + '%';
+        }
+    } catch (err) {
+        console.error("Dashboard resource error:", err);
+        document.getElementById('dash-uptime').textContent = "Error";
+        document.getElementById('dash-cpu').textContent = "Error";
+    }
+
+    try {
+        // Fetch Active Hotspot Users Count
+        let activeRes = await mikrotikApi('/rest/ip/hotspot/active', 'GET');
+        var activeUsersCount = Array.isArray(activeRes) ? activeRes.length : 0;
+        document.getElementById('dash-active-users').textContent = activeUsersCount;
+    } catch (err) {
+        console.error("Dashboard active users error:", err);
+        document.getElementById('dash-active-users').textContent = "Error";
+    }
+}
+
+// Utility: format uptime string from MikroTik (e.g. 1w2d3h4m5s)
+function formatUptime(uptimeStr) {
+    if (!uptimeStr) return '--';
+    return uptimeStr.replace('w', 'w ').replace('d', 'd ').replace('h', 'h ').replace('m', 'm ').trim();
+}
+
+// Utility: format bytes to KB/MB/GB
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    var k = 1024;
+    var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}

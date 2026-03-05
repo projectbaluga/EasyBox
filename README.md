@@ -94,14 +94,20 @@ Based on the current state of the application, here are the planned features and
 - [ ] **Improved Error Handling:** Implement auto-reconnect logic or clearer UI feedback when the REST API connection drops during active sessions.
 
 ### 🎟️ Voucher Generator & Editor
-- [ ] **QR Code Scanner / Importer:** Allow admins to scan QR codes or import them directly for fast profile setups.
+- [x] **QR Code Scanner / Importer:** Allow admins to scan QR codes or import them directly for fast profile setups.
 - [ ] **Advanced Alignments:** Snap-to-grid improvements and multi-select elements in the drag-and-drop editor.
-- [ ] **Undo/Redo Persistence:** Save editor history state locally so accidental page refreshes don't lose progress.
+- [x] **Undo/Redo Persistence:** Save editor history state locally so accidental page refreshes don't lose progress.
 
 ### 📱 UI / UX Enhancements
-- [ ] **Enhanced Mobile Responsiveness:** Optimize the Voucher Editor canvas for smaller screens to make editing easier on phones.
-- [ ] **Dark Mode Support:** Implement a system-wide Dark Mode toggle for night-time administration.
-- [ ] **Dashboard Analytics:** Add a visual dashboard showing active users, uptime, and bandwidth usage graphs.
+- [x] **Enhanced Mobile Responsiveness:** Optimize the Voucher Editor canvas for smaller screens to make editing easier on phones.
+- [x] **Dark Mode Support:** Implement a system-wide Dark Mode toggle for night-time administration.
+- [x] **Dashboard Analytics:** Add a visual dashboard showing active users, uptime, and bandwidth usage graphs.
+
+### 🌍 General Enhancements
+- [x] **Export Settings as JSON:** Allow admins to backup and export their editor and router configurations.
+- [x] **Multi-Language Support:** Localize the interface to support multiple languages for global operators.
+- [ ] **Customizable Dashboard Widgets:** Let users pin metrics like total bandwidth, live connections, and generated vouchers.
+- [ ] **Role-Based Access Control (RBAC):** Allow limiting access (e.g., staff can only generate vouchers, admins can edit router settings).
 
 ## 📄 License
 
