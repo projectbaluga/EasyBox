@@ -290,16 +290,6 @@ async function mikrotikApi(endpoint, method = 'GET', body = null, customSettings
 }
 
 // ---- Hotspot Manager ----
-async function loadHotspotUsers() {
-    var tbody = document.querySelector('#hotspotUsersTable tbody');
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>';
-
-    try {
-        var data = await mikrotikApi('/ip/hotspot/user');
-        if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No users found.</td></tr>';
-            return;
-        }
 
         var html = '';
         data.forEach(function(u) {
@@ -320,16 +310,6 @@ async function loadHotspotUsers() {
     }
 }
 
-async function loadHotspotActive() {
-    var tbody = document.querySelector('#hotspotActiveTable tbody');
-    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>';
-
-    try {
-        var data = await mikrotikApi('/ip/hotspot/active');
-        if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No active connections.</td></tr>';
-            return;
-        }
 
         var html = '';
         data.forEach(function(a) {
@@ -345,14 +325,6 @@ async function loadHotspotActive() {
     }
 }
 
-async function deleteHotspotUser(id, name) {
-    if (!confirm(`Are you sure you want to delete user '${name}'?`)) return;
-    try {
-        await mikrotikApi(`/ip/hotspot/user/${id}`, 'DELETE');
-        loadHotspotUsers();
-    } catch (e) {
-        alert('Failed to delete: ' + e.message);
-    }
 }
 
 // ---- PPPoE Manager ----
@@ -462,17 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ---- Hotspot Users Management Modal Logic ----
 
-async function loadHotspotUsersModal() {
-    var tbody = document.querySelector('#manageUsersTable tbody');
-    if(!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>';
-
-    try {
-        var data = await mikrotikApi('/ip/hotspot/user');
-        if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No users found.</td></tr>';
-            return;
-        }
 
         var html = '';
         data.forEach(function(u) {
@@ -495,19 +456,6 @@ async function loadHotspotUsersModal() {
     }
 }
 
-function openAddUserForm() {
-    document.getElementById('editUserId').value = '';
-    document.getElementById('userFormTitle').innerText = 'Add User';
-    document.getElementById('formUsername').value = '';
-    document.getElementById('formUsername').disabled = false;
-    document.getElementById('formPassword').value = '';
-    document.getElementById('formProfile').value = '';
-    document.getElementById('formUptimeLimit').value = '';
-    document.getElementById('formBytesLimit').value = '';
-
-    var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('userFormModal'));
-    modal.show();
-}
 
 function openEditUserForm(encodedUser) {
     var u = JSON.parse(decodeURIComponent(escape(atob(encodedUser))));
@@ -524,18 +472,6 @@ function openEditUserForm(encodedUser) {
     modal.show();
 }
 
-async function saveHotspotUser() {
-    var id = document.getElementById('editUserId').value;
-    var name = document.getElementById('formUsername').value.trim();
-    var pass = document.getElementById('formPassword').value;
-    var profile = document.getElementById('formProfile').value.trim();
-    var limitUptime = document.getElementById('formUptimeLimit').value.trim();
-    var limitBytes = document.getElementById('formBytesLimit').value.trim();
-
-    if (!name) {
-        alert("Username is required.");
-        return;
-    }
 
     var payload = { name: name };
     if (pass) payload.password = pass;
@@ -581,6 +517,18 @@ document.getElementById('usersModal')?.addEventListener('show.bs.modal', functio
 // ==========================================
 // WINBOX-STYLE DYNAMIC HOTSPOT CONTROLLER
 // ==========================================
+
+function escapeHtml(unsafe) {
+    if (unsafe == null) return '';
+    return String(unsafe)
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+
 
 const HOTSPOT_TABS_CONFIG = {
     'servers': {
@@ -720,28 +668,9 @@ async function loadHotspotCurrentTab() {
     tbody.innerHTML = `<tr><td colspan="${config.columns.length + 1}" class="text-center text-muted py-4">Loading ${config.title}...</td></tr>`;
 
     try {
-        const url = getApiUrl(config.endpoint);
-        const method = 'GET';
-
-        let response;
-        if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
-            response = await CapacitorHttp.request({ method: method, url: url, headers: getAuthHeaders() });
-        } else {
-            response = await fetch(url, { method: method, headers: getAuthHeaders() });
-        }
-
-        let data = [];
-        if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
-            data = response.data;
-        } else {
-            if (response.ok) {
-                data = await response.json();
-            } else {
-                throw new Error('Failed to fetch data');
-            }
-        }
-
-        if (!Array.isArray(data)) data = [];
+        let data = await mikrotikApi(config.endpoint);
+        if (!data) data = [];
+        if (!Array.isArray(data)) data = [data]; // Some Mikrotik versions return single object if only 1 item
 
         if (data.length === 0) {
             tbody.innerHTML = `<tr><td colspan="${config.columns.length + 1}" class="text-center text-muted py-4">No records found.</td></tr>`;
@@ -778,7 +707,7 @@ async function loadHotspotCurrentTab() {
                     }
                 }
 
-                tbHtml += `<td>${prefix}${val}</td>`;
+                tbHtml += `<td>${prefix}${escapeHtml(val)}</td>`;
             });
             tbHtml += `</tr>`;
         });
@@ -813,14 +742,8 @@ async function deleteHotspotSelected() {
 
     for (const id of ids) {
         try {
-            const url = getApiUrl(`${config.endpoint}/${id}`);
-            if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
-                const r = await CapacitorHttp.request({ method: 'DELETE', url: url, headers: getAuthHeaders() });
-                if(r.status >= 200 && r.status < 300) successCount++;
-            } else {
-                const r = await fetch(url, { method: 'DELETE', headers: getAuthHeaders() });
-                if(r.ok) successCount++;
-            }
+            await mikrotikApi(`${config.endpoint}/${id}`, 'DELETE');
+            successCount++;
         } catch (e) {
             console.error(e);
         }
@@ -849,25 +772,8 @@ async function toggleHotspotSelected(action) {
 
     for (const id of ids) {
         try {
-            const url = getApiUrl(`${config.endpoint}/${id}`);
-            const payload = { disabled: disabledVal };
-
-            if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
-                const r = await CapacitorHttp.request({
-                    method: 'PATCH',
-                    url: url,
-                    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-                    data: payload
-                });
-                if(r.status >= 200 && r.status < 300) successCount++;
-            } else {
-                const r = await fetch(url, {
-                    method: 'PATCH',
-                    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if(r.ok) successCount++;
-            }
+            await mikrotikApi(`${config.endpoint}/${id}`, 'PATCH', { disabled: disabledVal });
+            successCount++;
         } catch (e) {
             console.error(e);
         }
@@ -939,40 +845,12 @@ async function saveHotspotGeneric() {
     }
 
     try {
-        const url = getApiUrl(config.endpoint);
-        let status = 0;
-        let responseBody = null;
-
-        if (Capacitor.isNativePlatform() && window.CapacitorHttp) {
-            const r = await CapacitorHttp.request({
-                method: 'PUT',
-                url: url,
-                headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-                data: payload
-            });
-            status = r.status;
-            responseBody = r.data;
-        } else {
-            const r = await fetch(url, {
-                method: 'PUT',
-                headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            status = r.status;
-            if(!r.ok) {
-                 responseBody = await r.json();
-            }
-        }
-
-        if (status >= 200 && status < 300) {
-            bootstrap.Modal.getInstance(document.getElementById('hotspotGenericModal')).hide();
-            loadHotspotCurrentTab();
-        } else {
-            alert(`Failed to save: ${responseBody?.detail || JSON.stringify(responseBody) || 'Unknown error'}`);
-        }
+        await mikrotikApi(config.endpoint, 'PUT', payload);
+        bootstrap.Modal.getInstance(document.getElementById('hotspotGenericModal')).hide();
+        loadHotspotCurrentTab();
     } catch (e) {
         console.error(e);
-        alert('Network error while saving.');
+        alert(`Failed to save: ${e.message}`);
     }
 }
 
