@@ -137,19 +137,19 @@ async function wizExecute() {
 
     // Basic Validation
     if (internetType === 'pppoe' && !pppoeUser) {
-        showWizError("Please enter PPPoE Username.");
+        showWizError(t('err_pppoe_user'));
         return;
     }
     if (wifiType === 'builtin' && !ssid) {
-        showWizError("Please enter a WiFi Name (SSID).");
+        showWizError(t('err_wifi_ssid'));
         return;
     }
     if (!portalUrl) {
-        showWizError("Please enter a Login Portal URL.");
+        showWizError(t('err_portal_url'));
         return;
     }
     if (!promoName) {
-        showWizError("Please enter a Promo Name.");
+        showWizError(t('err_promo_name'));
         return;
     }
 
@@ -167,13 +167,13 @@ async function wizExecute() {
     try {
         // 1. Internet Connection
         if (internetType === 'dhcp') {
-            setWizStatus("Configuring DHCP Client on ether1...");
+            setWizStatus(t('wiz_configuring_dhcp'));
             await mikrotikApi('/ip/dhcp-client', 'PUT', {
                 "interface": "ether1",
                 "disabled": "false"
             });
         } else {
-            setWizStatus("Configuring PPPoE Client on ether1...");
+            setWizStatus(t('wiz_configuring_pppoe'));
             await mikrotikApi('/interface/pppoe-client', 'PUT', {
                 "name": "pppoe-out1",
                 "interface": "ether1",
@@ -186,11 +186,11 @@ async function wizExecute() {
         }
 
         // 2. Create Bridge
-        setWizStatus("Creating Bridge (bridge-HOTSPOT)...");
+        setWizStatus(t('wiz_creating_bridge'));
         await mikrotikApi('/interface/bridge', 'PUT', { "name": "bridge-HOTSPOT" });
 
         // 3. Add Ports to Bridge (ether2-ether5)
-        setWizStatus("Adding ports ether2-ether5 to bridge...");
+        setWizStatus(t('wiz_adding_ports'));
         for (let i = 2; i <= 5; i++) {
             await mikrotikApi('/interface/bridge/port', 'PUT', {
                 "bridge": "bridge-HOTSPOT",
@@ -200,7 +200,7 @@ async function wizExecute() {
 
         // 4. Configure WiFi (if builtin)
         if (wifiType === 'builtin') {
-            setWizStatus("Configuring Built-in WiFi (wlan1)...");
+            setWizStatus(t('wiz_configuring_wifi'));
             // Assuming wlan1 is standard. We use PATCH to modify the existing interface.
             let wlans = await mikrotikApi('/interface/wireless');
             let wlan1 = wlans.find(w => w.name === 'wlan1');
@@ -227,14 +227,14 @@ async function wizExecute() {
         }
 
         // 5. Assign IP
-        setWizStatus("Assigning IP Address (10.0.0.1/24)...");
+        setWizStatus(t('wiz_assigning_ip'));
         await mikrotikApi('/ip/address', 'PUT', {
             "address": "10.0.0.1/24",
             "interface": "bridge-HOTSPOT"
         });
 
         // 6. Setup NAT
-        setWizStatus("Configuring NAT (Masquerade)...");
+        setWizStatus(t('wiz_configuring_nat'));
         let outInt = internetType === 'dhcp' ? 'ether1' : 'pppoe-out1';
         await mikrotikApi('/ip/firewall/nat', 'PUT', {
             "chain": "srcnat",
@@ -243,7 +243,7 @@ async function wizExecute() {
         });
 
         // 7. Hotspot Server Profile
-        setWizStatus("Creating Hotspot Server Profile...");
+        setWizStatus(t('wiz_creating_hs_prof'));
         let profileId = "*1"; // Default profile might be *1, but let's PUT a new one
         let pRes = await mikrotikApi('/ip/hotspot/profile', 'PUT', {
             "name": "hsprof1",
@@ -255,7 +255,7 @@ async function wizExecute() {
         if (pRes && pRes['.id']) profileId = pRes['.id'];
 
         // 7.b Hotspot Server
-        setWizStatus("Creating Hotspot Server...");
+        setWizStatus(t('wiz_creating_hs_server'));
         await mikrotikApi('/ip/hotspot', 'PUT', {
             "name": "hotspot1",
             "interface": "bridge-HOTSPOT",
@@ -264,7 +264,7 @@ async function wizExecute() {
         });
 
         // 8. Create Promo Profile
-        setWizStatus(`Creating Voucher Profile (${promoName})...`);
+        setWizStatus(t('wiz_creating_voucher_prof') + ` (${promoName})...`);
         const onLogoutScript = `:local username $user;\r\n:local useruptime [/ip hotspot user get [find name=$username] uptime];\r\n:local userlimit [/ip hotspot user get [find name=$username] limit-uptime];\r\n:if ($useruptime >= $userlimit) do={\r\n    /ip hotspot user remove [find name=$username];\r\n}`;
 
         await mikrotikApi('/ip/hotspot/user/profile', 'PUT', {

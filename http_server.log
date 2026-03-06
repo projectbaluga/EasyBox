@@ -1,0 +1,13 @@
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /css/bootstrap.min.css HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /assets/logo/easybox-full-header.png HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /css/voucher.css HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/jquery-3.6.0.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/bootstrap.bundle.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/i18n.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/mikrotik.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/jsQR.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/undo_redo.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/generate.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Mar/2026 12:55:16] "GET /js/wizard.js HTTP/1.1" 200 -

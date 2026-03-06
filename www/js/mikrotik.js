@@ -176,19 +176,19 @@ async function testRouterConnection() {
     }
 
     btn.disabled = true;
-    btn.textContent = 'Testing...';
+    btn.textContent = t('testing') || 'Testing...';
     resultDiv.textContent = '';
 
     try {
         await mikrotikApi('/system/identity', 'GET', null, settings);
-        resultDiv.textContent = 'Connection Successful! ✅';
+        resultDiv.textContent = t('conn_success');
         resultDiv.className = 'mt-2 text-center text-success';
     } catch (e) {
-        resultDiv.textContent = 'Connection Failed: ' + e.message;
+        resultDiv.textContent = t('conn_failed') + e.message;
         resultDiv.className = 'mt-2 text-center text-danger';
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Test Connection';
+        btn.textContent = t('test_connection');
     }
 }
 
@@ -918,7 +918,10 @@ async function loadDashboardData() {
         if (data.uptime) document.getElementById('dash-uptime').textContent = formatUptime(data.uptime);
         if (data['cpu-load'] !== undefined) document.getElementById('dash-cpu').textContent = data['cpu-load'] + '%';
         if (data['board-name']) document.getElementById('dash-board').textContent = data['board-name'];
-        if (data.version) document.getElementById('dash-version').textContent = 'RouterOS Version: ' + data.version;
+        if (data.version) {
+            const versionLabel = t('routeros_version');
+            document.getElementById('dash-version').textContent = versionLabel + ': ' + data.version;
+        }
 
         // Memory
         if (data['free-memory'] !== undefined && data['total-memory'] !== undefined) {

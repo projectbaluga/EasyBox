@@ -56,52 +56,52 @@
         </span></div>
     </nav>
 
-    <div class="main-container">
+    <div class="main-container" id="mainContainer">
 
         <!-- Dashboard View -->
         <div id="dashboard-view" class="app-view active">
 
             <!-- Quick Setup Button -->
             <div class="d-grid mb-3">
-                <button class="btn btn-lg btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#wizardModal">
+                <button class="btn btn-lg btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#wizardModal" data-i18n="quick_setup">
                     Quick Setup Wizard
                 </button>
             </div>
 
             <div class="qv-card mb-4">
                 <div class="output-header">
-                    <h6 class="output-title">Dashboard Analytics</h6>
-                    <button class="btn btn-sm btn-primary" onclick="loadDashboardData()">Refresh Data</button>
+                    <h6 class="output-title" data-i18n="dash_analytics">Dashboard Analytics</h6>
+                    <button class="btn btn-sm btn-primary" onclick="loadDashboardData()" data-i18n="refresh_data">Refresh Data</button>
                 </div>
 
                 <div class="row g-3">
                     <div class="col-6 col-md-3">
                         <div class="p-3 border rounded text-center" style="background: var(--code-bg);">
-                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;">Router Uptime</div>
+                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;" data-i18n="router_uptime">Router Uptime</div>
                             <div id="dash-uptime" style="font-size: 16px; font-weight: 700; color: var(--text); margin-top: 4px;">--</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="p-3 border rounded text-center" style="background: var(--code-bg);">
-                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;">Active Users</div>
+                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;" data-i18n="active_users">Active Users</div>
                             <div id="dash-active-users" style="font-size: 20px; font-weight: 700; color: var(--primary); margin-top: 4px;">--</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="p-3 border rounded text-center" style="background: var(--code-bg);">
-                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;">CPU Load</div>
+                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;" data-i18n="cpu_load">CPU Load</div>
                             <div id="dash-cpu" style="font-size: 18px; font-weight: 700; color: var(--text); margin-top: 4px;">--</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="p-3 border rounded text-center" style="background: var(--code-bg);">
-                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;">Router Board</div>
+                            <div class="text-muted" style="font-size: 11px; text-transform: uppercase; font-weight: 600;" data-i18n="router_board">Router Board</div>
                             <div id="dash-board" style="font-size: 16px; font-weight: 700; color: var(--text); margin-top: 4px;">--</div>
                         </div>
                     </div>
 
                     <div class="col-12 col-md-6 mt-4">
-                        <h6 class="section-title">Memory Usage</h6>
+                        <h6 class="section-title" data-i18n="memory_usage">Memory Usage</h6>
                         <div class="d-flex justify-content-between mb-1" style="font-size: 12px; font-weight: 500;">
                             <span id="dash-mem-text">-- / --</span>
                             <span id="dash-mem-pct">--%</span>
@@ -112,7 +112,7 @@
                     </div>
 
                     <div class="col-12 col-md-6 mt-4">
-                        <h6 class="section-title">HDD Usage</h6>
+                        <h6 class="section-title" data-i18n="hdd_usage">HDD Usage</h6>
                         <div class="d-flex justify-content-between mb-1" style="font-size: 12px; font-weight: 500;">
                             <span id="dash-hdd-text">-- / --</span>
                             <span id="dash-hdd-pct">--%</span>
@@ -123,7 +123,7 @@
                     </div>
 
                     <div class="col-12 mt-4 text-center">
-                        <span id="dash-version" class="badge bg-secondary" style="font-size: 11px;">RouterOS Version: --</span>
+                        <span id="dash-version" class="badge bg-secondary" style="font-size: 11px;"><span data-i18n="routeros_version">RouterOS Version</span>: --</span>
                     </div>
                 </div>
             </div>
@@ -137,41 +137,41 @@
                 <div class="winbox-tabs-container d-flex align-items-center">
                     <ul class="nav winbox-tabs flex-nowrap overflow-auto" id="hotspotTabs" role="tablist">
                         <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="generator" type="button"><span data-i18n="nav_generator">Voucher Generator</span></button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab active" data-tab="users" type="button">All Vouchers</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="active" type="button">Online Users</button></li>
-                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="user-profiles" type="button">Internet Packages</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab active" data-tab="users" type="button" data-i18n="vouchers_all">All Vouchers</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="active" type="button" data-i18n="vouchers_online">Online Users</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="user-profiles" type="button" data-i18n="vouchers_packages">Internet Packages</button></li>
                     </ul>
 
                     <!-- Advanced Settings Dropdown -->
                     <div class="dropdown ms-auto ps-2">
                         <button class="btn btn-sm tb-action-btn dropdown-toggle d-flex align-items-center gap-1" type="button" id="advancedTabsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 20px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                            Advanced
+                            <span data-i18n="vouchers_advanced">Advanced</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm winbox-advanced-tabs" aria-labelledby="advancedTabsDropdown" style="font-size: 13px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="servers" type="button">Servers</button></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="server-profiles" type="button">Server Profiles</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="servers" type="button" data-i18n="adv_servers">Servers</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="server-profiles" type="button" data-i18n="adv_server_profiles">Server Profiles</button></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="hosts" type="button">Hosts (Connected Devices)</button></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="ip-bindings" type="button">IP Bindings (Bypass/Block)</button></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="cookies" type="button">Active Cookies</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="hosts" type="button" data-i18n="adv_hosts">Hosts (Connected Devices)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="ip-bindings" type="button" data-i18n="adv_ip_bindings">IP Bindings (Bypass/Block)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="cookies" type="button" data-i18n="adv_cookies">Active Cookies</button></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="walled-garden" type="button">Allowed Websites (Walled Garden)</button></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="walled-garden-ip" type="button">Allowed IPs (Walled Garden IP)</button></li>
-                            <li><button class="dropdown-item winbox-tab-adv" data-tab="service-ports" type="button">Service Ports</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="walled-garden" type="button" data-i18n="adv_walled_garden">Allowed Websites (Walled Garden)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="walled-garden-ip" type="button" data-i18n="adv_walled_garden_ip">Allowed IPs (Walled Garden IP)</button></li>
+                            <li><button class="dropdown-item winbox-tab-adv" data-tab="service-ports" type="button" data-i18n="adv_service_ports">Service Ports</button></li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- Winbox Style Toolbar -->
                 <div class="winbox-toolbar">
-                    <button class="btn btn-sm tb-action-btn" onclick="openHotspotGenericModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> New</button>
+                    <button class="btn btn-sm tb-action-btn" onclick="openHotspotGenericModal()" data-i18n="new"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> New</button>
                     <div class="tb-divider"></div>
-                    <button class="btn btn-sm tb-action-btn text-success" onclick="toggleHotspotSelected('enable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Enable</button>
-                    <button class="btn btn-sm tb-action-btn text-warning" onclick="toggleHotspotSelected('disable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Disable</button>
-                    <button class="btn btn-sm tb-action-btn text-danger" onclick="deleteHotspotSelected()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove</button>
+                    <button class="btn btn-sm tb-action-btn text-success" onclick="toggleHotspotSelected('enable')" data-i18n="enable"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Enable</button>
+                    <button class="btn btn-sm tb-action-btn text-warning" onclick="toggleHotspotSelected('disable')" data-i18n="disable"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Disable</button>
+                    <button class="btn btn-sm tb-action-btn text-danger" onclick="deleteHotspotSelected()" data-i18n="remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove</button>
                     <div class="tb-divider"></div>
-                    <button class="btn btn-sm tb-action-btn ms-auto" onclick="loadHotspotCurrentTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Refresh</button>
+                    <button class="btn btn-sm tb-action-btn ms-auto" onclick="loadHotspotCurrentTab()" data-i18n="refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Refresh</button>
                 </div>
 
                 <!-- Generic Table Container -->
@@ -195,15 +195,15 @@
                     <h6 class="section-title"><span data-i18n="basic_settings">Basic Settings</span></h6>
                     <div class="row g-3">
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label" for="Vendo">Tag Name</label>
-                            <input class="form-control" id="Vendo" placeholder="Your brand name" maxlength="14">
+                            <label class="form-label" for="Vendo" data-i18n="tag_name">Tag Name</label>
+                            <input class="form-control" id="Vendo" maxlength="14" data-i18n-placeholder="tag_name_placeholder">
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label" for="Prefix">Prefix <span class="hint">(max 3)</span></label>
-                            <input class="form-control" id="Prefix" placeholder="e.g. P5" maxlength="3">
+                            <label class="form-label" for="Prefix" data-i18n="prefix">Prefix <span class="hint">(max 3)</span></label>
+                            <input class="form-control" id="Prefix" maxlength="3" data-i18n-placeholder="prefix_placeholder">
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label" for="Length">Length</label>
+                            <label class="form-label" for="Length" data-i18n="length">Length</label>
                             <select class="form-select" id="Length">
                                 <option value="6" selected>6</option>
                                 <option value="7">7</option>
@@ -213,7 +213,7 @@
                             </select>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label" for="char">Characters</label>
+                            <label class="form-label" for="char" data-i18n="characters">Characters</label>
                             <select class="form-select" id="char">
                                 <option value="1" selected>A3B2C5</option>
                                 <option value="2">abcdef</option>
@@ -224,7 +224,7 @@
                             </select>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label">Auth Type</label>
+                            <label class="form-label" data-i18n="auth_type">Auth Type</label>
                             <div class="btn-group w-100 type-toggle" role="group">
                                 <input class="btn-check" id="userpass" type="radio" name="btnradio" autocomplete="off">
                                 <label class="btn btn-outline-primary" for="userpass">User + Pass</label>
@@ -233,57 +233,57 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label" for="Price">Price</label>
+                            <label class="form-label" for="Price" data-i18n="price">Price</label>
                             <input class="form-control" id="Price" placeholder="0" min="0" value="0" type="number">
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <label class="form-label" for="Quantity">Quantity</label>
-                            <input class="form-control" id="Quantity" placeholder="pcs" min="1" max="5000" type="number" value="3">
+                            <label class="form-label" for="Quantity" data-i18n="quantity">Quantity</label>
+                            <input class="form-control" id="Quantity" min="1" max="5000" type="number" value="3" data-i18n-placeholder="quantity_placeholder">
                         </div>
                     </div>
                 </div>
 
                 <!-- Time & Data Card -->
                 <div class="qv-card m-0">
-                    <h6 class="section-title">Time & Data</h6>
+                    <h6 class="section-title" data-i18n="time_data">Time & Data</h6>
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Duration <span class="hint">limit-uptime</span></label>
+                            <label class="form-label" data-i18n="duration">Duration <span class="hint">limit-uptime</span></label>
                             <div class="duration-group">
-                                <input class="form-control" id="LDays" placeholder="Days" min="0" max="31" type="number">
-                                <input class="form-control" id="LHours" placeholder="Hours" min="0" max="59" type="number">
-                                <input class="form-control" id="LMinutes" placeholder="Minutes" min="0" max="59" type="number">
+                                <input class="form-control" id="LDays" min="0" max="31" type="number" data-i18n-placeholder="days_placeholder">
+                                <input class="form-control" id="LHours" min="0" max="59" type="number" data-i18n-placeholder="hours_placeholder">
+                                <input class="form-control" id="LMinutes" min="0" max="59" type="number" data-i18n-placeholder="minutes_placeholder">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Validity <span class="optional">Optional</span></label>
+                            <label class="form-label" data-i18n="validity">Validity <span class="optional">Optional</span></label>
                             <div class="duration-group">
-                                <input class="form-control" id="VDays" placeholder="Days" min="0" max="31" type="number">
-                                <input class="form-control" id="VHours" placeholder="Hours" min="0" max="59" type="number">
-                                <input class="form-control" id="VMinutes" placeholder="Minutes" min="0" max="59" type="number">
+                                <input class="form-control" id="VDays" min="0" max="31" type="number" data-i18n-placeholder="days_placeholder">
+                                <input class="form-control" id="VHours" min="0" max="59" type="number" data-i18n-placeholder="hours_placeholder">
+                                <input class="form-control" id="VMinutes" min="0" max="59" type="number" data-i18n-placeholder="minutes_placeholder">
                             </div>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Data Package <span class="optional">Optional &mdash; e.g. 500M, 2G</span></label>
-                            <input class="form-control" id="Data" placeholder="e.g. 500M, 2G, 5G" value="0">
+                            <label class="form-label" data-i18n="data_package">Data Package <span class="optional">Optional &mdash; e.g. 500M, 2G</span></label>
+                            <input class="form-control" id="Data" value="0" data-i18n-placeholder="data_placeholder">
                         </div>
                     </div>
                 </div>
 
                 <!-- Server Configuration Card -->
                 <div class="qv-card m-0">
-                    <h6 class="section-title">Server Configuration</h6>
+                    <h6 class="section-title" data-i18n="server_config">Server Configuration</h6>
                     <div class="row g-3">
                         <div class="col-12 col-sm-4">
-                            <label class="form-label">User Profile <span class="optional">Optional</span></label>
+                            <label class="form-label" data-i18n="user_profile">User Profile <span class="optional">Optional</span></label>
                             <input class="form-control" id="Profile" placeholder="default" value="default">
                         </div>
                         <div class="col-12 col-sm-4">
-                            <label class="form-label">Hotspot Server <span class="optional">Optional</span></label>
+                            <label class="form-label" data-i18n="hotspot_server">Hotspot Server <span class="optional">Optional</span></label>
                             <input class="form-control" id="Server" placeholder="all" value="all">
                         </div>
                         <div class="col-12 col-sm-4">
-                            <label class="form-label">Hotspot IP <span class="hint">For login URL</span></label>
+                            <label class="form-label" data-i18n="hotspot_ip">Hotspot IP <span class="hint">For login URL</span></label>
                             <input class="form-control" id="ip" placeholder="10.0.0.1" value="">
                         </div>
                     </div>
@@ -308,7 +308,7 @@
         <!-- Output Card -->
         <div class="qv-card m-0 mt-4">
             <div class="output-header">
-                <h6 class="output-title">Script Output</h6>
+                <h6 class="output-title" data-i18n="script_output">Script Output</h6>
                 <span class="total-badge" id="Total"></span>
             </div>
             <div class="code-output" id="OutputCode">
@@ -328,8 +328,8 @@
         <div id="pppoe-view" class="app-view">
             <div class="qv-card">
                 <div class="output-header">
-                    <h6 class="output-title">PPPoE Secrets</h6>
-                    <button class="btn btn-sm btn-primary" onclick="loadPppoeSecrets()">Refresh</button>
+                    <h6 class="output-title" data-i18n="pppoe_secrets">PPPoE Secrets</h6>
+                    <button class="btn btn-sm btn-primary" onclick="loadPppoeSecrets()" data-i18n="refresh">Refresh</button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-sm" id="pppoeSecretsTable">
@@ -349,8 +349,8 @@
             </div>
             <div class="qv-card">
                 <div class="output-header">
-                    <h6 class="output-title">Active PPPoE Connections</h6>
-                    <button class="btn btn-sm btn-primary" onclick="loadPppoeActive()">Refresh</button>
+                    <h6 class="output-title" data-i18n="pppoe_active">Active PPPoE Connections</h6>
+                    <button class="btn btn-sm btn-primary" onclick="loadPppoeActive()" data-i18n="refresh">Refresh</button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-sm" id="pppoeActiveTable">
@@ -376,12 +376,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Router Connection Settings</h5>
+                    <h5 class="modal-title" data-i18n="router_settings">Router Connection Settings</h5>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Router Profile</label>
+                        <label class="form-label" data-i18n="router_profile">Router Profile</label>
                         <div class="input-group">
                             <select class="form-select" id="routerProfileSelect" onchange="loadSelectedRouterProfile()">
                                 <option value="default">Default Profile</option>
@@ -391,36 +391,36 @@
                         </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Import from QR Code</label>
+                        <label class="form-label" data-i18n="import_qr">Import from QR Code</label>
                         <div class="input-group">
                             <input type="file" class="form-control" id="qrImageInput" accept="image/*" onchange="scanQRImage(event)">
                         </div>
-                        <small class="text-muted">Upload an image containing router settings QR code.</small>
+                        <small class="text-muted" data-i18n="upload_qr_hint">Upload an image containing router settings QR code.</small>
                     </div>
 
                     </div>
                     <div class="mb-3" id="profileNameContainer" style="display:none;">
-                        <label class="form-label">Profile Name</label>
+                        <label class="form-label" data-i18n="profile_name">Profile Name</label>
                         <input type="text" class="form-control" id="routerProfileName" placeholder="e.g. Main Router">
                     </div>
                     <hr>
                     <div class="mb-3">
-                        <label class="form-label">Router IP Address</label>
-                        <input type="text" class="form-control" id="routerIp" placeholder="e.g. 192.168.88.1">
-                        <div class="form-text text-danger mt-2" style="font-weight: 500;">
+                        <label class="form-label" data-i18n="router_ip">Router IP Address</label>
+                        <input type="text" class="form-control" id="routerIp" data-i18n-placeholder="router_ip_placeholder">
+                        <div class="form-text text-danger mt-2" style="font-weight: 500;" data-i18n="router_crucial_hint">
                             <strong>Crucial:</strong> You must enable <code>www</code> (port 80) or <code>www-ssl</code> (port 443) in Winbox (IP &rarr; Services). The <code>api</code> service (port 8728) is a different protocol and will not work here.
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">API Username</label>
+                        <label class="form-label" data-i18n="router_user">API Username</label>
                         <input type="text" class="form-control" id="routerUser" placeholder="admin">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">API Password</label>
+                        <label class="form-label" data-i18n="router_pass">API Password</label>
                         <input type="password" class="form-control" id="routerPass" placeholder="Leave blank if none">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Protocol</label>
+                        <label class="form-label" data-i18n="protocol">Protocol</label>
                         <select class="form-select" id="routerProto">
                             <option value="http">HTTP (Default REST)</option>
                             <option value="https">HTTPS</option>
@@ -428,31 +428,31 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Port <span class="hint">(Optional)</span></label>
+                        <label class="form-label" data-i18n="port">Port <span class="hint" data-i18n="optional">(Optional)</span></label>
                         <input type="number" class="form-control" id="routerPort" placeholder="e.g. 80 or 443">
                     </div>
 
                     <!-- EXPORT IMPORT SETTINGS -->
                     <hr>
-                    <h6 class="section-title mt-4">Backup & Restore Settings</h6>
+                    <h6 class="section-title mt-4" data-i18n="backup_restore">Backup & Restore Settings</h6>
                     <div class="mb-3">
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary" type="button" onclick="exportSettings()">Export JSON</button>
+                            <button class="btn btn-outline-primary" type="button" onclick="exportSettings()" data-i18n="export_json">Export JSON</button>
                             <label class="btn btn-outline-secondary mb-0">
-                                Import JSON
+                                <span data-i18n="import_json">Import JSON</span>
                                 <input type="file" style="display: none;" accept=".json,application/json" onchange="importSettings(event)">
                             </label>
                         </div>
-                        <small class="text-muted d-block mt-1">Export all configurations, templates, and layouts to a file.</small>
+                        <small class="text-muted d-block mt-1" data-i18n="export_hint">Export all configurations, templates, and layouts to a file.</small>
                     </div>
                     <!-- /EXPORT IMPORT SETTINGS -->
 
                     <div id="testConnResult" class="mt-2 text-center" style="font-size: 13px; font-weight: 600;"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-info me-auto" id="btnTestConn" onclick="testRouterConnection()">Test Connection</button>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveRouterSettingsForm()">Save Settings</button>
+                    <button type="button" class="btn btn-outline-info me-auto" id="btnTestConn" onclick="testRouterConnection()" data-i18n="test_connection">Test Connection</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRouterSettingsForm()" data-i18n="save_settings">Save Settings</button>
                 </div>
             </div>
         </div>
@@ -488,7 +488,7 @@
             <div class="modal-content editor-modal">
                 <!-- Editor Header / Toolbar -->
                 <div class="editor-header">
-                    <span class="editor-title">Voucher Editor</span>
+                    <span class="editor-title" data-i18n="voucher_editor">Voucher Editor</span>
                     <div class="editor-toolbar">
                         <div class="tb-group">
                             <button class="tb-btn" id="btnUndo" title="Undo (Ctrl+Z)" disabled onclick="editorUndo()">
@@ -630,7 +630,7 @@
                             <div class="panel-section">
                                 <div class="panel-header">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                    Properties
+                                    <span data-i18n="properties">Properties</span>
                                 </div>
                                 <div id="propEmpty" class="panel-empty">Click an element to edit</div>
                                 <div id="propEditor" style="display: none;">
@@ -736,7 +736,7 @@
                             <div class="panel-section">
                                 <div class="panel-header">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                                    Layers
+                                    <span data-i18n="layers">Layers</span>
                                 </div>
                                 <div id="layersList" class="layers-list"></div>
                             </div>
@@ -745,8 +745,8 @@
                             <div class="panel-section">
                                 <div class="panel-header">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 10H3"/><path d="M21 6H3"/><path d="M21 14H3"/><path d="M17 18H3"/></svg>
-                                    Custom Text
-                                    <button type="button" class="panel-header-btn" id="btnAddCustomText" onclick="addCustomText()">+ Add</button>
+                                    <span data-i18n="custom_text">Custom Text</span>
+                                    <button type="button" class="panel-header-btn" id="btnAddCustomText" onclick="addCustomText()">+ <span data-i18n="add">Add</span></button>
                                 </div>
                                 <div id="customTextsList" class="custom-texts-list"></div>
                                 <div id="customTextsEmpty" class="panel-empty" style="font-size:11px;padding:8px;">Add custom text like WiFi name, terms, notes, etc.</div>
@@ -756,28 +756,28 @@
                             <div class="panel-section">
                                 <div class="panel-header">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.08 4.93a10 10 0 0 1 0 14.14"/><path d="M6.92 4.93a10 10 0 0 0 0 14.14"/><circle cx="12" cy="12" r="10"/></svg>
-                                    Style
+                                    <span data-i18n="style">Style</span>
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Currency</div>
+                                    <div class="prop-label" data-i18n="currency">Currency</div>
                                     <input type="text" id="currency" class="prop-input prop-input-full" value="PHP" placeholder="PHP">
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Tag Color</div>
+                                    <div class="prop-label" data-i18n="tag_color">Tag Color</div>
                                     <div class="prop-row">
                                         <input type="color" id="TagColor" class="prop-color" value="#ffea8f" onchange="applyTagColor()">
                                         <span class="prop-color-label" id="tagColorLabel">#ffea8f</span>
                                     </div>
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Background</div>
+                                    <div class="prop-label" data-i18n="background">Background</div>
                                     <div class="prop-row">
                                         <input type="color" id="voucherBgColor" class="prop-color" value="#ffffff" onchange="applyVoucherBgColor()">
                                         <span class="prop-color-label" id="voucherBgColorLabel">#ffffff</span>
                                     </div>
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Border</div>
+                                    <div class="prop-label" data-i18n="border">Border</div>
                                     <select id="voucherBorder" class="prop-select" onchange="applyBorderStyle()">
                                         <option value="1px dashed #aaa">Dashed</option>
                                         <option value="1px solid #ccc">Solid</option>
@@ -790,14 +790,14 @@
                                     </select>
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Corners</div>
+                                    <div class="prop-label" data-i18n="corners">Corners</div>
                                     <div class="prop-row">
                                         <input type="range" id="voucherBorderRadius" class="prop-range" min="0" max="20" value="0" oninput="applyBorderRadius()">
                                         <span id="borderRadiusVal" class="prop-range-val">0px</span>
                                     </div>
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Gradient</div>
+                                    <div class="prop-label" data-i18n="gradient">Gradient</div>
                                     <select id="voucherGradient" class="prop-select" onchange="applyVoucherGradient()">
                                         <option value="">None</option>
                                         <option value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)">Purple Haze</option>
@@ -815,7 +815,7 @@
                                     </select>
                                 </div>
                                 <div class="prop-group">
-                                    <div class="prop-label">Preset Layouts</div>
+                                    <div class="prop-label" data-i18n="preset_layouts">Preset Layouts</div>
                                     <div class="preset-grid">
                                         <button class="preset-btn" onclick="applyPresetLayout('classic')" title="Classic">Classic</button>
                                         <button class="preset-btn" onclick="applyPresetLayout('modern')" title="Modern">Modern</button>
@@ -928,7 +928,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Quick Setup Wizard</h5>
+                    <h5 class="modal-title" data-i18n="wiz_title">Quick Setup Wizard</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -936,31 +936,31 @@
 
                     <!-- Step 1: Internet Connection -->
                     <div class="wizard-step" id="step1">
-                        <h5 class="mb-3">Step 1: Internet Connection</h5>
-                        <p class="mb-3 fw-bold text-primary">Paano ka nagka-internet?</p>
+                        <h5 class="mb-3"><span data-i18n="wiz_step">Step</span> 1: <span data-i18n="wiz_internet_conn">Internet Connection</span></h5>
+                        <p class="mb-3 fw-bold text-primary" data-i18n="wiz_how_internet">Paano ka nagka-internet?</p>
 
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="internetType" id="internetDhcp" value="dhcp" checked>
-                            <label class="form-check-label fw-bold" for="internetDhcp">
+                            <label class="form-check-label fw-bold" for="internetDhcp" data-i18n="wiz_internet_dhcp">
                                 Automatic (DHCP Client)
                             </label>
-                            <div class="text-muted small">Cabled galing sa ibang router (PLDT/Globe/Converge)</div>
+                            <div class="text-muted small" data-i18n="wiz_internet_dhcp_hint">Cabled galing sa ibang router (PLDT/Globe/Converge)</div>
                         </div>
                         <div class="form-check mb-4">
                             <input class="form-check-input" type="radio" name="internetType" id="internetPppoe" value="pppoe">
-                            <label class="form-check-label fw-bold" for="internetPppoe">
+                            <label class="form-check-label fw-bold" for="internetPppoe" data-i18n="wiz_internet_pppoe">
                                 May Username at Password (PPPoE)
                             </label>
-                            <div class="text-muted small">Direct sa modem na naka bridge mode</div>
+                            <div class="text-muted small" data-i18n="wiz_internet_pppoe_hint">Direct sa modem na naka bridge mode</div>
                         </div>
 
                         <div id="pppoeFields" class="d-none bg-light p-3 rounded border mb-3">
                             <div class="mb-2">
-                                <label class="form-label small fw-bold">PPPoE Username</label>
+                                <label class="form-label small fw-bold" data-i18n="pppoe_user">PPPoE Username</label>
                                 <input type="text" class="form-control" id="pppoeUser" placeholder="e.g. user@pldtdsl.net">
                             </div>
                             <div>
-                                <label class="form-label small fw-bold">PPPoE Password</label>
+                                <label class="form-label small fw-bold" data-i18n="pppoe_pass">PPPoE Password</label>
                                 <input type="password" class="form-control" id="pppoePass">
                             </div>
                         </div>
@@ -968,62 +968,62 @@
 
                     <!-- Step 2: WiFi Source -->
                     <div class="wizard-step d-none" id="step2">
-                        <h5 class="mb-3">Step 2: WiFi Source</h5>
-                        <p class="mb-3 fw-bold text-primary">Saan kokonekta ang mga customer mo?</p>
+                        <h5 class="mb-3"><span data-i18n="wiz_step">Step</span> 2: <span data-i18n="wiz_wifi_source">WiFi Source</span></h5>
+                        <p class="mb-3 fw-bold text-primary" data-i18n="wiz_where_wifi">Saan kokonekta ang mga customer mo?</p>
 
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="wifiType" id="wifiBuiltIn" value="builtin" checked>
-                            <label class="form-check-label fw-bold" for="wifiBuiltIn">
+                            <label class="form-check-label fw-bold" for="wifiBuiltIn" data-i18n="wiz_wifi_builtin">
                                 Built-in WiFi ng Easybox
                             </label>
-                            <div class="text-muted small">Gamit ang wifi signal na galing mismo sa device na ito</div>
+                            <div class="text-muted small" data-i18n="wiz_wifi_builtin_hint">Gamit ang wifi signal na galing mismo sa device na ito</div>
                         </div>
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="radio" name="wifiType" id="wifiExternal" value="external">
-                            <label class="form-check-label fw-bold" for="wifiExternal">
+                            <label class="form-check-label fw-bold" for="wifiExternal" data-i18n="wiz_wifi_external">
                                 External Access Point (Antena sa labas)
                             </label>
-                            <div class="text-muted small">May naka connect na Access Point tulad ng Comfast o Tenda</div>
+                            <div class="text-muted small" data-i18n="wiz_wifi_external_hint">May naka connect na Access Point tulad ng Comfast o Tenda</div>
                         </div>
                     </div>
 
                     <!-- Step 3: Network & Business Name -->
                     <div class="wizard-step d-none" id="step3">
-                        <h5 class="mb-3">Step 3: Network & Business</h5>
+                        <h5 class="mb-3"><span data-i18n="wiz_step">Step</span> 3: <span data-i18n="wiz_network_business">Network & Business</span></h5>
 
                         <div id="ssidField" class="mb-3">
-                            <label class="form-label fw-bold">Pangalan ng WiFi (SSID)</label>
+                            <label class="form-label fw-bold" data-i18n="wiz_wifi_name">Pangalan ng WiFi (SSID)</label>
                             <input type="text" class="form-control" id="wizSsid" placeholder="e.g. EasyBox WiFi">
-                            <div class="form-text">Ito ang pangalan ng WiFi na makikita ng mga tao.</div>
+                            <div class="form-text" data-i18n="wiz_wifi_name_hint">Ito ang pangalan ng WiFi na makikita ng mga tao.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Login Portal URL</label>
+                            <label class="form-label fw-bold" data-i18n="wiz_portal_url">Login Portal URL</label>
                             <input type="text" class="form-control" id="wizPortalUrl" placeholder="e.g. wifi.local">
-                            <div class="form-text">Ito yung address na ita-type sa browser para lumabas ang login page. (Hal: <b>pisonet.local</b>)</div>
+                            <div class="form-text"><span data-i18n="wiz_portal_url_hint">Ito yung address na ita-type sa browser para lumabas ang login page. (Hal:</span> <b>pisonet.local</b>)</div>
                         </div>
                     </div>
 
                     <!-- Step 4: Create Promo -->
                     <div class="wizard-step d-none" id="step4">
-                        <h5 class="mb-3">Step 4: Create Initial Promo</h5>
-                        <p class="mb-3 text-muted small">Gagawa tayo ng isang voucher profile (promo) para magamit agad ang hotspot.</p>
+                        <h5 class="mb-3"><span data-i18n="wiz_step">Step</span> 4: <span data-i18n="wiz_create_promo">Create Initial Promo</span></h5>
+                        <p class="mb-3 text-muted small" data-i18n="wiz_create_promo_hint">Gagawa tayo ng isang voucher profile (promo) para magamit agad ang hotspot.</p>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Promo Name</label>
+                            <label class="form-label fw-bold" data-i18n="wiz_promo_name">Promo Name</label>
                             <input type="text" class="form-control" id="wizPromoName" placeholder="e.g. 1-Hour-Promo" value="1-Hour-Promo">
                         </div>
 
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label fw-bold small">Duration</label>
+                                <label class="form-label fw-bold small" data-i18n="duration">Duration</label>
                                 <select class="form-select" id="wizDuration">
-                                    <option value="01:00:00">1 Hour</option>
-                                    <option value="1d 00:00:00">1 Day</option>
+                                    <option value="01:00:00" data-i18n="1_hour">1 Hour</option>
+                                    <option value="1d 00:00:00" data-i18n="1_day">1 Day</option>
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-bold small">Speed Limit</label>
+                                <label class="form-label fw-bold small" data-i18n="wiz_speed_limit">Speed Limit</label>
                                 <select class="form-select" id="wizSpeed">
                                     <option value="2M/2M">2 Mbps</option>
                                     <option value="5M/5M" selected>5 Mbps</option>
@@ -1035,31 +1035,31 @@
                     <!-- Step 5: Execute -->
                     <div class="wizard-step d-none text-center py-4" id="step5">
                         <div id="wizReadyText">
-                            <h5 class="mb-4">Ready to Setup!</h5>
-                            <p class="text-muted mb-4">Click "Start Setup" to apply the configurations to your router.</p>
+                            <h5 class="mb-4" data-i18n="wiz_ready">Ready to Setup!</h5>
+                            <p class="text-muted mb-4" data-i18n="wiz_ready_hint">Click "Start Setup" to apply the configurations to your router.</p>
                         </div>
 
                         <div id="wizProgressArea" class="d-none">
                             <div class="spinner-border text-primary mb-3" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
-                            <h6 id="wizStatusText" class="text-primary fw-bold">Initializing...</h6>
+                            <h6 id="wizStatusText" class="text-primary fw-bold" data-i18n="wiz_initializing">Initializing...</h6>
                         </div>
 
                         <div id="wizSuccessArea" class="d-none">
                             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success mb-3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            <h5 class="text-success fw-bold">Setup Complete!</h5>
-                            <p class="text-muted small">Your router is now ready to use.</p>
+                            <h5 class="text-success fw-bold" data-i18n="wiz_complete">Setup Complete!</h5>
+                            <p class="text-muted small" data-i18n="wiz_complete_hint">Your router is now ready to use.</p>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer justify-content-between bg-light">
-                    <button type="button" class="btn btn-secondary d-none" id="wizBtnBack" onclick="wizBack()">Back</button>
+                    <button type="button" class="btn btn-secondary d-none" id="wizBtnBack" onclick="wizBack()" data-i18n="back">Back</button>
                     <div class="ms-auto">
-                        <button type="button" class="btn btn-primary" id="wizBtnNext" onclick="wizNext()">Next</button>
-                        <button type="button" class="btn btn-success d-none" id="wizBtnExecute" onclick="wizExecute()">Start Setup</button>
-                        <button type="button" class="btn btn-primary d-none" id="wizBtnDone" data-bs-dismiss="modal">Done</button>
+                        <button type="button" class="btn btn-primary" id="wizBtnNext" onclick="wizNext()" data-i18n="next">Next</button>
+                        <button type="button" class="btn btn-success d-none" id="wizBtnExecute" onclick="wizExecute()" data-i18n="wiz_start_setup">Start Setup</button>
+                        <button type="button" class="btn btn-primary d-none" id="wizBtnDone" data-bs-dismiss="modal" data-i18n="wiz_done">Done</button>
                     </div>
                 </div>
             </div>
@@ -1071,12 +1071,12 @@
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/jsQR.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/mikrotik.js"></script>
     <!-- Capacitor Core -->
     <script src="https://unpkg.com/@capacitor/core@8.1.0/dist/capacitor.js"></script>
     <script src="js/undo_redo.js"></script>
     <script src="js/generate.js"></script>
-    <script src="js/i18n.js"></script>
     <script src="js/wizard.js"></script>
 </body>
 </html>
