@@ -1468,6 +1468,79 @@ function alignElement(alignment) {
 // ============================================
 // CANVAS SIZE
 // ============================================
+function autoFitVoucherSize() {
+    var paperSelect = document.getElementById('editorPaperSize');
+    var qtySelect = document.getElementById('editorVouchersPerPage');
+
+    if (!paperSelect || !qtySelect) return;
+
+    var paperSize = paperSelect.value || 'a4';
+    var qty = parseInt(qtySelect.value);
+
+    if (!qty) return; // "Auto-Fit Qty" option selected
+
+    // Standard paper dimensions at ~96 DPI, minus a 40px margin (20px each side)
+    var paperDims = {
+        a4: { w: 794 - 40, h: 1123 - 40 },
+        letter: { w: 816 - 40, h: 1056 - 40 },
+        legal: { w: 816 - 40, h: 1344 - 40 }
+    };
+
+    var pw = paperDims[paperSize].w;
+    var ph = paperDims[paperSize].h;
+
+    var marginTotal = 10; // 5px margin on each side (from css margin: 5px)
+
+    // We want the voucher to maintain roughly a 2:1 aspect ratio
+    var targetRatio = 2.0;
+
+    var maxArea = 0;
+    var bestW = 200;
+    var bestH = 100;
+
+    // Test different column counts to find the layout that gives the largest voucher area
+    for (var cols = 1; cols <= qty; cols++) {
+        var rows = Math.ceil(qty / cols);
+
+        // Calculate max allowed dimensions for this grid
+        // pw = cols * (vw + marginTotal)
+        var maxW = Math.floor((pw / cols) - marginTotal);
+        // ph = rows * (vh + marginTotal)
+        var maxH = Math.floor((ph / rows) - marginTotal);
+
+        if (maxW < 50 || maxH < 25) continue; // too small
+
+        // Enforce aspect ratio
+        var currentRatio = maxW / maxH;
+        var w = maxW;
+        var h = maxH;
+
+        if (currentRatio > targetRatio) {
+            // It's too wide, so constrain by height
+            w = Math.floor(h * targetRatio);
+        } else {
+            // It's too tall, so constrain by width
+            h = Math.floor(w / targetRatio);
+        }
+
+        var area = w * h;
+        if (area > maxArea) {
+            maxArea = area;
+            bestW = w;
+            bestH = h;
+        }
+    }
+
+    // Cap dimensions to something reasonable
+    bestW = Math.max(100, Math.min(800, bestW));
+    bestH = Math.max(50, Math.min(600, bestH));
+
+    document.getElementById('canvasW').value = bestW;
+    document.getElementById('canvasH').value = bestH;
+
+    setCanvasSize();
+}
+
 function setCanvasSize() {
     var w = parseInt(document.getElementById('canvasW').value) || 200;
     var h = parseInt(document.getElementById('canvasH').value) || 100;
@@ -1570,18 +1643,12 @@ function buildVoucher(code, userpass, qr, cfg) {
 
     var w = voucherContainerSize.width;
     var vh = voucherContainerSize.height;
-    var scale = cfg.scale || 1.0;
-    var wrapperW = Math.round(w * scale);
-    var wrapperH = Math.round(vh * scale);
-
     var border = voucherBorderStyle || '1px dashed #ccc';
 
     var bgColor = voucherBgColor || '#ffffff';
     var bRadius = voucherBorderRadius ? 'border-radius: ' + voucherBorderRadius + 'px;' : '';
     var gradientStyle = voucherGradient ? 'background-image: ' + voucherGradient + ';' : '';
-
-    var h = '<div class="voucher-wrapper" style="width: ' + wrapperW + 'px; height: ' + wrapperH + 'px; margin: 5px; float: left; page-break-inside: avoid; overflow: visible;">';
-    h += '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transform: scale(' + scale + '); transform-origin: top left; margin: 0; float: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; ' + bRadius + ' ' + gradientStyle + ' ' + bgStyle + '">';
+    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; ' + bRadius + ' ' + gradientStyle + ' ' + bgStyle + '">';
 
     // Price
     var cPrice = voucherElementsConfig.price;
@@ -1639,7 +1706,7 @@ function buildVoucher(code, userpass, qr, cfg) {
         }
     }
 
-    h += '</div></div>';
+    h += '</div>';
     return h;
 }
 
@@ -1649,7 +1716,6 @@ function Generate() {
     var prefix = $('#Prefix').val() || '';
     var price = $('#Price').val() || '0';
     var qty = parseInt($('#Quantity').val()) || 1;
-    var paperSize = $('#PaperSize').val() || 'a4';
     var len = parseInt($('#Length').val()) || 6;
     var charType = $('#char').val() || '1';
     var isUserPass = $('#userpass').is(':checked');
@@ -1673,51 +1739,10 @@ function Generate() {
     var currency = $('#currency').val() || 'PHP';
     var tagColor = $('#TagColor').val() || '#ffea8f';
 
-    // Calculate best scale to fit `qty` vouchers into the `paperSize` page
-    // Using 96 DPI: A4 ~ 794x1123, Letter ~ 816x1056, Legal ~ 816x1344
-    // Accounting for some margins
-    var paperDims = {
-        a4: { w: 794 - 40, h: 1123 - 40 },
-        letter: { w: 816 - 40, h: 1056 - 40 },
-        legal: { w: 816 - 40, h: 1344 - 40 }
-    };
-    var pw = paperDims[paperSize].w;
-    var ph = paperDims[paperSize].h;
-
-    var vw = voucherContainerSize.width;
-    var vh = voucherContainerSize.height;
-    var marginTotal = 10; // 5px margin on each side (left/right or top/bottom)
-
-    var bestScale = 0;
-
-    // Test different column counts
-    for (var cols = 1; cols <= qty; cols++) {
-        var rows = Math.ceil(qty / cols);
-
-        // The total available space for the scaled vouchers is the paper dimension minus the margins
-        // pw = cols * (vw * scale + marginTotal) => scale = (pw - cols * marginTotal) / (cols * vw)
-        var scaleX = (pw - cols * marginTotal) / (cols * vw);
-        var scaleY = (ph - rows * marginTotal) / (rows * vh);
-
-        // Ensure scale is positive
-        scaleX = Math.max(0.01, scaleX);
-        scaleY = Math.max(0.01, scaleY);
-
-        var scale = Math.min(scaleX, scaleY);
-
-        if (scale > bestScale) {
-            bestScale = scale;
-        }
-    }
-
-    // Cap scale at 1.0 (don't upscale)
-    var scaleFactor = Math.min(1.0, bestScale);
-
     var cfg = {
         vendo: vendo, price: price, uptime: uptime, validity: validity,
         data: data, profile: profile, server: server, ip: ip,
-        currency: currency, color: tagColor, durDisplay: durDisplay,
-        scale: scaleFactor
+        currency: currency, color: tagColor, durDisplay: durDisplay
     };
 
     var script = '';

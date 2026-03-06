@@ -12,24 +12,18 @@ body {
     -webkit-print-color-adjust: exact;
 }
 
-div.voucher-wrapper {
-    display: inline-block;
-    margin: 5px;
-    box-sizing: border-box;
-    position: relative;
-    page-break-inside: avoid;
-    float: left;
-}
-
 div.voucher {
-    display: block;
+    display: inline-block;
     height: 100px;
     width: 200px;
     border: 1px dashed #ccc;
     background-color: #fff;
+    margin: 5px;
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
+    page-break-inside: avoid;
+    float: left;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
@@ -43,7 +37,7 @@ div.voucher {
 }
 
 @media print {
-    div.voucher-wrapper {
+    div.voucher {
         page-break-inside: avoid;
     }
 }
