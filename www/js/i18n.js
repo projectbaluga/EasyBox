@@ -51,6 +51,32 @@ const translations = {
         "print": "Imprimir",
         "clear_all": "Borrar todo",
         "customize": "Personalizar"
+    },
+    tl: {
+        "nav_generator": "Gawaan",
+        "nav_dashboard": "Dashboard",
+        "nav_hotspot": "Hotspot",
+        "nav_pppoe": "PPPoE",
+        "basic_settings": "Pangunahing Settings",
+        "tag_name": "Pangalan ng Tag",
+        "prefix": "Unlapi (Prefix)",
+        "length": "Haba",
+        "characters": "Karakter",
+        "auth_type": "Uri ng Auth",
+        "price": "Presyo",
+        "quantity": "Dami",
+        "time_data": "Oras at Data",
+        "duration": "Tagal",
+        "validity": "Bisa",
+        "data_package": "Pakete ng Data",
+        "download_speed": "Bilis ng Download",
+        "upload_speed": "Bilis ng Upload",
+        "generate_vouchers": "Gumawa ng Voucher",
+        "copy_script": "Kopyahin ang Script",
+        "download_rsc": "I-download ang .rsc",
+        "print": "I-print",
+        "clear_all": "Burahin Lahat",
+        "customize": "I-customize"
     }
 };
 
