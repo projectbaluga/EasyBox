@@ -1558,29 +1558,72 @@ body {
     }
 
     .canvas-workspace {
-        padding: 20px;
+        padding: 10px;
     }
 
     .editor-header {
-        padding: 4px 8px;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .editor-title {
+        font-size: 11px;
+        margin-right: 4px;
     }
 
     .editor-toolbar {
         gap: 2px;
+        justify-content: center;
     }
 
     .tb-sep {
         margin: 0 2px;
+    }
+
+    .tb-btn {
+        width: 26px;
+        height: 24px;
+    }
+
+    .tb-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .canvas-info-bar {
+        padding: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .canvas-coords {
+        display: none; /* Hide coords on mobile to save space */
     }
 }
 
 @media (max-width: 480px) {
     .editor-panel {
         max-height: 240px;
+        flex-direction: column;
+        flex-wrap: nowrap;
     }
 
     .panel-section {
-        min-width: 150px;
+        min-width: 100%;
+        padding: 8px 10px;
+    }
+
+    .editor-header {
+        justify-content: center;
+    }
+
+    .editor-title {
+        display: none; /* Hide title on very small screens to give tools more space */
+    }
+
+    .tb-group {
+        padding: 0;
     }
 }
 
@@ -2139,7 +2182,7 @@ body.dark-mode .editor-canvas-area {
         min-height: 250px;
     }
     .canvas-scaler {
-        transform: scale(0.8) !important;
+        transform: scale(0.65) !important;
         transform-origin: top center;
     }
 }
