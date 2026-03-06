@@ -1468,11 +1468,121 @@ function alignElement(alignment) {
 // ============================================
 // CANVAS SIZE
 // ============================================
+function autoFitVoucherSize() {
+    var paperSelect = document.getElementById('editorPaperSize');
+    var qtySelect = document.getElementById('editorVouchersPerPage');
+
+    if (!paperSelect || !qtySelect) return;
+
+    var paperSize = paperSelect.value || 'a4';
+    var qty = parseInt(qtySelect.value);
+
+    if (!qty) return; // "Auto-Fit Qty" option selected
+
+    // Standard paper dimensions at ~96 DPI.
+    // Margin is tightly packed: 10mm top (~38px), 3mm bottom (~11px), 7mm left (~26px), 3mm right (~11px) based on voucher.css
+    // We add a safety buffer to ensure browsers don't wrap to the next page.
+    var paperDims = {
+        a4: { w: 794 - 45, h: 1123 - 60 },
+        letter: { w: 816 - 45, h: 1056 - 60 },
+        legal: { w: 816 - 45, h: 1344 - 60 }
+    };
+
+    var pw = paperDims[paperSize].w;
+    var ph = paperDims[paperSize].h;
+
+    var marginTotal = 10; // 5px margin on each side (from css margin: 5px)
+
+    // Maintain the *current* aspect ratio of the voucher template, bounded by standard aesthetic ranges
+    var currentW = voucherContainerSize.width || 200;
+    var currentH = voucherContainerSize.height || 100;
+    var targetRatio = currentW / currentH;
+    targetRatio = Math.max(1.4, Math.min(3.0, targetRatio));
+
+    var maxArea = 0;
+    var bestW = currentW;
+    var bestH = currentH;
+
+    // Test different column counts to find the layout that gives the largest voucher area
+    for (var cols = 1; cols <= qty; cols++) {
+        var rows = Math.ceil(qty / cols);
+
+        // Calculate max allowed dimensions for this grid
+        // pw = cols * (vw + marginTotal) => vw = (pw / cols) - marginTotal
+        var maxW = Math.floor((pw / cols) - marginTotal);
+        // ph = rows * (vh + marginTotal) => vh = (ph / rows) - marginTotal
+        var maxH = Math.floor((ph / rows) - marginTotal);
+
+        if (maxW < 30 || maxH < 15) continue; // too small to render nicely
+
+        var w, h;
+        var currentRatio = maxW / maxH;
+
+        if (currentRatio > targetRatio) {
+            // Space is wider than needed, limit by height
+            h = maxH;
+            w = Math.floor(h * targetRatio);
+        } else {
+            // Space is taller than needed, limit by width
+            w = maxW;
+            h = Math.floor(w / targetRatio);
+        }
+
+        var area = w * h;
+        if (area > maxArea) {
+            maxArea = area;
+            bestW = w;
+            bestH = h;
+        }
+    }
+
+    // Allow down to 50x25 to fit large quantities (e.g. 100pcs)
+    bestW = Math.max(50, Math.min(800, bestW));
+    bestH = Math.max(25, Math.min(600, bestH));
+
+    // Now, we must gracefully scale all inner elements relative to the new canvas size
+    var scaleFactor = bestW / currentW;
+
+    // Update elements
+    for (var key in voucherElementsConfig) {
+        var el = voucherElementsConfig[key];
+        el.left = Math.round(el.left * scaleFactor);
+        el.top = Math.round(el.top * scaleFactor);
+
+        if (el.fontSize) {
+            el.fontSize = Math.max(4, Math.round(el.fontSize * scaleFactor));
+        }
+
+        if (el.letterSpacing) {
+            el.letterSpacing = el.letterSpacing * scaleFactor;
+        }
+    }
+
+    // Scale QR code specifically
+    if (voucherElementsConfig.qr && voucherElementsConfig.qr.visible) {
+        qrCodeSize = Math.max(20, Math.round(qrCodeSize * scaleFactor));
+        var qrSizeInput = document.getElementById('propQrSize');
+        if (qrSizeInput) qrSizeInput.value = qrCodeSize;
+        var qrSizeVal = document.getElementById('propQrSizeVal');
+        if (qrSizeVal) qrSizeVal.textContent = qrCodeSize + 'px';
+        localStorage.setItem('qv_qr_size', qrCodeSize);
+    }
+
+    // Apply changes
+    document.getElementById('canvasW').value = bestW;
+    document.getElementById('canvasH').value = bestH;
+
+    setCanvasSize();
+    applyAllElementStyles();
+    saveElementsConfig();
+    updatePropertiesPanel();
+}
+
 function setCanvasSize() {
     var w = parseInt(document.getElementById('canvasW').value) || 200;
     var h = parseInt(document.getElementById('canvasH').value) || 100;
-    w = Math.max(100, Math.min(800, w));
-    h = Math.max(50, Math.min(600, h));
+    w = Math.max(50, Math.min(800, w));
+    h = Math.max(25, Math.min(600, h));
     voucherContainerSize.width = w;
     voucherContainerSize.height = h;
     var container = document.getElementById('dragVoucherContainer');
