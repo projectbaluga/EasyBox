@@ -71,6 +71,14 @@
                 <strong>Browser Notice:</strong> Due to CORS security restrictions in standard web browsers, connecting to your Mikrotik router may fail with a "Network Error". Please use the Android App for full functionality.
             </div>
 
+            <!-- Quick Setup Button -->
+            <div class="d-grid mb-3">
+                <button class="btn btn-lg btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#wizardModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Quick Setup Wizard
+                </button>
+            </div>
+
             <div class="qv-card mb-4">
                 <div class="output-header">
                     <h6 class="output-title">Dashboard Analytics</h6>
@@ -987,6 +995,149 @@
         <div id="PrintBody"></div>
     </div>
 
+    <!-- Quick Setup Wizard Modal -->
+    <div class="modal fade" id="wizardModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Quick Setup Wizard</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="wizardAlert" class="alert alert-danger d-none" role="alert"></div>
+
+                    <!-- Step 1: Internet Connection -->
+                    <div class="wizard-step" id="step1">
+                        <h5 class="mb-3">Step 1: Internet Connection</h5>
+                        <p class="mb-3 fw-bold text-primary">Paano ka nagka-internet?</p>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="internetType" id="internetDhcp" value="dhcp" checked>
+                            <label class="form-check-label fw-bold" for="internetDhcp">
+                                Automatic (DHCP Client)
+                            </label>
+                            <div class="text-muted small">Cabled galing sa ibang router (PLDT/Globe/Converge)</div>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="radio" name="internetType" id="internetPppoe" value="pppoe">
+                            <label class="form-check-label fw-bold" for="internetPppoe">
+                                May Username at Password (PPPoE)
+                            </label>
+                            <div class="text-muted small">Direct sa modem na naka bridge mode</div>
+                        </div>
+
+                        <div id="pppoeFields" class="d-none bg-light p-3 rounded border mb-3">
+                            <div class="mb-2">
+                                <label class="form-label small fw-bold">PPPoE Username</label>
+                                <input type="text" class="form-control" id="pppoeUser" placeholder="e.g. user@pldtdsl.net">
+                            </div>
+                            <div>
+                                <label class="form-label small fw-bold">PPPoE Password</label>
+                                <input type="password" class="form-control" id="pppoePass">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: WiFi Source -->
+                    <div class="wizard-step d-none" id="step2">
+                        <h5 class="mb-3">Step 2: WiFi Source</h5>
+                        <p class="mb-3 fw-bold text-primary">Saan kokonekta ang mga customer mo?</p>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="wifiType" id="wifiBuiltIn" value="builtin" checked>
+                            <label class="form-check-label fw-bold" for="wifiBuiltIn">
+                                Built-in WiFi ng Easybox
+                            </label>
+                            <div class="text-muted small">Gamit ang wifi signal na galing mismo sa device na ito</div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="wifiType" id="wifiExternal" value="external">
+                            <label class="form-check-label fw-bold" for="wifiExternal">
+                                External Access Point (Antena sa labas)
+                            </label>
+                            <div class="text-muted small">May naka connect na Access Point tulad ng Comfast o Tenda</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Network & Business Name -->
+                    <div class="wizard-step d-none" id="step3">
+                        <h5 class="mb-3">Step 3: Network & Business</h5>
+
+                        <div id="ssidField" class="mb-3">
+                            <label class="form-label fw-bold">Pangalan ng WiFi (SSID)</label>
+                            <input type="text" class="form-control" id="wizSsid" placeholder="e.g. EasyBox WiFi">
+                            <div class="form-text">Ito ang pangalan ng WiFi na makikita ng mga tao.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Login Portal URL</label>
+                            <input type="text" class="form-control" id="wizPortalUrl" placeholder="e.g. wifi.local">
+                            <div class="form-text">Ito yung address na ita-type sa browser para lumabas ang login page. (Hal: <b>pisonet.local</b>)</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Create Promo -->
+                    <div class="wizard-step d-none" id="step4">
+                        <h5 class="mb-3">Step 4: Create Initial Promo</h5>
+                        <p class="mb-3 text-muted small">Gagawa tayo ng isang voucher profile (promo) para magamit agad ang hotspot.</p>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Promo Name</label>
+                            <input type="text" class="form-control" id="wizPromoName" placeholder="e.g. 1-Hour-Promo" value="1-Hour-Promo">
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small">Duration</label>
+                                <select class="form-select" id="wizDuration">
+                                    <option value="01:00:00">1 Hour</option>
+                                    <option value="1d 00:00:00">1 Day</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small">Speed Limit</label>
+                                <select class="form-select" id="wizSpeed">
+                                    <option value="2M/2M">2 Mbps</option>
+                                    <option value="5M/5M" selected>5 Mbps</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Execute -->
+                    <div class="wizard-step d-none text-center py-4" id="step5">
+                        <div id="wizReadyText">
+                            <h5 class="mb-4">Ready to Setup!</h5>
+                            <p class="text-muted mb-4">Click "Start Setup" to apply the configurations to your router.</p>
+                        </div>
+
+                        <div id="wizProgressArea" class="d-none">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h6 id="wizStatusText" class="text-primary fw-bold">Initializing...</h6>
+                        </div>
+
+                        <div id="wizSuccessArea" class="d-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success mb-3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <h5 class="text-success fw-bold">Setup Complete!</h5>
+                            <p class="text-muted small">Your router is now ready to use.</p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer justify-content-between bg-light">
+                    <button type="button" class="btn btn-secondary d-none" id="wizBtnBack" onclick="wizBack()">Back</button>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-primary" id="wizBtnNext" onclick="wizNext()">Next</button>
+                        <button type="button" class="btn btn-success d-none" id="wizBtnExecute" onclick="wizExecute()">Start Setup</button>
+                        <button type="button" class="btn btn-primary d-none" id="wizBtnDone" data-bs-dismiss="modal">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="app-footer">EasyBox v2.5</footer>
 
     <script src="js/jquery-3.6.0.min.js"></script>
@@ -998,5 +1149,6 @@
     <script src="js/undo_redo.js"></script>
     <script src="js/generate.js"></script>
     <script src="js/i18n.js"></script>
+    <script src="js/wizard.js"></script>
 </body>
 </html>
