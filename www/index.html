@@ -148,8 +148,8 @@
 
             <div class="qv-card p-0 overflow-hidden" style="display: flex; flex-direction: column; height: calc(100vh - 160px); min-height: 500px;">
                 <!-- Beginner Friendly Tabs -->
-                <div class="winbox-tabs-container d-flex justify-content-between align-items-center pe-2">
-                    <ul class="nav nav-tabs winbox-tabs flex-nowrap overflow-auto border-0" id="hotspotTabs" role="tablist">
+                <div class="winbox-tabs-container d-flex align-items-center">
+                    <ul class="nav winbox-tabs flex-nowrap overflow-auto" id="hotspotTabs" role="tablist">
                         <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="generator" type="button"><span data-i18n="nav_generator">Voucher Generator</span></button></li>
                         <li class="nav-item" role="presentation"><button class="nav-link winbox-tab active" data-tab="users" type="button">All Vouchers</button></li>
                         <li class="nav-item" role="presentation"><button class="nav-link winbox-tab" data-tab="active" type="button">Online Users</button></li>
@@ -157,12 +157,12 @@
                     </ul>
 
                     <!-- Advanced Settings Dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1" type="button" id="advancedTabsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px; padding: 4px 8px;">
+                    <div class="dropdown ms-auto ps-2">
+                        <button class="btn btn-sm tb-action-btn dropdown-toggle d-flex align-items-center gap-1" type="button" id="advancedTabsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 20px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                             Advanced
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm winbox-advanced-tabs" aria-labelledby="advancedTabsDropdown" style="font-size: 13px;">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm winbox-advanced-tabs" aria-labelledby="advancedTabsDropdown" style="font-size: 13px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                             <li><button class="dropdown-item winbox-tab-adv" data-tab="servers" type="button">Servers</button></li>
                             <li><button class="dropdown-item winbox-tab-adv" data-tab="server-profiles" type="button">Server Profiles</button></li>
                             <li><hr class="dropdown-divider"></li>
@@ -179,13 +179,13 @@
 
                 <!-- Winbox Style Toolbar -->
                 <div class="winbox-toolbar">
-                    <button class="btn btn-sm btn-light tb-action-btn" onclick="openHotspotGenericModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> New</button>
+                    <button class="btn btn-sm tb-action-btn" onclick="openHotspotGenericModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> New</button>
                     <div class="tb-divider"></div>
-                    <button class="btn btn-sm btn-light tb-action-btn text-success" onclick="toggleHotspotSelected('enable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Enable</button>
-                    <button class="btn btn-sm btn-light tb-action-btn text-warning" onclick="toggleHotspotSelected('disable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Disable</button>
-                    <button class="btn btn-sm btn-light tb-action-btn text-danger" onclick="deleteHotspotSelected()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove</button>
+                    <button class="btn btn-sm tb-action-btn text-success" onclick="toggleHotspotSelected('enable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Enable</button>
+                    <button class="btn btn-sm tb-action-btn text-warning" onclick="toggleHotspotSelected('disable')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Disable</button>
+                    <button class="btn btn-sm tb-action-btn text-danger" onclick="deleteHotspotSelected()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove</button>
                     <div class="tb-divider"></div>
-                    <button class="btn btn-sm btn-light tb-action-btn ms-auto" onclick="loadHotspotCurrentTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Refresh</button>
+                    <button class="btn btn-sm tb-action-btn ms-auto" onclick="loadHotspotCurrentTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Refresh</button>
                 </div>
 
                 <!-- Generic Table Container -->
@@ -201,13 +201,11 @@
                 </div>
 
 <!-- Generator View -->
-        <div id="generator-content" style="display: none; overflow-y: auto; height: 100%;">
-            <!-- Generator Card -->
-            <div class="qv-card">
-            <form id="rst">
+        <div id="generator-content" style="display: none; overflow-y: auto; height: 100%; padding: 16px; background: var(--bg);">
+            <form id="rst" class="d-flex flex-column gap-3">
 
-                <!-- Basic Settings -->
-                <div class="section">
+                <!-- Basic Settings Card -->
+                <div class="qv-card m-0">
                     <h6 class="section-title"><span data-i18n="basic_settings">Basic Settings</span></h6>
                     <div class="row g-3">
                         <div class="col-12 col-sm-6 col-md-4">
@@ -259,8 +257,8 @@
                     </div>
                 </div>
 
-                <!-- Time & Data -->
-                <div class="section">
+                <!-- Time & Data Card -->
+                <div class="qv-card m-0">
                     <h6 class="section-title">Time & Data</h6>
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
@@ -286,8 +284,8 @@
                     </div>
                 </div>
 
-                <!-- Server Configuration -->
-                <div class="section">
+                <!-- Server Configuration Card -->
+                <div class="qv-card m-0">
                     <h6 class="section-title">Server Configuration</h6>
                     <div class="row g-3">
                         <div class="col-12 col-sm-4">
@@ -307,10 +305,10 @@
 
             </form>
 
-            <!-- Actions -->
-            <div class="actions-bar">
-                <button class="btn btn-generate" onclick="Generate()"><span data-i18n="generate_vouchers">Generate Vouchers</span></button>
-                <div class="actions-row">
+            <!-- Actions Card -->
+            <div class="qv-card m-0 mt-3" style="background: transparent; box-shadow: none; border: none; padding: 0;">
+                <button class="btn btn-generate mb-3" onclick="Generate()"><span data-i18n="generate_vouchers">Generate Vouchers</span></button>
+                <div class="actions-row mb-2">
                     <button class="btn btn-outline-primary" onclick="copyCode()"><span data-i18n="copy_script">Copy Script</span></button>
                     <a class="btn btn-outline-primary" onclick="DownloadScript()" role="button"><span data-i18n="download_rsc">Download .rsc</span></a>
                     <button class="btn btn-outline-warning" onclick="printvoucher()"><span data-i18n="print">Print</span></button>
@@ -320,10 +318,9 @@
                     <button class="btn btn-outline-secondary" data-bs-target="#customize" data-bs-toggle="modal"><span data-i18n="customize">Customize</span></button>
                 </div>
             </div>
-        </div>
 
         <!-- Output Card -->
-        <div class="qv-card">
+        <div class="qv-card m-0 mt-4">
             <div class="output-header">
                 <h6 class="output-title">Script Output</h6>
                 <span class="total-badge" id="Total"></span>

@@ -19,7 +19,7 @@
     --input-border: #cbd5e1;
     --input-bg: #ffffff;
     --code-bg: #f1f5f9;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --radius: 16px;
@@ -735,22 +735,25 @@ body {
 /* ---- Responsive ---- */
 @media (max-width: 576px) {
     .qv-card {
-        padding: 24px 16px;
-        border-radius: var(--radius);
+        padding: 20px 16px;
+        border-radius: 20px;
         margin-bottom: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
     }
 
     .main-container {
-        padding: 16px 10px 40px;
+        padding: 12px 8px 40px;
     }
 
     .actions-bar .btn {
-        font-size: 14px;
-        padding: 10px 12px;
+        font-size: 15px;
+        padding: 14px 16px;
+        border-radius: 12px;
     }
 
     .actions-row {
         flex-direction: column;
+        gap: 10px;
     }
 
     .header-inner {
@@ -763,6 +766,17 @@ body {
 
     .duration-group {
         gap: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 12px 14px;
+    }
+
+    .btn-generate {
+        border-radius: 16px !important;
+        padding: 16px 24px !important;
+        font-size: 17px !important;
     }
 }
 
@@ -1714,74 +1728,94 @@ body {
     }
 }
 
-/* Winbox Style Tabs & Toolbar for Hotspot */
+/* Modern Pill Style Tabs & Toolbar for Hotspot */
 .winbox-tabs-container {
-    background: #e1eaf1;
-    border-bottom: 1px solid #c5d4e0;
-    padding-top: 4px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
 }
+.winbox-tabs-container::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
 .winbox-tabs {
     border-bottom: none;
-    padding: 0 4px;
+    padding: 0;
     margin: 0;
+    display: flex;
+    gap: 8px;
 }
+
 .winbox-tab {
-    background: transparent !important;
+    background: var(--code-bg) !important;
     border: 1px solid transparent !important;
-    border-bottom: none !important;
-    color: #495057 !important;
-    padding: 6px 16px !important;
+    color: var(--text-muted) !important;
+    padding: 8px 16px !important;
     font-size: 13px;
     font-weight: 600;
-    margin-right: 2px;
-    border-radius: 4px 4px 0 0 !important;
-    transition: all 0.2s;
+    border-radius: 20px !important;
+    transition: all 0.3s ease;
     white-space: nowrap;
 }
+
 .winbox-tab:hover {
-    background: rgba(255,255,255,0.4) !important;
+    background: var(--input-border) !important;
+    color: var(--text) !important;
 }
+
 .winbox-tab.active {
-    background: #fff !important;
-    border-color: #c5d4e0 #c5d4e0 #fff !important;
-    color: #2c3e50 !important;
-    z-index: 2;
-    position: relative;
-    margin-bottom: -1px;
+    background: var(--primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px var(--primary-light);
 }
+
 .winbox-toolbar {
-    background: #f1f5f9;
-    padding: 4px 8px;
-    border-bottom: 1px solid #dee2e6;
+    background: var(--bg);
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
     display: flex;
-    gap: 4px;
+    gap: 8px;
     align-items: center;
     overflow-x: auto;
+    scrollbar-width: none;
 }
+.winbox-toolbar::-webkit-scrollbar {
+    display: none;
+}
+
 .tb-action-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    padding: 4px 8px;
-    color: #495057;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 3px;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    color: var(--text-secondary);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     white-space: nowrap;
+    transition: all 0.2s ease;
 }
+
 .tb-action-btn:hover {
-    background: #e2e8f0;
-    border-color: #cbd5e1;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
 }
 .tb-action-btn svg {
     opacity: 0.8;
 }
 .tb-divider {
     width: 1px;
-    height: 16px;
-    background: #cbd5e1;
-    margin: 0 4px;
+    height: 20px;
+    background: var(--border);
+    margin: 0 8px;
+    flex-shrink: 0;
 }
 .winbox-table-wrapper {
     overflow: auto;
@@ -1822,6 +1856,78 @@ body {
 .item-checkbox {
     margin: 0;
     cursor: pointer;
+}
+
+/* Card-style tables for mobile */
+@media (max-width: 768px) {
+    .winbox-table-wrapper {
+        background: var(--bg) !important;
+        padding: 10px;
+    }
+
+    .winbox-table {
+        display: block;
+        width: 100%;
+        background: transparent;
+        border: none;
+    }
+
+    .winbox-table thead {
+        display: none; /* Hide headers */
+    }
+
+    .winbox-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .winbox-table tr {
+        display: flex;
+        flex-direction: column;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+    }
+
+    .winbox-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        padding: 6px 0;
+        white-space: normal;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .winbox-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Simulate table headers via data-label if implemented in JS,
+       otherwise just style the first column bolder */
+    .winbox-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 11px;
+        margin-right: 16px;
+        min-width: 80px;
+    }
+
+    .winbox-table tr:hover td {
+        background: transparent;
+    }
+
+    .winbox-table td:first-child {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+    }
 }
 
 /* ============================================
@@ -1966,12 +2072,12 @@ body.dark-mode .qv-card {
     --border: #e5e7eb;
     --text: #1f2937;
     --text-secondary: #4b5563;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    --radius: 12px;
-    --radius-sm: 8px;
-    --radius-xs: 6px;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+    --shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 12px 20px -4px rgba(0, 0, 0, 0.06), 0 6px 10px -2px rgba(0, 0, 0, 0.04);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
 }
 
 /* Modern Header */
@@ -2025,14 +2131,15 @@ body.dark-mode .qv-card {
     box-shadow: var(--shadow);
     padding: 24px;
     margin-bottom: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Form Controls */
 .form-control, .form-select {
     border-radius: var(--radius-sm);
     border: 1px solid var(--input-border);
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 12px 16px;
+    font-size: 15px;
     transition: all 0.2s;
 }
 
@@ -2043,21 +2150,31 @@ body.dark-mode .qv-card {
 
 /* Editor Canvas Area */
 .editor-canvas-area {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    min-height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Remove padding, justify-content, and align-items so the child .canvas-workspace can fill the container */
+}
+
+/* Apply the grid pattern to the .canvas-workspace instead to fix the shrink-to-fit issue */
+.canvas-workspace {
     background-color: #f8fafc;
     background-image: linear-gradient(#e2e8f0 1px, transparent 1px),
                       linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
     background-size: 20px 20px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 40px;
+    flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 400px;
-    overflow: hidden;
+    justify-content: center;
+    overflow: auto;
+    padding: 40px;
+    position: relative;
 }
 
-body.dark-mode .editor-canvas-area {
+body.dark-mode .canvas-workspace {
     background-color: #0f172a;
     background-image: linear-gradient(#1e293b 1px, transparent 1px),
                       linear-gradient(90deg, #1e293b 1px, transparent 1px);
@@ -2072,7 +2189,7 @@ body.dark-mode .editor-canvas-area {
 .btn {
     border-radius: var(--radius-sm);
     font-weight: 500;
-    padding: 8px 16px;
+    padding: 10px 18px;
     transition: all 0.2s;
 }
 
