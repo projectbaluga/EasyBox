@@ -33,14 +33,6 @@
                 <button class="btn btn-sm btn-outline-secondary d-flex align-items-center me-2" onclick="toggleDarkMode()" title="Toggle Dark Mode">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278zM4.858 1.311A7.269 7.269 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.316 7.316 0 0 0 5.205-2.162c-.337.042-.68.063-1.029.063-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286z"/></svg>
                 </button>
-                                <button class="icon-btn" title="Manage Users" data-bs-target="#usersModal" data-bs-toggle="modal">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                </button>
                 <button class="icon-btn" title="Router Settings" data-bs-target="#routerSettingsModal" data-bs-toggle="modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
@@ -334,9 +326,6 @@
 
         <!-- PPPoE View -->
         <div id="pppoe-view" class="app-view">
-            <div class="alert alert-warning mb-3" role="alert" style="font-size: 13px;">
-                <strong>Browser Notice:</strong> Due to CORS security restrictions in standard web browsers, connecting to your Mikrotik router may fail with a "Network Error". Please use the Android App for full functionality.
-            </div>
             <div class="qv-card">
                 <div class="output-header">
                     <h6 class="output-title">PPPoE Secrets</h6>
@@ -470,77 +459,6 @@
     </div>
 
 
-    <!-- Users Management Modal -->
-    <div class="modal fade" id="usersModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Manage Hotspot Users</h5>
-                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex justify-content-between mb-3">
-                        <button class="btn btn-success" onclick="openAddUserForm()">+ Add User</button>
-                        <button class="btn btn-outline-secondary" onclick="loadHotspotUsersModal()">Refresh</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm" id="manageUsersTable">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Profile</th>
-                                    <th>Uptime</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add/Edit User Modal -->
-    <div class="modal fade" id="userFormModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="userFormTitle">Add User</h5>
-                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="editUserId">
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" id="formUsername" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="text" class="form-control" id="formPassword">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Profile</label>
-                        <input type="text" class="form-control" id="formProfile" placeholder="default">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Limit Uptime (e.g. 1d 12h)</label>
-                        <input type="text" class="form-control" id="formUptimeLimit">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Limit Bytes Total</label>
-                        <input type="number" class="form-control" id="formBytesLimit" placeholder="Bytes">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveHotspotUser()">Save User</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <!-- Generic Hotspot Modal -->
