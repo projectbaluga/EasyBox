@@ -857,6 +857,74 @@ document.addEventListener('DOMContentLoaded', () => {
 // BULK PUSH CONFIGURATION
 // ==========================================
 
+const COMMON_SCRIPTS = {
+    'hp-clear-active': {
+        name: 'Clear Active Users',
+        desc: 'Removes all currently logged-in hotspot users.',
+        script: '/ip hotspot active remove [find]'
+    },
+    'hp-clear-cookies': {
+        name: 'Clear Hotspot Cookies',
+        desc: 'Removes saved login sessions from the router.',
+        script: '/ip hotspot cookie remove [find]'
+    },
+    'hp-cleanup-expired': {
+        name: 'Auto-Cleanup Expired',
+        desc: 'Finds and deletes users whose time limit has reached.',
+        script: '/ip hotspot user remove [find where uptime>=limit-uptime and limit-uptime>0s]'
+    },
+    'set-dns-google': {
+        name: 'Set Google DNS',
+        desc: 'Configures router to use 8.8.8.8 and 8.8.4.4.',
+        script: '/ip dns set servers=8.8.8.8,8.8.4.4; /ip dns cache flush'
+    },
+    'set-dns-cloudflare': {
+        name: 'Set Cloudflare DNS',
+        desc: 'Configures router to use 1.1.1.1 and 1.0.0.1.',
+        script: '/ip dns set servers=1.1.1.1,1.0.0.1; /ip dns cache flush'
+    },
+    'sys-ntp-setup': {
+        name: 'NTP Time Sync',
+        desc: 'Enables network time protocol for accurate logs.',
+        script: '/system ntp client set enabled=yes servers=pool.ntp.org'
+    },
+    'sys-reboot': {
+        name: 'Reboot Router',
+        desc: 'Triggers a system restart immediately.',
+        script: '/system reboot'
+    },
+    'sys-backup-local': {
+        name: 'Local Backup',
+        desc: 'Creates a configuration backup file on the router.',
+        script: '/system backup save name=manual-backup'
+    },
+    'sys-backup-cloud': {
+        name: 'Cloud Backup (v7+)',
+        desc: 'Uploads configuration to MikroTik Cloud storage.',
+        script: '/system backup cloud upload-file name=auto-backup'
+    },
+    'sec-hardening': {
+        name: 'Security Hardening',
+        desc: 'Disables insecure services (Telnet, FTP, API).',
+        script: '/ip service disable telnet,ftp,api,api-ssl'
+    },
+    'diag-resource': {
+        name: 'Check Resources',
+        desc: 'Shows CPU, Memory, and Uptime info.',
+        script: '/system resource print'
+    },
+    'diag-health': {
+        name: 'System Health',
+        desc: 'Checks voltage and temperature sensors.',
+        script: '/system health print'
+    },
+    'diag-neighbors': {
+        name: 'IP Neighbors',
+        desc: 'Lists other MikroTik devices on the network.',
+        script: '/ip neighbor print'
+    }
+};
+
 function renderBulkRouterList() {
     var container = document.getElementById('bulk-router-list');
     if (!container) return;
@@ -885,6 +953,21 @@ function toggleBulkRouterSelectAll(chk) {
     document.querySelectorAll('.bulk-router-check').forEach(c => c.checked = chk.checked);
 }
 
+function syncBulkScriptArea() {
+    var area = document.getElementById('bulk_script_text');
+    if (!area) return;
+
+    var selectedScripts = [];
+    document.querySelectorAll('.bulk-script-chk:checked').forEach(chk => {
+        var key = chk.value;
+        if (COMMON_SCRIPTS[key]) {
+            selectedScripts.push(COMMON_SCRIPTS[key].script);
+        }
+    });
+
+    area.value = selectedScripts.join('\n');
+}
+
 function updateBulkConfigFields() {
     var type = document.getElementById('bulkConfigType').value;
     var container = document.getElementById('bulkConfigFields');
@@ -895,15 +978,15 @@ function updateBulkConfigFields() {
         html = `
             <div class="row g-2">
                 <div class="col-12">
-                    <label class="form-label small fw-bold">Profile Name</label>
+                    <label class="form-label small fw-bold" data-i18n="profile_name">Profile Name</label>
                     <input type="text" class="form-control form-control-sm" id="bulk_hp_name" placeholder="e.g. VIP-1HOUR">
                 </div>
                 <div class="col-6">
-                    <label class="form-label small fw-bold">Rate Limit</label>
+                    <label class="form-label small fw-bold" data-i18n="wiz_speed_limit">Rate Limit</label>
                     <input type="text" class="form-control form-control-sm" id="bulk_hp_rate" placeholder="e.g. 5M/5M">
                 </div>
                 <div class="col-6">
-                    <label class="form-label small fw-bold">Shared Users</label>
+                    <label class="form-label small fw-bold" data-i18n="adv_shared_users">Shared Users</label>
                     <input type="number" class="form-control form-control-sm" id="bulk_hp_shared" value="1">
                 </div>
             </div>
@@ -922,15 +1005,38 @@ function updateBulkConfigFields() {
             </div>
         `;
     } else if (type === 'script') {
+        let scriptsHtml = '<div class="row g-2" style="max-height: 250px; overflow-y: auto;">';
+        for (let key in COMMON_SCRIPTS) {
+            let name = t(key) || COMMON_SCRIPTS[key].name;
+            let desc = t(key + '_desc') || COMMON_SCRIPTS[key].desc;
+            scriptsHtml += `
+                <div class="col-12">
+                    <div class="form-check p-2 border rounded bg-white shadow-xs d-flex align-items-center gap-2" style="cursor: pointer;" onclick="var c = this.querySelector('input'); c.checked = !c.checked; syncBulkScriptArea();">
+                        <input class="form-check-input bulk-script-chk ms-0" type="checkbox" value="${key}" onclick="event.stopPropagation(); syncBulkScriptArea();" style="flex-shrink: 0;">
+                        <div style="line-height: 1.2;">
+                            <div class="fw-bold small">${name}</div>
+                            <div class="text-muted" style="font-size: 10px;">${desc}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        scriptsHtml += '</div>';
+
         html = `
+            <div class="mb-3">
+                <label class="form-label small fw-bold mb-2" data-i18n="common_scripts">Common Scripts</label>
+                ${scriptsHtml}
+            </div>
             <div>
-                <label class="form-label small fw-bold">Commands (One per line)</label>
-                <textarea class="form-control form-control-sm" id="bulk_script_text" rows="5" placeholder="/system resource print\\n/ip address print"></textarea>
-                <small class="text-muted" style="font-size:10px;">Note: API supports raw commands, not full scripts with local variables.</small>
+                <label class="form-label small fw-bold" data-i18n="commands">Commands (One per line)</label>
+                <textarea class="form-control form-control-sm" id="bulk_script_text" rows="4" placeholder="/system resource print\\n/ip address print"></textarea>
+                <small class="text-muted" style="font-size:10px;" data-i18n="cli_note">Note: Uses the /rest/cli endpoint. Enter raw RouterOS commands.</small>
             </div>
         `;
     }
     container.innerHTML = html;
+    applyTranslations();
 }
 
 function logBulk(msg, type = 'info') {
@@ -991,21 +1097,13 @@ async function executeBulkPush() {
                 logBulk(`SUCCESS: IP Binding for ${payload['mac-address']} added to ${router.name}.`);
 
             } else if (type === 'script') {
-                var script = document.getElementById('bulk_script_text').value.trim();
-                var commands = script.split('\n').filter(line => line.trim() !== '');
+                var scriptText = document.getElementById('bulk_script_text').value.trim();
+                if (!scriptText) throw new Error("No script provided.");
 
-                for (var cmd of commands) {
-                    // This is a naive implementation as the REST API expects specific endpoints.
-                    // For true custom scripting, we might need a generic CLI endpoint if available.
-                    // Assuming user provides valid REST endpoints for now or we warn them.
-                    logBulk(`Executing: ${cmd} on ${router.name}...`);
-                    // We'll treat the script as a list of POST commands to the relative paths
-                    var parts = cmd.split(' ');
-                    var endpoint = parts[0];
-                    // We don't support complex body parsing in this MVP.
-                    await mikrotikApi(endpoint, 'GET', null, router);
-                }
-                logBulk(`COMPLETED commands on ${router.name}.`);
+                logBulk(`Executing CLI script on ${router.name}...`);
+                // Using the MikroTik v7 /cli endpoint for full command support
+                await mikrotikApi('/cli', 'POST', { command: scriptText }, router);
+                logBulk(`SUCCESS: Script executed on ${router.name}.`);
             }
         } catch (e) {
             logBulk(`FAILED on ${router.name}: ${e.message}`, 'error');
