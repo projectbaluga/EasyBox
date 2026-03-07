@@ -1,6 +1,6 @@
 {
   "name": "app",
-  "version": "2.6.2",
+  "version": "2.7.0",
   "description": "**Hotspot Voucher Generator** for MikroTik-based hotspot systems.",
   "main": "index.js",
   "scripts": {

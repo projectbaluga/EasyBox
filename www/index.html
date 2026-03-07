@@ -19,6 +19,17 @@
             </div>
 
             <div class="header-actions">
+                <!-- Global Router Switcher -->
+                <div class="dropdown me-2" id="headerRouterSwitcherContainer">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle d-flex align-items-center gap-1" type="button" id="headerRouterSwitcher" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 20px; font-weight: 600; font-size: 12px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><rect x="6" y="2" width="12" height="8" rx="2" ry="2"/><line x1="12" y1="14" x2="12" y2="10"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/></svg>
+                        <span id="activeRouterName">Router</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" id="headerRouterList" style="font-size: 13px; border-radius: var(--radius-sm); max-height: 300px; overflow-y: auto;">
+                        <!-- Profiles injected here -->
+                    </ul>
+                </div>
+
                 <div class="dropdown me-2">
                     <button class="icon-btn dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
@@ -66,6 +77,20 @@
                 <button class="btn btn-lg btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#wizardModal" data-i18n="quick_setup">
                     Quick Setup Wizard
                 </button>
+            </div>
+
+            <!-- Multi-Router Overview -->
+            <div class="qv-card mb-4" id="multi-router-overview" style="padding: 20px;">
+                <div class="output-header mb-3">
+                    <h6 class="output-title" data-i18n="multi_router_overview">Multi-Router Overview</h6>
+                    <div class="d-flex gap-2">
+                         <span class="badge bg-success" id="routers-online-count">0 Online</span>
+                         <button class="btn btn-sm btn-link p-0 text-primary" onclick="loadMultiRouterStatus()" style="text-decoration: none; font-size: 12px;" data-i18n="refresh">Refresh</button>
+                    </div>
+                </div>
+                <div class="row g-2" id="multi-router-list">
+                    <!-- Router cards injected here -->
+                </div>
             </div>
 
             <div class="qv-card mb-4">
@@ -382,6 +407,12 @@
                                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label" data-i18n="router_profile">Router Profile</label>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-light border-end-0">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </span>
+                            <input type="text" class="form-control border-start-0 ps-0" id="routerProfileSearch" data-i18n-placeholder="search_profiles" placeholder="Search profiles..." onkeyup="filterRouterProfiles()">
+                        </div>
                         <div class="input-group">
                             <select class="form-select" id="routerProfileSelect" onchange="loadSelectedRouterProfile()">
                                 <option value="default">Default Profile</option>
@@ -1066,7 +1097,7 @@
         </div>
     </div>
 
-    <footer class="app-footer">EasyBox v2.6.2</footer>
+    <footer class="app-footer">EasyBox v2.7.0</footer>
 
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>

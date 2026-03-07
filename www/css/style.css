@@ -2309,6 +2309,27 @@ body.dark-mode .canvas-workspace {
     touch-action: none;
 }
 
+/* Multi-Router Dashboard Styles */
+.router-mini-card {
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.router-mini-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.router-mini-card.border-primary {
+    background: var(--primary-light) !important;
+}
+
+.status-dot {
+    flex-shrink: 0;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
 @media (max-width: 576px) {
     /* Collapse side panels or resize inputs for mobile */
     .editor-panel {

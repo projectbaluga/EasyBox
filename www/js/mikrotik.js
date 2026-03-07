@@ -63,6 +63,9 @@ function populateRouterSettings() {
         });
     }
 
+    // Populate Header Switcher
+    populateHeaderRouterSwitcher();
+
     var profile = getRouterSettings();
 
     if (document.getElementById('routerIp')) {
@@ -80,6 +83,73 @@ function loadSelectedRouterProfile() {
     setCurrentProfileId(select.value);
     document.getElementById('profileNameContainer').style.display = 'block';
     populateRouterSettings();
+    // Auto refresh dashboard if active
+    if (document.getElementById('dashboard-view').classList.contains('active')) {
+        loadDashboardData();
+    }
+}
+
+function populateHeaderRouterSwitcher() {
+    var profiles = getRouterProfiles();
+    var currentId = getCurrentProfileId();
+    var list = document.getElementById('headerRouterList');
+    var activeLabel = document.getElementById('activeRouterName');
+
+    if (!list) return;
+
+    list.innerHTML = '';
+    var activeProfileName = 'Select Router';
+
+    profiles.forEach(p => {
+        var isSelected = p.id === currentId;
+        if (isSelected) activeProfileName = p.name || p.id;
+
+        var li = document.createElement('li');
+        li.innerHTML = `
+            <a class="dropdown-item d-flex align-items-center justify-content-between ${isSelected ? 'active' : ''}" href="#" onclick="switchRouterFromHeader('${p.id}'); return false;">
+                <span>${p.name || p.id}</span>
+                ${isSelected ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+            </a>
+        `;
+        list.appendChild(li);
+    });
+
+    if (activeLabel) activeLabel.textContent = activeProfileName;
+}
+
+function switchRouterFromHeader(id) {
+    setCurrentProfileId(id);
+    populateRouterSettings();
+
+    // Notify user
+    var profile = getRouterSettings();
+    console.log('Switched to router:', profile.name);
+
+    // Refresh current view
+    var activeView = document.querySelector('.app-view.active');
+    if (activeView) {
+        var id = activeView.id;
+        if (id === 'dashboard-view') loadDashboardData();
+        if (id === 'hotspot-view') loadHotspotCurrentTab();
+        if (id === 'pppoe-view') { loadPppoeSecrets(); loadPppoeActive(); }
+    }
+}
+
+function filterRouterProfiles() {
+    var query = document.getElementById('routerProfileSearch').value.toLowerCase();
+    var select = document.getElementById('routerProfileSelect');
+    var profiles = getRouterProfiles();
+
+    select.innerHTML = '';
+    profiles.forEach(p => {
+        if ((p.name && p.name.toLowerCase().includes(query)) || p.ip.includes(query)) {
+            var opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name || p.id;
+            if(p.id === getCurrentProfileId()) opt.selected = true;
+            select.appendChild(opt);
+        }
+    });
 }
 
 function addNewRouterProfile() {
@@ -801,6 +871,12 @@ function toggleDarkMode() {
 // Initialize on load
 $(document).ready(function() {
     initDarkMode();
+    populateRouterSettings();
+
+    // If dashboard is active, load its data
+    if (document.getElementById('dashboard-view').classList.contains('active')) {
+        loadDashboardData();
+    }
 });
 
 // ---- QR Code Importer ----
@@ -910,6 +986,9 @@ function importSettings(event) {
 // DASHBOARD ANALYTICS
 // ==========================================
 async function loadDashboardData() {
+    // Also load multi-router status
+    loadMultiRouterStatus();
+
     try {
         // Fetch System Resources
         let res = await mikrotikApi('/system/resource', 'GET');
@@ -978,4 +1057,74 @@ function formatBytes(bytes) {
     var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// ==========================================
+// MULTI-ROUTER STATUS
+// ==========================================
+async function loadMultiRouterStatus() {
+    var container = document.getElementById('multi-router-list');
+    var onlineBadge = document.getElementById('routers-online-count');
+    if (!container) return;
+
+    var profiles = getRouterProfiles();
+    var currentId = getCurrentProfileId();
+
+    if (profiles.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center text-muted py-3">No router profiles found.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+    var onlineCount = 0;
+
+    // We process them sequentially or in parallel. Parallel is better for many routers.
+    var promises = profiles.map(async (p) => {
+        var cardId = `router-card-${p.id}`;
+        var col = document.createElement('div');
+        col.className = 'col-6 col-md-4';
+        col.innerHTML = `
+            <div class="p-2 border rounded d-flex flex-column gap-1 router-mini-card ${p.id === currentId ? 'border-primary' : ''}" id="${cardId}" onclick="switchRouterFromHeader('${p.id}')" style="cursor: pointer; background: var(--code-bg); transition: all 0.2s;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="fw-bold text-truncate" style="font-size: 12px; max-width: 80%;">${p.name || p.id}</span>
+                    <span class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-top: 4px;"></span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center" style="font-size: 10px;">
+                    <span class="text-muted">${p.ip}</span>
+                    <span class="router-stats d-none">-- active</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+
+        try {
+            // Check health
+            let res = await mikrotikApi('/system/resource', 'GET', null, p);
+            let data = res[0] || res;
+
+            if (data) {
+                onlineCount++;
+                let dot = col.querySelector('.status-dot');
+                if (dot) dot.style.background = '#2ECC71';
+
+                // Try to get active users if it's a hotspot
+                try {
+                    let activeRes = await mikrotikApi('/ip/hotspot/active', 'GET', null, p);
+                    let count = Array.isArray(activeRes) ? activeRes.length : 0;
+                    let stats = col.querySelector('.router-stats');
+                    if (stats) {
+                        stats.textContent = count + ' active';
+                        stats.classList.remove('d-none');
+                    }
+                } catch(e) {}
+            }
+        } catch (e) {
+            let dot = col.querySelector('.status-dot');
+            if (dot) dot.style.background = '#ef4444';
+        }
+
+        if (onlineBadge) onlineBadge.textContent = onlineCount + ' Online';
+    });
+
+    await Promise.all(promises);
 }
