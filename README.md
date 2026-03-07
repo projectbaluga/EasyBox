@@ -89,25 +89,30 @@ Ensure your MikroTik router (RouterOS v7+) is configured to accept REST API conn
 Based on the current state of the application, here are the planned features and improvements:
 
 ### 🎛️ MikroTik & Mini-Winbox Integration
-- [ ] **Full User Profile Management:** Implement adding and editing capabilities for User Profiles (currently partially supported via generic modal).
-- [ ] **Service Ports & Cookies Editing:** Add support for adding/modifying Service Ports and Cookies directly from the interface (currently read-only).
-- [ ] **Improved Error Handling:** Implement auto-reconnect logic or clearer UI feedback when the REST API connection drops during active sessions.
+- [ ] **Full User Profile Management:** Implement dedicated editing modals for Hotspot User Profiles with support for `rate-limit`, `shared-users`, and `on-login` scripts.
+- [ ] **PPPoE Secret Creation:** Add a form to create new PPPoE secrets (currently view/delete/enable only).
+- [ ] **Service Ports & Cookies Editing:** Add support for modifying Service Ports and managing browser cookies directly from the interface.
+- [ ] **System Logs Viewer:** Implement a real-time log viewer to monitor router events and authentication failures.
+- [ ] **Improved Error Handling:** Implement auto-reconnect logic and more descriptive toast notifications for REST API timeouts.
 
 ### 🎟️ Voucher Generator & Editor
 - [x] **QR Code Scanner / Importer:** Allow admins to scan QR codes or import them directly for fast profile setups.
-- [ ] **Advanced Alignments:** Snap-to-grid improvements and multi-select elements in the drag-and-drop editor.
+- [ ] **Multi-Element Selection:** Enable selecting multiple elements (Ctrl+Click) to align or move them simultaneously.
+- [ ] **Voucher Template Export:** Allow exporting specific voucher designs as standalone JSON files to share with other admins.
 - [x] **Undo/Redo Persistence:** Save editor history state locally so accidental page refreshes don't lose progress.
 
 ### 📱 UI / UX Enhancements
-- [x] **Enhanced Mobile Responsiveness:** Optimize the Voucher Editor canvas for smaller screens to make editing easier on phones.
-- [x] **Dark Mode Support:** Implement a system-wide Dark Mode toggle for night-time administration.
-- [x] **Dashboard Analytics:** Add a visual dashboard showing active users, uptime, and bandwidth usage graphs.
+- [ ] **Table Search & Filtering:** Add a search bar to Hotspot and PPPoE tables for faster user management.
+- [ ] **Live Traffic Graphs:** Implement real-time bandwidth monitoring graphs for WAN and Local interfaces on the dashboard.
+- [x] **Enhanced Mobile Responsiveness:** Optimized the Voucher Editor canvas for smaller screens.
+- [x] **Dark Mode Support:** System-wide Dark Mode toggle implemented.
+- [x] **Dashboard Analytics:** Visual dashboard showing active users, uptime, and resource usage.
 
 ### 🌍 General Enhancements
-- [x] **Export Settings as JSON:** Allow admins to backup and export their editor and router configurations.
-- [x] **Multi-Language Support:** Localize the interface to support multiple languages for global operators.
-- [ ] **Customizable Dashboard Widgets:** Let users pin metrics like total bandwidth, live connections, and generated vouchers.
-- [ ] **Role-Based Access Control (RBAC):** Allow limiting access (e.g., staff can only generate vouchers, admins can edit router settings).
+- [x] **Export Settings as JSON:** Backup/Restore for editor and router configurations.
+- [x] **Multi-Language Support:** Full localization for English, Spanish, and Filipino (Tagalog).
+- [ ] **Batch Operations:** Add capability to bulk-print or bulk-export selected vouchers from the "All Vouchers" list.
+- [ ] **Role-Based Access Control (RBAC):** Implement local PIN/Password protection for Settings and Router configuration.
 
 ## 📄 License
 
