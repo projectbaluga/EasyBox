@@ -1101,9 +1101,31 @@ async function executeBulkPush() {
                 if (!scriptText) throw new Error("No script provided.");
 
                 logBulk(`Executing CLI script on ${router.name}...`);
-                // Using the MikroTik v7 /cli endpoint for full command support
-                await mikrotikApi('/cli', 'POST', { command: scriptText }, router);
-                logBulk(`SUCCESS: Script executed on ${router.name}.`);
+                try {
+                    // Try the standard MikroTik v7 /rest/cli endpoint
+                    await mikrotikApi('/cli', 'POST', { command: scriptText }, router);
+                    logBulk(`SUCCESS: Script executed on ${router.name}.`);
+                } catch (cliError) {
+                    if (cliError.message.includes('400') || cliError.message.includes('cli')) {
+                        logBulk(`CLI endpoint failed. Attempting fallback via /system/script...`, 'warn');
+                        // Fallback: Create and run a temporary script
+                        var tmpName = 'eb_tmp_' + Math.floor(Math.random() * 10000);
+                        try {
+                            // 1. Create script
+                            await mikrotikApi('/system/script', 'PUT', { name: tmpName, source: scriptText }, router);
+                            // 2. Run script - In v7 REST, we can use the .id/run or the name/run endpoint
+                            // A common way to run a script is via POST to /system/script/run with name
+                            await mikrotikApi('/system/script/run', 'POST', { '.id': tmpName }, router);
+                            // 3. Cleanup
+                            await mikrotikApi('/system/script/' + tmpName, 'DELETE', null, router);
+                            logBulk(`SUCCESS (via fallback): Script executed on ${router.name}.`);
+                        } catch (fallbackError) {
+                            throw new Error(`CLI and Fallback failed. ${cliError.message}`);
+                        }
+                    } else {
+                        throw cliError;
+                    }
+                }
             }
         } catch (e) {
             logBulk(`FAILED on ${router.name}: ${e.message}`, 'error');

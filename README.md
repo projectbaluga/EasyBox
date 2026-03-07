@@ -111,6 +111,7 @@ Based on the current state of the application, here are the planned features and
 ### 🌍 General Enhancements
 - [x] **Export Settings as JSON:** Backup/Restore for editor and router configurations.
 - [x] **Multi-Language Support:** Full localization for English, Spanish, and Filipino (Tagalog).
+- [x] **Bulk Push Configuration:** Deploy settings and scripts to multiple routers simultaneously with a library of common maintenance tasks.
 - [ ] **Batch Operations:** Add capability to bulk-print or bulk-export selected vouchers from the "All Vouchers" list.
 - [ ] **Role-Based Access Control (RBAC):** Implement local PIN/Password protection for Settings and Router configuration.
 
