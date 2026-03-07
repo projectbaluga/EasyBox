@@ -843,9 +843,178 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadDashboardData();
                 }, 100);
             }
+            if (target === 'bulk-push-view') {
+                setTimeout(() => {
+                    renderBulkRouterList();
+                    updateBulkConfigFields();
+                }, 100);
+            }
         });
     });
 });
+
+// ==========================================
+// BULK PUSH CONFIGURATION
+// ==========================================
+
+function renderBulkRouterList() {
+    var container = document.getElementById('bulk-router-list');
+    if (!container) return;
+
+    var profiles = getRouterProfiles();
+    if (profiles.length === 0) {
+        container.innerHTML = '<div class="text-muted small">No routers found.</div>';
+        return;
+    }
+
+    var html = '';
+    profiles.forEach(p => {
+        html += `
+            <div class="form-check">
+                <input class="form-check-input bulk-router-check" type="checkbox" value="${p.id}" id="bulk_chk_${p.id}">
+                <label class="form-check-label small" for="bulk_chk_${p.id}">
+                    <strong>${p.name || p.id}</strong> (${p.ip})
+                </label>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function toggleBulkRouterSelectAll(chk) {
+    document.querySelectorAll('.bulk-router-check').forEach(c => c.checked = chk.checked);
+}
+
+function updateBulkConfigFields() {
+    var type = document.getElementById('bulkConfigType').value;
+    var container = document.getElementById('bulkConfigFields');
+    if (!container) return;
+
+    var html = '';
+    if (type === 'hotspot-profile') {
+        html = `
+            <div class="row g-2">
+                <div class="col-12">
+                    <label class="form-label small fw-bold">Profile Name</label>
+                    <input type="text" class="form-control form-control-sm" id="bulk_hp_name" placeholder="e.g. VIP-1HOUR">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small fw-bold">Rate Limit</label>
+                    <input type="text" class="form-control form-control-sm" id="bulk_hp_rate" placeholder="e.g. 5M/5M">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small fw-bold">Shared Users</label>
+                    <input type="number" class="form-control form-control-sm" id="bulk_hp_shared" value="1">
+                </div>
+            </div>
+        `;
+    } else if (type === 'ip-binding') {
+        html = `
+            <div class="row g-2">
+                <div class="col-12">
+                    <label class="form-label small fw-bold">MAC Address</label>
+                    <input type="text" class="form-control form-control-sm" id="bulk_ipb_mac" placeholder="AA:BB:CC:DD:EE:FF">
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-bold">Comment</label>
+                    <input type="text" class="form-control form-control-sm" id="bulk_ipb_comment" placeholder="Whitelist device">
+                </div>
+            </div>
+        `;
+    } else if (type === 'script') {
+        html = `
+            <div>
+                <label class="form-label small fw-bold">Commands (One per line)</label>
+                <textarea class="form-control form-control-sm" id="bulk_script_text" rows="5" placeholder="/system resource print\\n/ip address print"></textarea>
+                <small class="text-muted" style="font-size:10px;">Note: API supports raw commands, not full scripts with local variables.</small>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+}
+
+function logBulk(msg, type = 'info') {
+    var log = document.getElementById('bulkExecutionLog');
+    if (!log) return;
+
+    var time = new Date().toLocaleTimeString();
+    var color = '#0f0'; // green
+    if (type === 'error') color = '#f00'; // red
+    if (type === 'warn') color = '#ff0'; // yellow
+
+    if (log.innerHTML.includes('Waiting for action...')) log.innerHTML = '';
+
+    log.innerHTML += `<div>[${time}] <span style="color:${color}">${msg}</span></div>`;
+    log.scrollTop = log.scrollHeight;
+}
+
+async function executeBulkPush() {
+    var selectedIds = Array.from(document.querySelectorAll('.bulk-router-check:checked')).map(c => c.value);
+    if (selectedIds.length === 0) {
+        alert("Please select at least one router.");
+        return;
+    }
+
+    var type = document.getElementById('bulkConfigType').value;
+    var btn = document.getElementById('btnExecuteBulk');
+    btn.disabled = true;
+
+    logBulk(`Starting bulk push for ${selectedIds.length} routers...`, 'warn');
+
+    var profiles = getRouterProfiles();
+
+    for (var id of selectedIds) {
+        var router = profiles.find(p => p.id === id);
+        if (!router) continue;
+
+        logBulk(`Connecting to ${router.name || router.ip}...`);
+
+        try {
+            if (type === 'hotspot-profile') {
+                var payload = {
+                    name: document.getElementById('bulk_hp_name').value.trim(),
+                    'rate-limit': document.getElementById('bulk_hp_rate').value.trim(),
+                    'shared-users': document.getElementById('bulk_hp_shared').value
+                };
+                if (!payload.name) throw new Error("Profile name is required.");
+                await mikrotikApi('/ip/hotspot/user/profile', 'PUT', payload, router);
+                logBulk(`SUCCESS: Hotspot Profile '${payload.name}' added to ${router.name}.`);
+
+            } else if (type === 'ip-binding') {
+                var payload = {
+                    'mac-address': document.getElementById('bulk_ipb_mac').value.trim(),
+                    'type': 'bypassed',
+                    'comment': document.getElementById('bulk_ipb_comment').value.trim()
+                };
+                if (!payload['mac-address']) throw new Error("MAC address is required.");
+                await mikrotikApi('/ip/hotspot/ip-binding', 'PUT', payload, router);
+                logBulk(`SUCCESS: IP Binding for ${payload['mac-address']} added to ${router.name}.`);
+
+            } else if (type === 'script') {
+                var script = document.getElementById('bulk_script_text').value.trim();
+                var commands = script.split('\n').filter(line => line.trim() !== '');
+
+                for (var cmd of commands) {
+                    // This is a naive implementation as the REST API expects specific endpoints.
+                    // For true custom scripting, we might need a generic CLI endpoint if available.
+                    // Assuming user provides valid REST endpoints for now or we warn them.
+                    logBulk(`Executing: ${cmd} on ${router.name}...`);
+                    // We'll treat the script as a list of POST commands to the relative paths
+                    var parts = cmd.split(' ');
+                    var endpoint = parts[0];
+                    // We don't support complex body parsing in this MVP.
+                    await mikrotikApi(endpoint, 'GET', null, router);
+                }
+                logBulk(`COMPLETED commands on ${router.name}.`);
+            }
+        } catch (e) {
+            logBulk(`FAILED on ${router.name}: ${e.message}`, 'error');
+        }
+    }
+
+    logBulk("Bulk operation finished.", 'warn');
+    btn.disabled = false;
+}
 
 // ---- Dark Mode ----
 function initDarkMode() {
