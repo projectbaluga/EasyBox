@@ -734,7 +734,7 @@ async function loadPppoeActive() {
 async function deletePppoeSecret(id) {
     if (!confirm('Are you sure you want to remove this PPPoE secret?')) return;
     try {
-        await mikrotikApi(`/rest/ppp/secret/${id}`, 'DELETE');
+        await mikrotikApi(`/ppp/secret/${id}`, 'DELETE');
         loadPppoeSecrets();
     } catch (e) {
         alert('Failed to remove: ' + e.message);
@@ -743,7 +743,7 @@ async function deletePppoeSecret(id) {
 
 async function enablePppoeSecret(id) {
     try {
-        await mikrotikApi(`/rest/ppp/secret/${id}`, 'PATCH', { disabled: 'false' });
+        await mikrotikApi(`/ppp/secret/${id}`, 'PATCH', { disabled: 'false' });
         loadPppoeSecrets();
     } catch (e) {
         alert('Failed to enable: ' + e.message);
@@ -912,7 +912,7 @@ function importSettings(event) {
 async function loadDashboardData() {
     try {
         // Fetch System Resources
-        let res = await mikrotikApi('/rest/system/resource', 'GET');
+        let res = await mikrotikApi('/system/resource', 'GET');
         let data = res[0] || res;
 
         if (data.uptime) document.getElementById('dash-uptime').textContent = formatUptime(data.uptime);
@@ -956,7 +956,7 @@ async function loadDashboardData() {
 
     try {
         // Fetch Active Hotspot Users Count
-        let activeRes = await mikrotikApi('/rest/ip/hotspot/active', 'GET');
+        let activeRes = await mikrotikApi('/ip/hotspot/active', 'GET');
         var activeUsersCount = Array.isArray(activeRes) ? activeRes.length : 0;
         document.getElementById('dash-active-users').textContent = activeUsersCount;
     } catch (err) {
