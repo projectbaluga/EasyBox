@@ -889,6 +889,13 @@
                                     </div>
                                 </div>
                                 <div class="prop-group">
+                                    <div class="prop-label">Voucher Spacing</div>
+                                    <div class="prop-row">
+                                        <input type="range" class="prop-range voucherMarginInput" min="0" max="50" value="5" oninput="applyVoucherMargin(this.value)">
+                                        <span class="prop-range-val voucherMarginVal">5px</span>
+                                    </div>
+                                </div>
+                                <div class="prop-group">
                                     <div class="prop-label" data-i18n="gradient">Gradient</div>
                                     <select id="voucherGradient" class="prop-select" onchange="applyVoucherGradient()">
                                         <option value="">None</option>
@@ -997,6 +1004,18 @@
                 <div class="modal-body">
                     <h6 class="section-title">Select Template</h6>
                     <div class="print-tpl-gallery" id="printTemplateGallery"></div>
+
+                    <h6 class="section-title mt-3">Print Settings</h6>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Voucher Spacing</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="range" class="form-range voucherMarginInput" min="0" max="50" value="5" oninput="applyVoucherMargin(this.value)">
+                                <span class="badge bg-secondary voucherMarginVal" style="min-width: 45px;">5px</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <h6 class="section-title mt-3">Preview</h6>
                     <div class="print-preview-area" id="printPreviewArea">
                         <p class="text-muted">Generate vouchers first to see preview.</p>

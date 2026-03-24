@@ -280,6 +280,7 @@ var voucherBorderStyle = '1px dashed #aaa';
 var voucherBgColor = '#ffffff';
 var voucherBorderRadius = 0;
 var voucherGradient = '';
+var voucherMargin = 5;
 
 var LAYER_NAMES = {
     price: 'Price',
@@ -1224,6 +1225,16 @@ function applyVoucherGradient() {
     if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
+function applyVoucherMargin(val) {
+    voucherMargin = parseInt(val) || 0;
+    var labels = document.querySelectorAll('.voucherMarginVal');
+    for (var i = 0; i < labels.length; i++) labels[i].textContent = voucherMargin + 'px';
+    var inputs = document.querySelectorAll('.voucherMarginInput');
+    for (var j = 0; j < inputs.length; j++) inputs[j].value = voucherMargin;
+    localStorage.setItem('qv_voucher_margin', voucherMargin);
+    updatePrintPreview();
+}
+
 function distributeElements(axis) {
     // Distribute visible elements evenly along axis
     var visibleKeys = [];
@@ -1685,7 +1696,7 @@ function buildVoucher(code, userpass, qr, cfg) {
     var bgColor = voucherBgColor || '#ffffff';
     var bRadius = voucherBorderRadius ? 'border-radius: ' + voucherBorderRadius + 'px;' : '';
     var gradientStyle = voucherGradient ? 'background-image: ' + voucherGradient + ';' : '';
-    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: 5px; float: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; ' + bRadius + ' ' + gradientStyle + ' ' + bgStyle + '">';
+    var h = '<div class="voucher" style="width: ' + w + 'px; height: ' + vh + 'px; position: relative; border: ' + border + '; background-color: ' + bgColor + '; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; page-break-inside: avoid; margin: ' + voucherMargin + 'px; float: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; ' + bRadius + ' ' + gradientStyle + ' ' + bgStyle + '">';
 
     // Price
     var cPrice = voucherElementsConfig.price;
@@ -1877,8 +1888,14 @@ function updatePrintPreview() {
     }
 
     if (printSelectedTemplate === null || printSelectedTemplate === '__current__') {
-        // Use current PrintBody as-is
-        previewArea.innerHTML = body.innerHTML;
+        // Apply current margin to existing PrintBody content for preview
+        var tempCurrent = document.createElement('div');
+        tempCurrent.innerHTML = body.innerHTML;
+        var currentVouchers = tempCurrent.querySelectorAll('.voucher');
+        for (var k = 0; k < currentVouchers.length; k++) {
+            currentVouchers[k].style.margin = voucherMargin + 'px';
+        }
+        previewArea.innerHTML = tempCurrent.innerHTML;
     } else {
         // Rebuild vouchers with selected template
         var bgData = '';
@@ -1893,6 +1910,7 @@ function updatePrintPreview() {
         temp.innerHTML = body.innerHTML;
         var vouchers = temp.querySelectorAll('.voucher');
         for (var j = 0; j < vouchers.length; j++) {
+            vouchers[j].style.margin = voucherMargin + 'px';
             if (bgData) {
                 vouchers[j].style.backgroundImage = 'url(' + bgData + ')';
                 vouchers[j].style.backgroundSize = 'cover';
@@ -2156,6 +2174,18 @@ function initDraggables() {
                     }
                 }
             }
+        }
+    } catch (e) {}
+
+    // Load saved voucher margin
+    try {
+        var savedMargin = localStorage.getItem('qv_voucher_margin');
+        if (savedMargin !== null) {
+            voucherMargin = parseInt(savedMargin) || 0;
+            var labels = document.querySelectorAll('.voucherMarginVal');
+            for (var m = 0; m < labels.length; m++) labels[m].textContent = voucherMargin + 'px';
+            var inputs = document.querySelectorAll('.voucherMarginInput');
+            for (var n = 0; n < inputs.length; n++) inputs[n].value = voucherMargin;
         }
     } catch (e) {}
 
