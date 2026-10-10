@@ -1901,7 +1901,7 @@ function buildElementInlineStyle(elCfg, isPrice, containerHeight) {
     if (elCfg.textDecoration && elCfg.textDecoration !== 'none') s += ' text-decoration: ' + elCfg.textDecoration + ';';
     if (elCfg.letterSpacing) s += ' letter-spacing: ' + elCfg.letterSpacing + 'px;';
     if (elCfg.textShadow) s += ' text-shadow: 1px 1px 2px rgba(0,0,0,0.5);';
-    if (elCfg.lineHeight && elCfg.lineHeight !== 1.2) s += ' line-height: ' + elCfg.lineHeight + ';';
+    s += ' line-height: ' + (elCfg.lineHeight || 1.2) + ';';
     if (elCfg.bgColor && elCfg.bgColor !== 'transparent') s += ' background-color: ' + elCfg.bgColor + '; -webkit-print-color-adjust: exact;';
     if (elCfg.padding) s += ' padding: ' + elCfg.padding + 'px;';
     else if (elCfg.bgColor && elCfg.bgColor !== 'transparent') s += ' padding: 1px 3px;';
@@ -2170,11 +2170,26 @@ function executePrint() {
     if (modal) modal.hide();
 
     var win = window.open('', '', 'height=800,width=800');
-    win.document.write('<link href="' + VOUCHER_CSS + '" rel="stylesheet">');
-    setTimeout(function () {
-        win.document.write('<html><body><title>' + title + '</title>' + html + '</body></html>');
+    win.document.write('<!DOCTYPE html><html><head><title>' + title + '</title><link href="' + VOUCHER_CSS + '" rel="stylesheet"></head><body>' + html + '</body></html>');
+    win.document.close();
+
+    var printed = false;
+    function doPrint() {
+        if (printed) return;
+        printed = true;
         win.print();
-    }, 150);
+    }
+
+    if (win.document.fonts && win.document.fonts.ready) {
+        win.document.fonts.ready.then(function () {
+            doPrint();
+        }).catch(function () {
+            doPrint();
+        });
+        setTimeout(doPrint, 1000);
+    } else {
+        setTimeout(doPrint, 300);
+    }
 }
 
 // ---- Reset Form ----
