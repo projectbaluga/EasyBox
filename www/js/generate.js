@@ -300,10 +300,10 @@ var voucherContainerSize = { width: 200, height: 100 };
 
 var voucherElementsConfig = {
     price:    { id: 'dragPrice',    visible: true,  left: 0,   top: 0,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
-    vendor:   { id: 'dragVendor',   visible: true,  left: 35,  top: 5,  fontSize: 14, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
-    code:     { id: 'dragCode',     visible: true,  left: 35,  top: 30, fontSize: 18, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
-    duration: { id: 'dragDuration', visible: true,  left: 35,  top: 60, fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
-    login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 75, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    vendor:   { id: 'dragVendor',   visible: true,  left: 35,  top: 4,  fontSize: 14, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    code:     { id: 'dragCode',     visible: true,  left: 35,  top: 25, fontSize: 18, fontFamily: 'Arial, sans-serif', color: '#000000', bold: true,  italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    duration: { id: 'dragDuration', visible: true,  left: 35,  top: 52, fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
+    login:    { id: 'dragLogin',    visible: true,  left: 35,  top: 72, fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false },
     qr:       { id: 'dragQR',       visible: false, left: 135, top: 5,  fontSize: 12, fontFamily: 'Arial, sans-serif', color: '#000000', bold: false, italic: false, opacity: 1, textTransform: 'none', textDecoration: 'none', letterSpacing: 0, textShadow: false, rotation: 0, bgColor: 'transparent', lineHeight: 1.2, padding: 0, boxShadow: false }
 };
 
@@ -948,12 +948,31 @@ function initSingleDraggable(el) {
         var elKey = el.getAttribute('data-key');
         var cfg = voucherElementsConfig[elKey];
         if (cfg) {
+            var cw = voucherContainerSize.width || 200;
+            var ch = voucherContainerSize.height || 100;
+            var ew = el.offsetWidth || 0;
+            var eh = el.offsetHeight || 0;
+            var margin = 10;
+
+            var minLeft = -margin;
+            var maxLeft = cw - ew + margin;
+            if (maxLeft < minLeft) maxLeft = minLeft;
+
+            var minTop = -margin;
+            var maxTop = ch - eh + margin;
+            if (maxTop < minTop) maxTop = minTop;
+
             cfg.left = Math.round(initialLeft + dx);
             cfg.top = Math.round(initialTop + dy);
-            el.style.left = cfg.left + 'px';
-            el.style.top = cfg.top + 'px';
+
+            cfg.left = Math.max(minLeft, Math.min(maxLeft, cfg.left));
+            cfg.top = Math.max(minTop, Math.min(maxTop, cfg.top));
 
             checkSnap(elKey);
+
+            cfg.left = Math.max(minLeft, Math.min(maxLeft, cfg.left));
+            cfg.top = Math.max(minTop, Math.min(maxTop, cfg.top));
+
             el.style.left = cfg.left + 'px';
             el.style.top = cfg.top + 'px';
 
@@ -992,10 +1011,10 @@ var presetLayouts = {
         gradient: '',
         elements: {
             price:    { visible: true,  left: 0,   top: 0,  fontSize: 12, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
-            vendor:   { visible: true,  left: 35,  top: 5,  fontSize: 14, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
-            code:     { visible: true,  left: 35,  top: 30, fontSize: 18, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
-            duration: { visible: true,  left: 35,  top: 60, fontSize: 11, bold: false, color: '#000000', fontFamily: 'Arial, sans-serif' },
-            login:    { visible: true,  left: 35,  top: 75, fontSize: 12, bold: false, color: '#000000', fontFamily: 'Arial, sans-serif' },
+            vendor:   { visible: true,  left: 35,  top: 4,  fontSize: 14, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
+            code:     { visible: true,  left: 35,  top: 25, fontSize: 18, bold: true,  color: '#000000', fontFamily: 'Arial, sans-serif' },
+            duration: { visible: true,  left: 35,  top: 52, fontSize: 11, bold: false, color: '#000000', fontFamily: 'Arial, sans-serif' },
+            login:    { visible: true,  left: 35,  top: 72, fontSize: 12, bold: false, color: '#000000', fontFamily: 'Arial, sans-serif' },
             qr:       { visible: false, left: 135, top: 5 }
         }
     },
@@ -1959,6 +1978,8 @@ function checkSnap(key) {
     var el = document.getElementById(cfg.id);
     if (!el) return;
 
+    var snapThreshold = SNAP_THRESHOLD / (editorZoom || 1);
+
     var guideH = document.getElementById('snapGuideH');
     var guideV = document.getElementById('snapGuideV');
 
@@ -1976,7 +1997,7 @@ function checkSnap(key) {
     var snappedY = false;
 
     // Snap to horizontal center
-    if (Math.abs(centerX - canvasCenterX) < SNAP_THRESHOLD) {
+    if (Math.abs(centerX - canvasCenterX) < snapThreshold) {
         cfg.left = Math.round(canvasCenterX - ew / 2);
         if (guideV) {
             guideV.style.left = canvasCenterX + 'px';
@@ -1986,7 +2007,7 @@ function checkSnap(key) {
     }
 
     // Snap to vertical center
-    if (Math.abs(centerY - canvasCenterY) < SNAP_THRESHOLD) {
+    if (Math.abs(centerY - canvasCenterY) < snapThreshold) {
         cfg.top = Math.round(canvasCenterY - eh / 2);
         if (guideH) {
             guideH.style.top = canvasCenterY + 'px';
@@ -1996,23 +2017,23 @@ function checkSnap(key) {
     }
 
     // Snap to edges
-    if (!snappedX && Math.abs(cfg.left) < SNAP_THRESHOLD) {
+    if (!snappedX && Math.abs(cfg.left) < snapThreshold) {
         cfg.left = 0;
         if (guideV) { guideV.style.left = '0px'; guideV.style.display = 'block'; }
         snappedX = true;
     }
-    if (!snappedX && Math.abs(cfg.left + ew - cw) < SNAP_THRESHOLD) {
+    if (!snappedX && Math.abs(cfg.left + ew - cw) < snapThreshold) {
         cfg.left = cw - ew;
         if (guideV) { guideV.style.left = cw + 'px'; guideV.style.display = 'block'; }
         snappedX = true;
     }
 
-    if (!snappedY && Math.abs(cfg.top) < SNAP_THRESHOLD) {
+    if (!snappedY && Math.abs(cfg.top) < snapThreshold) {
         cfg.top = 0;
         if (guideH) { guideH.style.top = '0px'; guideH.style.display = 'block'; }
         snappedY = true;
     }
-    if (!snappedY && Math.abs(cfg.top + eh - ch) < SNAP_THRESHOLD) {
+    if (!snappedY && Math.abs(cfg.top + eh - ch) < snapThreshold) {
         cfg.top = ch - eh;
         if (guideH) { guideH.style.top = ch + 'px'; guideH.style.display = 'block'; }
         snappedY = true;
@@ -2187,85 +2208,7 @@ function initDraggables() {
     // Drag logic
     var dragElements = document.querySelectorAll('.drag-el');
     dragElements.forEach(function (el) {
-        var isDragging = false;
-        var hasMoved = false;
-        var startX, startY, initialLeft, initialTop;
-
-        el.addEventListener('mousedown', dragStart);
-        el.addEventListener('touchstart', dragStart, { passive: false });
-
-        function dragStart(e) {
-            if (e.target.tagName.toLowerCase() === 'input') return;
-            e.preventDefault();
-            e.stopPropagation();
-
-            var elKey = el.getAttribute('data-key');
-            selectElement(elKey);
-
-            isDragging = true;
-            hasMoved = false;
-            var clientX = e.clientX || e.touches[0].clientX;
-            var clientY = e.clientY || e.touches[0].clientY;
-
-            startX = clientX;
-            startY = clientY;
-            initialLeft = parseInt(el.style.left || 0);
-            initialTop = parseInt(el.style.top || 0);
-
-            document.addEventListener('mousemove', dragMove);
-            document.addEventListener('mouseup', dragEnd);
-            document.addEventListener('touchmove', dragMove, { passive: false });
-            document.addEventListener('touchend', dragEnd);
-        }
-
-        function dragMove(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-
-            if (!hasMoved) {
-                hasMoved = true;
-            }
-
-            var clientX = e.clientX || e.touches[0].clientX;
-            var clientY = e.clientY || e.touches[0].clientY;
-
-            var dx = (clientX - startX) / editorZoom;
-            var dy = (clientY - startY) / editorZoom;
-
-            var elKey = el.getAttribute('data-key');
-            var cfg = voucherElementsConfig[elKey];
-            if (cfg) {
-                cfg.left = Math.round(initialLeft + dx);
-                cfg.top = Math.round(initialTop + dy);
-                el.style.left = cfg.left + 'px';
-                el.style.top = cfg.top + 'px';
-
-                checkSnap(elKey);
-                el.style.left = cfg.left + 'px';
-                el.style.top = cfg.top + 'px';
-
-                // Update coordinates display
-                var coords = document.getElementById('canvasCoords');
-                if (coords) coords.textContent = 'X: ' + cfg.left + '  Y: ' + cfg.top;
-
-                // Update properties panel position fields
-                var propX = document.getElementById('propX');
-                var propY = document.getElementById('propY');
-                if (propX) propX.value = cfg.left;
-                if (propY) propY.value = cfg.top;
-            }
-        }
-
-        function dragEnd(e) {
-            if (!isDragging) return;
-            isDragging = false;
-            document.removeEventListener('mousemove', dragMove);
-            document.removeEventListener('mouseup', dragEnd);
-            document.removeEventListener('touchmove', dragMove);
-            document.removeEventListener('touchend', dragEnd);
-            hideSnapGuides();
-            saveElementsConfig();
-        }
+        initSingleDraggable(el);
     });
 
     // Click on canvas background to deselect
