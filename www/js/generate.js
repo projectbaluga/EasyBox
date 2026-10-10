@@ -2480,6 +2480,14 @@ $(function () {
         });
     }
 
+    // Window resize listener to auto-fit canvas
+    window.addEventListener('resize', function () {
+        var customizeModal = document.getElementById('customize');
+        if (customizeModal && customizeModal.classList.contains('show')) {
+            editorZoomFit();
+        }
+    });
+
     // Template Manager modal events
     var managerEl = document.getElementById('templateManager');
     if (managerEl) {

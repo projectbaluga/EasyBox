@@ -1556,6 +1556,12 @@ body {
         flex-direction: column;
     }
 
+    .editor-canvas-area {
+        padding: 10px;
+        min-height: 280px;
+        overflow: auto;
+    }
+
     .editor-panel {
         width: 100%;
         border-left: none;
@@ -1580,6 +1586,8 @@ body {
 
     .canvas-workspace {
         padding: 10px;
+        align-items: flex-start;
+        justify-content: center;
     }
 
     .editor-header {
@@ -1593,7 +1601,7 @@ body {
     }
 
     .editor-toolbar {
-        gap: 2px;
+        gap: 4px;
         justify-content: center;
     }
 
@@ -1602,13 +1610,13 @@ body {
     }
 
     .tb-btn {
-        width: 26px;
-        height: 24px;
+        min-width: 32px;
+        min-height: 32px;
     }
 
     .tb-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
     }
 
     .canvas-info-bar {
@@ -1621,9 +1629,38 @@ body {
     .canvas-coords {
         display: none; /* Hide coords on mobile to save space */
     }
+
+    /* Make touch targets easier on small screens */
+    .prop-input, .prop-select {
+        min-height: 32px;
+    }
+
+    .prop-style-btn {
+        min-width: 32px;
+        min-height: 32px;
+    }
+}
+
+@media (max-width: 576px) {
+    .editor-panel {
+        max-height: 250px;
+    }
+
+    .panel-section {
+        min-width: 150px;
+    }
+
+    .prop-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
 @media (max-width: 480px) {
+    .editor-canvas-area {
+        min-height: 250px;
+    }
+
     .editor-panel {
         max-height: 240px;
         flex-direction: column;
@@ -1640,7 +1677,7 @@ body {
     }
 
     .editor-title {
-        display: none; /* Hide title on very small screens to give tools more space */
+        display: none;
     }
 
     .tb-group {
@@ -2257,32 +2294,19 @@ body.dark-mode .canvas-workspace {
 }
 
 /* ============================================
-   Enhanced Mobile Responsiveness (Voucher Editor)
+   Enhanced Mobile Responsiveness
    ============================================ */
-@media (max-width: 768px) {
-    .editor-canvas-area {
-        padding: 10px;
-        min-height: 300px;
-        overflow: auto;
-    }
-    .canvas-workspace {
-        padding: 10px;
-        align-items: flex-start;
-        justify-content: center;
-    }
-    .drag-voucher-container {
-        transform-origin: top center;
-        /* Let JS handle dynamic scale based on screen width,
-           but give it a fallback scale if JS fails */
-    }
+/* Force touch actions for better drag experience on mobile */
+.drag-el {
+    touch-action: none;
+}
 
-    /* Make the settings modal inputs more stackable on small screens */
+@media (max-width: 768px) {
     #rst .col-sm-6 {
         flex: 0 0 auto;
         width: 100%;
     }
 
-    /* Compact the properties panel if it shows up */
     .properties-panel {
         width: 100%;
         border-left: none;
@@ -2290,7 +2314,6 @@ body.dark-mode .canvas-workspace {
         padding: 12px;
     }
 
-    /* Hotspot tables on mobile */
     .winbox-table-wrapper {
         font-size: 11px;
     }
@@ -2298,42 +2321,5 @@ body.dark-mode .canvas-workspace {
     .tb-action-btn {
         padding: 4px 6px;
         font-size: 11px;
-    }
-}
-
-@media (max-width: 480px) {
-    .editor-canvas-area {
-        min-height: 250px;
-    }
-    .canvas-scaler {
-        transform: scale(0.65) !important;
-        transform-origin: top center;
-    }
-}
-
-/* Force touch actions for better drag experience on mobile */
-.drag-el {
-    touch-action: none;
-}
-
-@media (max-width: 576px) {
-    /* Collapse side panels or resize inputs for mobile */
-    .editor-panel {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        border-left: none;
-        border-top: 1px solid var(--border);
-    }
-    .panel-section {
-        flex: 1;
-        min-width: 150px;
-    }
-    .prop-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .prop-input, .prop-select {
-        width: 100%;
     }
 }
