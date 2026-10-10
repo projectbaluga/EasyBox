@@ -904,6 +904,15 @@ function initSingleDraggable(el) {
     var hasMoved = false;
     var startX, startY, initialLeft, initialTop;
 
+    // Attach resize handle if not present
+    var handle = el.querySelector('.resize-handle');
+    if (!handle) {
+        handle = document.createElement('div');
+        handle.className = 'resize-handle';
+        el.appendChild(handle);
+    }
+    initResizeHandle(handle, el);
+
     el.addEventListener('mousedown', dragStart);
     el.addEventListener('touchstart', dragStart, { passive: false });
 
@@ -993,6 +1002,92 @@ function initSingleDraggable(el) {
         document.removeEventListener('mouseup', dragEnd);
         document.removeEventListener('touchmove', dragMove);
         document.removeEventListener('touchend', dragEnd);
+        hideSnapGuides();
+        saveElementsConfig();
+    }
+}
+
+function initResizeHandle(handle, el) {
+    if (!handle || !el) return;
+
+    var isResizing = false;
+    var startX, startY, initialFontSize, initialQrSize;
+
+    handle.addEventListener('mousedown', resizeStart);
+    handle.addEventListener('touchstart', resizeStart, { passive: false });
+
+    function resizeStart(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var elKey = el.getAttribute('data-key');
+        selectElement(elKey);
+
+        isResizing = true;
+        var clientX = e.clientX || e.touches[0].clientX;
+        var clientY = e.clientY || e.touches[0].clientY;
+
+        startX = clientX;
+        startY = clientY;
+
+        var cfg = voucherElementsConfig[elKey];
+        if (cfg) {
+            initialFontSize = cfg.fontSize || 12;
+        }
+        if (elKey === 'qr') {
+            initialQrSize = qrCodeSize || 60;
+        }
+
+        document.addEventListener('mousemove', resizeMove);
+        document.addEventListener('mouseup', resizeEnd);
+        document.addEventListener('touchmove', resizeMove, { passive: false });
+        document.addEventListener('touchend', resizeEnd);
+    }
+
+    function resizeMove(e) {
+        if (!isResizing) return;
+        e.preventDefault();
+
+        var clientX = e.clientX || e.touches[0].clientX;
+        var clientY = e.clientY || e.touches[0].clientY;
+
+        var dx = (clientX - startX) / editorZoom;
+        var dy = (clientY - startY) / editorZoom;
+        var delta = Math.round((dx + dy) / 2);
+
+        var elKey = el.getAttribute('data-key');
+        var cfg = voucherElementsConfig[elKey];
+
+        if (elKey === 'qr') {
+            qrCodeSize = Math.max(30, Math.min(120, initialQrSize + delta));
+            var label = document.getElementById('propQrSizeVal');
+            if (label) label.textContent = qrCodeSize + 'px';
+            var slider = document.getElementById('propQrSize');
+            if (slider) slider.value = qrCodeSize;
+            var qrImg = document.querySelector('#dragQR img');
+            if (qrImg) {
+                qrImg.width = qrCodeSize;
+                qrImg.height = qrCodeSize;
+            }
+            localStorage.setItem('qv_qr_size', qrCodeSize);
+        } else if (cfg) {
+            cfg.fontSize = Math.max(6, Math.min(72, initialFontSize + delta));
+            applyElementStyle(elKey);
+
+            var propFontSizeInput = document.getElementById('propFontSize');
+            if (propFontSizeInput && selectedElementKey === elKey) {
+                propFontSizeInput.value = cfg.fontSize;
+            }
+        }
+    }
+
+    function resizeEnd(e) {
+        if (!isResizing) return;
+        isResizing = false;
+        document.removeEventListener('mousemove', resizeMove);
+        document.removeEventListener('mouseup', resizeEnd);
+        document.removeEventListener('touchmove', resizeMove);
+        document.removeEventListener('touchend', resizeEnd);
         hideSnapGuides();
         saveElementsConfig();
     }
@@ -2384,6 +2479,14 @@ $(function () {
             deselectAll();
         });
     }
+
+    // Window resize listener to auto-fit canvas
+    window.addEventListener('resize', function () {
+        var customizeModal = document.getElementById('customize');
+        if (customizeModal && customizeModal.classList.contains('show')) {
+            editorZoomFit();
+        }
+    });
 
     // Template Manager modal events
     var managerEl = document.getElementById('templateManager');
