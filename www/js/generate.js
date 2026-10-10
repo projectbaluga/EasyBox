@@ -13,6 +13,54 @@ var STORAGE_KEY = 'qv_templates';
 var ACTIVE_KEY = 'qv_active_template';
 var templateBg = '';
 
+var templateBgSettings = { fit: 'cover', posX: 50, posY: 50, scale: 100 };
+
+function getBgStyleProps(bgData, settings) {
+    if (!bgData) {
+        return {
+            backgroundImage: '',
+            backgroundSize: '',
+            backgroundRepeat: '',
+            backgroundPosition: '',
+            inlineCss: ''
+        };
+    }
+
+    var st = settings || templateBgSettings || { fit: 'cover', posX: 50, posY: 50, scale: 100 };
+    var fit = st.fit || 'cover';
+    var posX = st.posX !== undefined ? st.posX : 50;
+    var posY = st.posY !== undefined ? st.posY : 50;
+    var scale = st.scale !== undefined ? st.scale : 100;
+
+    var bgSize = 'cover';
+    var bgPos = 'center';
+
+    if (fit === 'contain') {
+        bgSize = 'contain';
+        bgPos = posX + '% ' + posY + '%';
+    } else if (fit === 'stretch') {
+        bgSize = '100% 100%';
+        bgPos = posX + '% ' + posY + '%';
+    } else if (fit === 'custom') {
+        bgSize = scale + '%';
+        bgPos = posX + '% ' + posY + '%';
+    } else {
+        // Default cover
+        bgSize = 'cover';
+        bgPos = posX + '% ' + posY + '%';
+    }
+
+    var inlineCss = 'background-image:url(' + bgData + ');background-size:' + bgSize + ';background-repeat:no-repeat;background-position:' + bgPos + ';';
+
+    return {
+        backgroundImage: 'url(' + bgData + ')',
+        backgroundSize: bgSize,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: bgPos,
+        inlineCss: inlineCss
+    };
+}
+
 function getTemplates() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
     catch (e) { return []; }
@@ -196,17 +244,73 @@ function toggleEditorFullscreen() {
 function updateVoucherPreviews() {
     var container = document.getElementById('dragVoucherContainer');
     if (container) {
-        if (templateBg) {
-            container.style.backgroundImage = 'url(' + templateBg + ')';
-            container.style.backgroundSize = 'cover';
-            container.style.backgroundRepeat = 'no-repeat';
-            container.style.backgroundPosition = 'center';
-        } else {
-            container.style.backgroundImage = '';
-            container.style.backgroundSize = '';
-            container.style.backgroundRepeat = '';
-            container.style.backgroundPosition = '';
-        }
+        var props = getBgStyleProps(templateBg, templateBgSettings);
+        container.style.backgroundImage = props.backgroundImage;
+        container.style.backgroundSize = props.backgroundSize;
+        container.style.backgroundRepeat = props.backgroundRepeat;
+        container.style.backgroundPosition = props.backgroundPosition;
+    }
+}
+
+function applyBgSettings() {
+    var fitEl = document.getElementById('bgFit');
+    var posXEl = document.getElementById('bgPosX');
+    var posYEl = document.getElementById('bgPosY');
+    var scaleEl = document.getElementById('bgScale');
+
+    if (fitEl) templateBgSettings.fit = fitEl.value;
+    if (posXEl) templateBgSettings.posX = parseInt(posXEl.value) || 0;
+    if (posYEl) templateBgSettings.posY = parseInt(posYEl.value) || 0;
+    if (scaleEl) templateBgSettings.scale = parseInt(scaleEl.value) || 100;
+
+    // Update val labels
+    var posXVal = document.getElementById('bgPosXVal');
+    if (posXVal) posXVal.textContent = templateBgSettings.posX + '%';
+    var posYVal = document.getElementById('bgPosYVal');
+    if (posYVal) posYVal.textContent = templateBgSettings.posY + '%';
+    var scaleVal = document.getElementById('bgScaleVal');
+    if (scaleVal) scaleVal.textContent = templateBgSettings.scale + '%';
+
+    var customGroup = document.getElementById('bgCustomGroup');
+    if (customGroup) {
+        customGroup.style.display = templateBgSettings.fit === 'custom' || templateBgSettings.fit === 'contain' ? 'block' : 'none';
+    }
+
+    localStorage.setItem('qv_bg_settings', JSON.stringify(templateBgSettings));
+    updateVoucherPreviews();
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
+}
+
+function resetBgSettings() {
+    templateBgSettings = { fit: 'cover', posX: 50, posY: 50, scale: 100 };
+    localStorage.setItem('qv_bg_settings', JSON.stringify(templateBgSettings));
+    updateBgSettingsUI();
+    updateVoucherPreviews();
+    if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
+}
+
+function updateBgSettingsUI() {
+    var fitEl = document.getElementById('bgFit');
+    var posXEl = document.getElementById('bgPosX');
+    var posYEl = document.getElementById('bgPosY');
+    var scaleEl = document.getElementById('bgScale');
+
+    if (fitEl) fitEl.value = templateBgSettings.fit || 'cover';
+    if (posXEl) posXEl.value = templateBgSettings.posX !== undefined ? templateBgSettings.posX : 50;
+    if (posYEl) posYEl.value = templateBgSettings.posY !== undefined ? templateBgSettings.posY : 50;
+    if (scaleEl) scaleEl.value = templateBgSettings.scale !== undefined ? templateBgSettings.scale : 100;
+
+    var posXVal = document.getElementById('bgPosXVal');
+    if (posXVal) posXVal.textContent = (templateBgSettings.posX !== undefined ? templateBgSettings.posX : 50) + '%';
+    var posYVal = document.getElementById('bgPosYVal');
+    if (posYVal) posYVal.textContent = (templateBgSettings.posY !== undefined ? templateBgSettings.posY : 50) + '%';
+    var scaleVal = document.getElementById('bgScaleVal');
+    if (scaleVal) scaleVal.textContent = (templateBgSettings.scale !== undefined ? templateBgSettings.scale : 100) + '%';
+
+    var customGroup = document.getElementById('bgCustomGroup');
+    if (customGroup) {
+        var fit = templateBgSettings.fit || 'cover';
+        customGroup.style.display = fit === 'custom' || fit === 'contain' ? 'block' : 'none';
     }
 }
 
@@ -1711,6 +1815,36 @@ function setCanvasSize() {
     if (typeof isUndoRedoing !== 'undefined' && !isUndoRedoing) { if (typeof pushUndo === 'function') pushUndo(); }
 }
 
+function fitCanvasToImageAspect() {
+    if (!templateBg) {
+        alert('Please select or upload an image template first.');
+        return;
+    }
+    var img = new Image();
+    img.onload = function () {
+        var nw = img.naturalWidth || img.width;
+        var nh = img.naturalHeight || img.height;
+        if (!nw || !nh) return;
+
+        var aspect = nw / nh;
+        // Keep current height or default 100px and adjust width proportionally
+        var targetH = voucherContainerSize.height || 100;
+        var targetW = Math.round(targetH * aspect);
+
+        // Clamp target width between 100 and 600 px
+        targetW = Math.max(100, Math.min(600, targetW));
+
+        var wInput = document.getElementById('canvasW');
+        var hInput = document.getElementById('canvasH');
+        if (wInput) wInput.value = targetW;
+        if (hInput) hInput.value = targetH;
+
+        setCanvasSize();
+        editorZoomFit();
+    };
+    img.src = templateBg;
+}
+
 // ============================================
 // TAG COLOR & BORDER
 // ============================================
@@ -1789,7 +1923,8 @@ function buildElementInlineStyle(elCfg, isPrice, containerHeight) {
 function buildVoucher(code, userpass, qr, cfg) {
     var bgStyle = '';
     if (templateBg) {
-        bgStyle = 'background-image:url(' + templateBg + ');background-size:cover;background-repeat:no-repeat;background-position:center;';
+        var bgProps = getBgStyleProps(templateBg, templateBgSettings);
+        bgStyle = bgProps.inlineCss;
     }
 
     var w = voucherContainerSize.width;
@@ -2008,10 +2143,11 @@ function updatePrintPreview() {
         var vouchers = temp.querySelectorAll('.voucher');
         for (var j = 0; j < vouchers.length; j++) {
             if (bgData) {
-                vouchers[j].style.backgroundImage = 'url(' + bgData + ')';
-                vouchers[j].style.backgroundSize = 'cover';
-                vouchers[j].style.backgroundRepeat = 'no-repeat';
-                vouchers[j].style.backgroundPosition = 'center';
+                var p = getBgStyleProps(bgData, templateBgSettings);
+                vouchers[j].style.backgroundImage = p.backgroundImage;
+                vouchers[j].style.backgroundSize = p.backgroundSize;
+                vouchers[j].style.backgroundRepeat = p.backgroundRepeat;
+                vouchers[j].style.backgroundPosition = p.backgroundPosition;
             } else {
                 vouchers[j].style.backgroundImage = '';
             }
@@ -2181,6 +2317,15 @@ function initDraggables() {
             container.style.height = voucherContainerSize.height + 'px';
         }
     } catch (e) {}
+
+    // Load saved bg settings
+    try {
+        var savedBgSt = localStorage.getItem('qv_bg_settings');
+        if (savedBgSt) {
+            templateBgSettings = JSON.parse(savedBgSt);
+        }
+    } catch (e) {}
+    updateBgSettingsUI();
 
     // Update canvas size inputs
     var canvasW = document.getElementById('canvasW');

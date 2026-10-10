@@ -856,6 +856,42 @@
                                     </div>
                                 </div>
                                 <div class="prop-group">
+                                    <div class="prop-label">Template Fit</div>
+                                    <select id="bgFit" class="prop-select" onchange="applyBgSettings()">
+                                        <option value="cover">Cover (Fill)</option>
+                                        <option value="contain">Contain (Fit)</option>
+                                        <option value="stretch">Stretch (100% x 100%)</option>
+                                        <option value="custom">Custom Scale/Pos</option>
+                                    </select>
+                                </div>
+                                <div id="bgCustomGroup" style="display:none;">
+                                    <div class="prop-group">
+                                        <div class="prop-label">Pos X (%)</div>
+                                        <div class="prop-row">
+                                            <input type="range" id="bgPosX" class="prop-range" min="0" max="100" value="50" oninput="applyBgSettings()">
+                                            <span id="bgPosXVal" class="prop-range-val">50%</span>
+                                        </div>
+                                    </div>
+                                    <div class="prop-group">
+                                        <div class="prop-label">Pos Y (%)</div>
+                                        <div class="prop-row">
+                                            <input type="range" id="bgPosY" class="prop-range" min="0" max="100" value="50" oninput="applyBgSettings()">
+                                            <span id="bgPosYVal" class="prop-range-val">50%</span>
+                                        </div>
+                                    </div>
+                                    <div class="prop-group">
+                                        <div class="prop-label">Scale (%)</div>
+                                        <div class="prop-row">
+                                            <input type="range" id="bgScale" class="prop-range" min="10" max="300" value="100" oninput="applyBgSettings()">
+                                            <span id="bgScaleVal" class="prop-range-val">100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="prop-group mt-2 d-flex gap-1">
+                                    <button type="button" class="btn btn-sm btn-outline-light w-50" style="font-size:10px;padding:3px 6px;" onclick="fitCanvasToImageAspect()" title="Adjust voucher size to image aspect ratio">Fit to Aspect</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger w-50" style="font-size:10px;padding:3px 6px;" onclick="resetBgSettings()" title="Reset background settings to default">Reset BG</button>
+                                </div>
+                                <div class="prop-group">
                                     <div class="prop-label">Border</div>
                                     <select id="voucherBorder" class="prop-select" onchange="applyBorderStyle()">
                                         <option value="1px dashed #aaa">Dashed</option>
